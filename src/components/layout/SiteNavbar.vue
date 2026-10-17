@@ -34,10 +34,9 @@ const authStore = useAuthStore()
           Writing
         </BrutalButton>
         <BrutalButton
-          v-if="authStore.user"
           as="router-link"
           to="/admin"
-          variant="orange"
+          :variant="route.path.startsWith('/admin') ? 'orange' : 'white'"
         >
           Admin
         </BrutalButton>

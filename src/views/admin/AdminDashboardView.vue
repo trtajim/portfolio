@@ -25,6 +25,12 @@ function notify(text: string, type: 'success' | 'error' = 'success') {
 }
 
 async function handleFileUpload(event: Event, targetType: 'avatar' | 'project' | 'post') {
+  if (!authStore.canEdit) {
+    notify('Guest Demo Mode: Uploading assets is disabled.', 'error')
+    ;(event.target as HTMLInputElement).value = ''
+    return
+  }
+
   const file = (event.target as HTMLInputElement).files?.[0]
   if (!file) return
 
@@ -58,6 +64,10 @@ const profileForm = ref({
 })
 
 async function saveProfile() {
+  if (!authStore.canEdit) {
+    notify('Guest Demo Mode: You are in view-only inspection mode. Changes cannot be saved.', 'error')
+    return
+  }
   isSaving.value = true
   try {
     const whoami = profileForm.value.whoamiRaw
@@ -143,6 +153,10 @@ function removeProjectAction(idx: number) {
 
 async function saveCurrentProject() {
   if (!editingProject.value) return
+  if (!authStore.canEdit) {
+    notify('Guest Demo Mode: You are in view-only inspection mode. Changes cannot be saved.', 'error')
+    return
+  }
   isSaving.value = true
   try {
     const tags = projectTagsRaw.value
@@ -173,6 +187,10 @@ async function saveCurrentProject() {
 
 async function deleteProject(id?: string) {
   if (!id) return
+  if (!authStore.canEdit) {
+    notify('Guest Demo Mode: Deletion is disabled in view-only mode.', 'error')
+    return
+  }
   if (!confirm('Are you sure you want to delete this project?')) return
   try {
     await portfolioStore.deleteProject(id)
@@ -213,6 +231,10 @@ function editPost(post: Post) {
 
 async function saveCurrentPost() {
   if (!editingPost.value) return
+  if (!authStore.canEdit) {
+    notify('Guest Demo Mode: You are in view-only inspection mode. Changes cannot be saved.', 'error')
+    return
+  }
   isSaving.value = true
   try {
     const tags = postTagsRaw.value
@@ -242,6 +264,10 @@ async function saveCurrentPost() {
 
 async function deletePost(id?: string) {
   if (!id) return
+  if (!authStore.canEdit) {
+    notify('Guest Demo Mode: Deletion is disabled in view-only mode.', 'error')
+    return
+  }
   if (!confirm('Are you sure you want to delete this post?')) return
   try {
     await portfolioStore.deletePost(id)
@@ -270,6 +296,14 @@ async function handleLogout() {
         </BrutalButton>
       </div>
     </header>
+
+    <div v-if="authStore.isGuest" class="demo-banner box">
+      <div class="demo-badge">GUEST DEMO MODE</div>
+      <p>
+        You are inspecting the admin studio as a visitor with <strong>view-only</strong> permissions. 
+        You can test navigation, explore forms, and preview the Markdown editor. Saving, deleting, and uploads are disabled.
+      </p>
+    </div>
 
     <div v-if="notification" :class="['notif', notification.type]">
       {{ notification.text }}
@@ -968,6 +1002,28 @@ label {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.demo-banner {
+  background: var(--yellow);
+  color: #111;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.demo-badge {
+  display: inline-block;
+  background: #111;
+  color: #fff;
+  font: 700 0.8rem var(--mono);
+  padding: 2px 10px;
+  margin-bottom: 8px;
+}
+
+.demo-banner p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 @media (max-width: 760px) {
