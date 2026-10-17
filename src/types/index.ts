@@ -55,7 +55,6 @@ export interface Post {
   title: string
   subtitle?: string | null
   content: string
-  reading_time: string
   tags: string[]
   image_url?: string | null
   is_featured: boolean

@@ -36,8 +36,6 @@ const renderedContent = computed(() => {
       <header class="post-header box">
         <div class="meta">
           <time>{{ post.published_date }}</time>
-          <span class="dot">•</span>
-          <span>{{ post.reading_time }}</span>
         </div>
 
         <h1>{{ post.title }}</h1>
