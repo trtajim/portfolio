@@ -25,8 +25,8 @@ create table if not exists public.profile (
     {"label": "Facebook", "url": "https://facebook.com/trtajim"}
   ]'::jsonb,
   stats jsonb not null default '[
-    {"label": "projects shipped", "value": "15+"},
-    {"label": "active users reached", "value": "10k+"}
+    {"label": "years building", "value": "4+"},
+    {"label": "projects shipped", "value": "15+"}
   ]'::jsonb,
   avatar_url text default null,
   updated_at timestamp with time zone default timezone('utc'::text, now())
@@ -92,6 +92,28 @@ create policy "Allow admin full access on projects" on public.projects for all t
 
 drop policy if exists "Allow admin full access on posts" on public.posts;
 create policy "Allow admin full access on posts" on public.posts for all to authenticated using (true) with check (true);
+
+-- 4. Supabase Storage for Assets
+insert into storage.buckets (id, name, public)
+values ('portfolio-assets', 'portfolio-assets', true)
+on conflict (id) do nothing;
+
+create policy "Allow public read on portfolio-assets"
+  on storage.objects for select
+  using (bucket_id = 'portfolio-assets');
+
+create policy "Allow authenticated upload on portfolio-assets"
+  on storage.objects for insert
+  to authenticated
+  with check (bucket_id = 'portfolio-assets');
+
+create policy "Allow authenticated update/delete on portfolio-assets"
+  on storage.objects for all
+  to authenticated
+  using (bucket_id = 'portfolio-assets');
+
+-- 5. Realtime Publication
+alter publication supabase_realtime add table public.profile, public.projects, public.posts;
 
 -- Seed Initial Profile
 insert into public.profile (name, headline, whoami, main_stack, grouped_stacks, social_links)
