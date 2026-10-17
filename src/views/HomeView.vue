@@ -83,7 +83,10 @@ const mainStackString = computed(() => {
     </ul>
 
     <section id="about">
-      <h2 class="h">Who I am</h2>
+      <div class="about-headers">
+        <h2 class="h">Who I am</h2>
+        <h2 class="h stack-heading">Tech stack</h2>
+      </div>
       <div class="about">
         <div class="card box">
           <p v-for="(p, i) in profile.whoami" :key="i">
@@ -92,6 +95,7 @@ const mainStackString = computed(() => {
         </div>
 
         <div class="card box">
+          <h2 class="h mobile-stack-heading">Tech stack</h2>
           <dl class="stack" aria-label="Technologies">
             <div v-for="group in profile.grouped_stacks" :key="group.category">
               <dt>{{ group.category }}</dt>
@@ -229,6 +233,16 @@ section {
   padding: 30px 0;
 }
 
+.about-headers {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+}
+
+.mobile-stack-heading {
+  display: none;
+}
+
 .about {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
@@ -290,6 +304,16 @@ section {
 @media (max-width: 760px) {
   .hero, .about, .proj {
     grid-template-columns: 1fr;
+  }
+  .about-headers {
+    display: block;
+  }
+  .stack-heading {
+    display: none;
+  }
+  .mobile-stack-heading {
+    display: inline-block;
+    margin-bottom: 16px;
   }
   .side {
     grid-template-columns: 1fr 1fr;
