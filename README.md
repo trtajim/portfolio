@@ -1,61 +1,29 @@
-# Hey, I'm TR Tajim 👋
+# Hey there, I'm TR Tajim 👋
 
-This is the repository for my personal portfolio and blog, built with Vue 3, Vite, and Supabase. 
+Welcome to my personal corner on the web! This repository powers my portfolio and writing space, built to showcase the software, community projects, and hardware experiments I work on.
 
-I designed it with a bold neo-brutalist theme (sharp borders, thick offset shadows, and clean monospaced accents) and wired it up to an admin panel so I can easily update my projects, write articles in Markdown, and tweak my tech stack on the go.
-
----
-
-## ⚡ What’s inside?
-
-- **Vue 3 + TypeScript + Vite**: Fast build setup with scoped Neobrutalist design elements.
-- **Supabase Backend**:
-  - PostgreSQL database with **Row Level Security (RLS)** enabled for all tables.
-  - Public read-only access for visitors; full authenticated CRUD access for the admin panel.
-  - **Supabase Storage**: Drag-and-drop or file select for profile avatars, project covers, and article banners.
-  - **Supabase Realtime**: Any edits saved in the admin panel push live to active visitors immediately.
-- **Fast Client-Side Caching**: Pinia stores project and post data in-memory so navigating between pages takes 0ms, while updates automatically bust the cache.
-- **Markdown Writing Studio**: Built-in split-view Markdown editor with live preview for articles and project case studies.
-- **Vercel Ready**: Preconfigured with `vercel.json` rewrites for smooth SPA routing.
+I've always loved retro, high-contrast aesthetics, so I designed this site using a **neo-brutalist style**—bold black borders, playful shadows, and snappy page transitions.
 
 ---
 
-## 🛠️ Local Development
+## ✨ Highlights
 
-### 1. Clone & install dependencies
-```bash
-git clone https://github.com/trtajim/portfolio.git
-cd portfolio
-npm install
-```
-
-### 2. Configure environment variables
-Create a `.env` file in the root folder:
-```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-public-key
-```
-
-### 3. Run the database migrations
-Open `supabase/schema.sql` and run it directly in your **Supabase SQL Editor**. This will:
-- Set up the `profile`, `projects`, and `posts` tables.
-- Enable RLS policies.
-- Create the `portfolio-assets` storage bucket.
-- Enable real-time updates for live syncing.
-
-### 4. Create your admin user
-In your Supabase dashboard under **Authentication > Users**, add your email & password. You'll use these credentials to log in at `/admin/login`.
-
-### 5. Start building
-```bash
-npm run dev
-```
+- **Fast & Responsive**: Built with modern web tools so everything loads instantly and looks great on phones, tablets, and desktops.
+- **My Work & Case Studies**: A dedicated showcase of full-stack web platforms, mobile apps, and IoT hardware projects with detailed write-ups.
+- **Tech Journey**: A clean overview of the tools, languages, and frameworks I use every day (like Laravel, Vue, React, C++, and Arduino).
+- **Writing & Notes**: A simple space where I share lessons learned from building open-source tools and tinkering with technology.
+- **Live Admin Studio**: A custom dashboard where I can manage my projects and write articles in real time. It even has a **Guest Demo Mode** so anyone can click around and check out how it works behind the scenes without needing an account!
 
 ---
 
-## 🚀 Deployment (Vercel)
+## ☕ Getting in Touch
 
-1. Push your code to GitHub.
-2. Import the repository in [Vercel](https://vercel.com).
-3. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to your Vercel Project Environment Variables.
-4. Deploy!
+I'm always excited to collaborate on open-source initiatives, talk competitive programming, or chat about tech ideas:
+
+- **GitHub**: [@trtajim](https://github.com/trtajim)
+- **LinkedIn**: [in/trtajim](https://linkedin.com/in/trtajim)
+- **Facebook**: [fb.com/trtajim](https://facebook.com/trtajim)
+
+---
+
+*Thanks for stopping by! Feel free to explore the code or check out the live site.*
