@@ -40,10 +40,6 @@ const fallbackThumbnail = computed(() => {
       <div class="play-overlay">
         <span class="play-icon">▶</span>
       </div>
-
-      <span :class="['platform-badge', short.platform]">
-        {{ short.platform === 'youtube' ? 'YouTube' : 'Facebook' }}
-      </span>
     </div>
 
     <div class="card-info">
@@ -138,26 +134,6 @@ const fallbackThumbnail = computed(() => {
 
 .short-card:hover .play-icon {
   transform: scale(1.1);
-}
-
-.platform-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  font: 700 0.7rem var(--mono);
-  padding: 2px 8px;
-  border: 2px solid #111;
-  box-shadow: 2px 2px 0 #111;
-}
-
-.platform-badge.youtube {
-  background: var(--pink);
-  color: #111;
-}
-
-.platform-badge.facebook {
-  background: var(--blue);
-  color: #111;
 }
 
 .card-info {
