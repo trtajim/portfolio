@@ -54,9 +54,9 @@ router.beforeEach(async (to, _from, next) => {
     await authStore.checkSession()
   }
 
-  if (to.meta.requiresAuth && !authStore.user) {
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'admin-login', query: { redirect: to.fullPath } })
-  } else if (to.name === 'admin-login' && authStore.user) {
+  } else if (to.name === 'admin-login' && authStore.isAuthenticated) {
     next({ name: 'admin-dashboard' })
   } else {
     next()
