@@ -63,3 +63,17 @@ export interface Post {
   created_at?: string
   updated_at?: string
 }
+
+export type ShortPlatform = 'youtube' | 'facebook'
+
+export interface Short {
+  id?: string
+  title: string
+  platform: ShortPlatform
+  video_url: string
+  thumbnail_url?: string | null
+  is_published: boolean
+  order_index?: number
+  created_at?: string
+  updated_at?: string
+}
