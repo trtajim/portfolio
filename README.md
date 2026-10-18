@@ -1,48 +1,54 @@
-# tajim-portfolio
+# TR Tajim - Portfolio & Content Management System
 
-This template should help get you started developing with Vue 3 in Vite.
+A personal portfolio website and full-featured Neobrutalist admin studio built with Vue 3, TypeScript, Pinia, Supabase, and Vite.
 
-## Recommended IDE Setup
+## Features
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Neobrutalist Design System**: High contrast, bold borders (`3px`), solid offset shadows, responsive layouts, and accessible color palettes.
+- **Dynamic Content Management (CRUD)**:
+  - Edit name, tagline, multi-paragraph WhoAmI bio, and main stack.
+  - Dynamic key-value tech stack builder (`Category` ➔ `Items`).
+  - Social & contact link builder with auto-cycling neo-brutal button colors.
+  - Project showcase with stack pill, custom metric badges (e.g. `1,000+ registered users`), category filtering, and Markdown deep-dive pages.
+  - Writing studio with split-screen live Markdown preview.
+- **Client-Side Cache & Invalidation**: Instant tab/page transitions via Pinia with automatic invalidation upon any admin save/delete.
+- **Supabase Backend**: PostgreSQL database with Row Level Security (RLS) policies and authentication.
+- **Vercel Ready**: Preconfigured with `vercel.json` rewrite rules for HTML5 history mode.
 
-## Recommended Browser Setup
+## Setup & Local Development
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+### 1. Install Dependencies
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+Provide your Supabase URL and Anon Key:
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-public-key
+```
 
-```sh
+### 3. Setup Database in Supabase
+Run the SQL script located at `supabase/schema.sql` in your Supabase SQL Editor. This will create:
+- `profile` table (with seed data)
+- `projects` table
+- `posts` table
+- Row Level Security (RLS) policies allowing public read and authenticated admin CRUD.
+
+### 4. Create an Admin Account
+In your Supabase dashboard under **Authentication > Users**, create an admin user (email & password). You will use these credentials to log in at `/admin/login`.
+
+### 5. Run Development Server
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
-
-```sh
+### 6. Production Build
+```bash
 npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```
