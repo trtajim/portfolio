@@ -15,7 +15,17 @@ const post = computed(() => {
 
 const renderedContent = computed(() => {
   if (!post.value?.content) return ''
-  return marked.parse(post.value.content)
+  // Normalize Windows CRLF to LF, and strip accidental 4-space / tab paragraph indentations
+  const cleaned = post.value.content
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line) => {
+      // If line starts with 4 spaces or tab but is not a fenced block, trim leading whitespace
+      return line.startsWith('    ') || line.startsWith('\t') ? line.trimStart() : line
+    })
+    .join('\n')
+
+  return marked.parse(cleaned)
 })
 </script>
 
