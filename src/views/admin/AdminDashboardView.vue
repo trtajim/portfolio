@@ -1,0 +1,891 @@
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { marked } from 'marked'
+import { usePortfolioStore } from '@/stores/portfolio'
+import { useAuthStore } from '@/stores/auth'
+import type { Project, Post, GroupedStack, SocialLink } from '@/types'
+import BrutalButton from '@/components/brutal/BrutalButton.vue'
+
+const router = useRouter()
+const portfolioStore = usePortfolioStore()
+const authStore = useAuthStore()
+
+const activeTab = ref<'profile' | 'projects' | 'posts'>('profile')
+const notification = ref<{ text: string; type: 'success' | 'error' } | null>(null)
+const isSaving = ref(false)
+
+function notify(text: string, type: 'success' | 'error' = 'success') {
+  notification.value = { text, type }
+  setTimeout(() => {
+    notification.value = null
+  }, 3500)
+}
+
+const profileForm = ref({
+  name: portfolioStore.profile.name,
+  headline: portfolioStore.profile.headline,
+  whoamiRaw: portfolioStore.profile.whoami.join('\n\n'),
+  mainStackRaw: portfolioStore.profile.main_stack.join(', '),
+  avatar_url: portfolioStore.profile.avatar_url || '',
+  grouped_stacks: JSON.parse(JSON.stringify(portfolioStore.profile.grouped_stacks)) as GroupedStack[],
+  social_links: JSON.parse(JSON.stringify(portfolioStore.profile.social_links)) as SocialLink[]
+})
+
+async function saveProfile() {
+  isSaving.value = true
+  try {
+    const whoami = profileForm.value.whoamiRaw
+      .split('\n\n')
+      .map((s) => s.trim())
+      .filter(Boolean)
+
+    const main_stack = profileForm.value.mainStackRaw
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+
+    await portfolioStore.updateProfile({
+      name: profileForm.value.name,
+      headline: profileForm.value.headline,
+      whoami,
+      main_stack,
+      avatar_url: profileForm.value.avatar_url || null,
+      grouped_stacks: profileForm.value.grouped_stacks,
+      social_links: profileForm.value.social_links
+    })
+    notify('Profile & Stacks updated successfully!')
+  } catch (err: unknown) {
+    notify(err instanceof Error ? err.message : 'Error updating profile', 'error')
+  } finally {
+    isSaving.value = false
+  }
+}
+
+function addGroupedStack() {
+  profileForm.value.grouped_stacks.push({ category: 'New Category', items: 'Tool 1, Tool 2' })
+}
+
+function removeGroupedStack(idx: number) {
+  profileForm.value.grouped_stacks.splice(idx, 1)
+}
+
+function addSocialLink() {
+  profileForm.value.social_links.push({ label: 'Platform', url: 'https://' })
+}
+
+function removeSocialLink(idx: number) {
+  profileForm.value.social_links.splice(idx, 1)
+}
+
+const editingProject = ref<Project | null>(null)
+const projectTagsRaw = ref('')
+const projectActions = ref<{ label: string; url: string }[]>([])
+
+function openNewProject() {
+  editingProject.value = {
+    slug: '',
+    title: '',
+    summary: '',
+    pill: 'Web',
+    top_metric: '',
+    tags: [],
+    actions: [],
+    content: '',
+    image_url: null,
+    is_featured: false,
+    is_published: true
+  }
+  projectTagsRaw.value = ''
+  projectActions.value = [{ label: 'Visit site', url: 'https://' }]
+}
+
+function editProject(project: Project) {
+  editingProject.value = JSON.parse(JSON.stringify(project))
+  projectTagsRaw.value = project.tags ? project.tags.join(', ') : ''
+  projectActions.value = project.actions ? JSON.parse(JSON.stringify(project.actions)) : []
+}
+
+function addProjectAction() {
+  if (projectActions.value.length < 3) {
+    projectActions.value.push({ label: 'Link', url: 'https://' })
+  }
+}
+
+function removeProjectAction(idx: number) {
+  projectActions.value.splice(idx, 1)
+}
+
+async function saveCurrentProject() {
+  if (!editingProject.value) return
+  isSaving.value = true
+  try {
+    const tags = projectTagsRaw.value
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean)
+
+    if (!editingProject.value.slug) {
+      editingProject.value.slug = editingProject.value.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '')
+    }
+
+    await portfolioStore.saveProject({
+      ...editingProject.value,
+      tags,
+      actions: projectActions.value.filter((a) => a.label && a.url)
+    })
+    editingProject.value = null
+    notify('Project saved successfully!')
+  } catch (err: unknown) {
+    notify(err instanceof Error ? err.message : 'Error saving project', 'error')
+  } finally {
+    isSaving.value = false
+  }
+}
+
+async function deleteProject(id?: string) {
+  if (!id) return
+  if (!confirm('Are you sure you want to delete this project?')) return
+  try {
+    await portfolioStore.deleteProject(id)
+    notify('Project deleted.')
+  } catch (err: unknown) {
+    notify(err instanceof Error ? err.message : 'Error deleting project', 'error')
+  }
+}
+
+const editingPost = ref<Post | null>(null)
+const postTagsRaw = ref('')
+
+const renderedPostPreview = computed(() => {
+  if (!editingPost.value?.content) return ''
+  return marked.parse(editingPost.value.content)
+})
+
+function openNewPost() {
+  editingPost.value = {
+    slug: '',
+    title: '',
+    subtitle: '',
+    content: '# New Article\n\nWrite your thoughts here...',
+    reading_time: '3 min read',
+    tags: [],
+    image_url: null,
+    is_featured: false,
+    is_published: true,
+    published_date: new Date().toISOString().split('T')[0] || ''
+  }
+  postTagsRaw.value = ''
+}
+
+function editPost(post: Post) {
+  editingPost.value = JSON.parse(JSON.stringify(post))
+  postTagsRaw.value = post.tags ? post.tags.join(', ') : ''
+}
+
+async function saveCurrentPost() {
+  if (!editingPost.value) return
+  isSaving.value = true
+  try {
+    const tags = postTagsRaw.value
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean)
+
+    if (!editingPost.value.slug) {
+      editingPost.value.slug = editingPost.value.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '')
+    }
+
+    await portfolioStore.savePost({
+      ...editingPost.value,
+      tags
+    })
+    editingPost.value = null
+    notify('Article saved successfully!')
+  } catch (err: unknown) {
+    notify(err instanceof Error ? err.message : 'Error saving post', 'error')
+  } finally {
+    isSaving.value = false
+  }
+}
+
+async function deletePost(id?: string) {
+  if (!id) return
+  if (!confirm('Are you sure you want to delete this post?')) return
+  try {
+    await portfolioStore.deletePost(id)
+    notify('Post deleted.')
+  } catch (err: unknown) {
+    notify(err instanceof Error ? err.message : 'Error deleting post', 'error')
+  }
+}
+
+async function handleLogout() {
+  await authStore.signOut()
+  router.push('/')
+}
+</script>
+
+<template>
+  <div class="c admin-container">
+    <header class="admin-top">
+      <div>
+        <span class="h">ADMIN DASHBOARD</span>
+        <p class="tagline">Manage site copy, projects, key-value tech stacks, and articles.</p>
+      </div>
+      <div class="top-actions">
+        <BrutalButton as="button" variant="white" @click="handleLogout">
+          Log Out
+        </BrutalButton>
+      </div>
+    </header>
+
+    <div v-if="notification" :class="['notif', notification.type]">
+      {{ notification.text }}
+    </div>
+
+    <nav class="admin-tabs">
+      <button
+        :class="['tab-btn', { active: activeTab === 'profile' }]"
+        @click="activeTab = 'profile'"
+      >
+        Profile & Stacks
+      </button>
+      <button
+        :class="['tab-btn', { active: activeTab === 'projects' }]"
+        @click="activeTab = 'projects'"
+      >
+        Projects ({{ portfolioStore.projects.length }})
+      </button>
+      <button
+        :class="['tab-btn', { active: activeTab === 'posts' }]"
+        @click="activeTab = 'posts'"
+      >
+        Writing ({{ portfolioStore.posts.length }})
+      </button>
+    </nav>
+
+    <!-- TAB 1: PROFILE & TECH STACKS -->
+    <section v-if="activeTab === 'profile'" class="tab-pane">
+      <form @submit.prevent="saveProfile" class="card box admin-form">
+        <h3 class="pane-title">Hero & WhoAmI Content</h3>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Name</label>
+            <input v-model="profileForm.name" type="text" class="input-box" required />
+          </div>
+
+          <div class="field">
+            <label>Avatar / Image URL (Leave blank for initials)</label>
+            <input v-model="profileForm.avatar_url" type="text" class="input-box" placeholder="https://..." />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Headline Tagline</label>
+          <input v-model="profileForm.headline" type="text" class="input-box" required />
+        </div>
+
+        <div class="field">
+          <label>WhoAmI Bio (Separate paragraphs with double Enter / blank line)</label>
+          <textarea v-model="profileForm.whoamiRaw" rows="4" class="input-box"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Main Stack (Comma separated)</label>
+          <input v-model="profileForm.mainStackRaw" type="text" class="input-box" />
+        </div>
+
+        <hr class="divider" />
+
+        <div class="stack-header">
+          <h3 class="pane-title" style="margin: 0">Tech Stack Categories (Key-Value)</h3>
+          <BrutalButton as="button" variant="mint" type="button" @click="addGroupedStack">
+            + Add Category
+          </BrutalButton>
+        </div>
+
+        <div class="kv-list">
+          <div
+            v-for="(stack, idx) in profileForm.grouped_stacks"
+            :key="idx"
+            class="kv-item box"
+          >
+            <div class="field" style="flex: 0 0 160px">
+              <label>Category</label>
+              <input v-model="stack.category" type="text" class="input-box" placeholder="Category" required />
+            </div>
+            <div class="field" style="flex: 1">
+              <label>Technologies (Comma separated)</label>
+              <input v-model="stack.items" type="text" class="input-box" placeholder="Item 1, Item 2" required />
+            </div>
+            <BrutalButton
+              as="button"
+              variant="pink"
+              type="button"
+              style="align-self: flex-end"
+              @click="removeGroupedStack(idx)"
+            >
+              Remove
+            </BrutalButton>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="stack-header">
+          <h3 class="pane-title" style="margin: 0">Social Links</h3>
+          <BrutalButton as="button" variant="mint" type="button" @click="addSocialLink">
+            + Add Social Link
+          </BrutalButton>
+        </div>
+
+        <div class="kv-list">
+          <div
+            v-for="(link, idx) in profileForm.social_links"
+            :key="idx"
+            class="kv-item box"
+          >
+            <div class="field" style="flex: 0 0 160px">
+              <label>Label</label>
+              <input v-model="link.label" type="text" class="input-box" placeholder="e.g. GitHub" required />
+            </div>
+            <div class="field" style="flex: 1">
+              <label>URL</label>
+              <input v-model="link.url" type="text" class="input-box" placeholder="https://..." required />
+            </div>
+            <BrutalButton
+              as="button"
+              variant="pink"
+              type="button"
+              style="align-self: flex-end"
+              @click="removeSocialLink(idx)"
+            >
+              Remove
+            </BrutalButton>
+          </div>
+        </div>
+
+        <div class="action-footer">
+          <BrutalButton type="submit" variant="yellow" :disabled="isSaving" style="font-size: 1.1rem; padding: 10px 24px">
+            {{ isSaving ? 'Saving...' : 'Save Profile Changes' }}
+          </BrutalButton>
+        </div>
+      </form>
+    </section>
+
+    <!-- TAB 2: PROJECTS -->
+    <section v-if="activeTab === 'projects'" class="tab-pane">
+      <div v-if="!editingProject">
+        <div class="pane-bar">
+          <h3 class="pane-title">All Projects</h3>
+          <BrutalButton as="button" variant="mint" @click="openNewProject">
+            + Create New Project
+          </BrutalButton>
+        </div>
+
+        <div class="list-grid">
+          <div
+            v-for="proj in portfolioStore.projects"
+            :key="proj.id || proj.slug"
+            class="card box proj-row"
+          >
+            <div class="info">
+              <div class="meta-row">
+                <span class="st-pill">{{ proj.pill }}</span>
+                <span v-if="proj.top_metric" class="badge-pill">{{ proj.top_metric }}</span>
+                <span v-if="proj.is_featured" class="featured-badge">Featured on Home</span>
+              </div>
+              <h4 class="title">{{ proj.title }}</h4>
+              <p class="summary-text">{{ proj.summary }}</p>
+            </div>
+
+            <div class="row-actions">
+              <BrutalButton as="button" variant="yellow" @click="editProject(proj)">
+                Edit
+              </BrutalButton>
+              <BrutalButton as="button" variant="pink" @click="deleteProject(proj.id)">
+                Delete
+              </BrutalButton>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project Edit Form Modal/Pane -->
+      <form v-else @submit.prevent="saveCurrentProject" class="card box admin-form">
+        <div class="pane-bar">
+          <h3 class="pane-title">{{ editingProject.id ? 'Edit Project' : 'New Project' }}</h3>
+          <BrutalButton as="button" variant="white" type="button" @click="editingProject = null">
+            Cancel
+          </BrutalButton>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Title</label>
+            <input v-model="editingProject.title" type="text" class="input-box" required />
+          </div>
+
+          <div class="field">
+            <label>Slug (URL key)</label>
+            <input v-model="editingProject.slug" type="text" class="input-box" placeholder="auto-generated-if-blank" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Top-Left Pill (Category/Stack e.g. Web, IoT, Mobile)</label>
+            <input v-model="editingProject.pill" type="text" class="input-box" required />
+          </div>
+
+          <div class="field">
+            <label>Top-Right Metric (Nullable e.g. 1,000+ registered users)</label>
+            <input v-model="editingProject.top_metric" type="text" class="input-box" placeholder="Optional" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Summary</label>
+          <textarea v-model="editingProject.summary" rows="2" class="input-box" required></textarea>
+        </div>
+
+        <div class="field">
+          <label>Tags (Comma separated e.g. Open source, Education, Community)</label>
+          <input v-model="projectTagsRaw" type="text" class="input-box" />
+        </div>
+
+        <div class="field">
+          <label>Cover Image URL (Nullable)</label>
+          <input v-model="editingProject.image_url" type="text" class="input-box" placeholder="https://..." />
+        </div>
+
+        <div class="stack-header">
+          <h4 style="margin: 0; font-family: var(--mono)">Action Links (Up to 3)</h4>
+          <BrutalButton
+            v-if="projectActions.length < 3"
+            as="button"
+            variant="mint"
+            type="button"
+            @click="addProjectAction"
+          >
+            + Add Link
+          </BrutalButton>
+        </div>
+
+        <div class="kv-list">
+          <div v-for="(act, idx) in projectActions" :key="idx" class="kv-item box">
+            <div class="field" style="flex: 0 0 160px">
+              <label>Label</label>
+              <input v-model="act.label" type="text" class="input-box" placeholder="e.g. Visit site" required />
+            </div>
+            <div class="field" style="flex: 1">
+              <label>URL</label>
+              <input v-model="act.url" type="text" class="input-box" placeholder="https://..." required />
+            </div>
+            <BrutalButton
+              as="button"
+              variant="pink"
+              type="button"
+              style="align-self: flex-end"
+              @click="removeProjectAction(idx)"
+            >
+              Remove
+            </BrutalButton>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Markdown Deep-Dive Content</label>
+          <textarea v-model="editingProject.content" rows="8" class="input-box" placeholder="# Detailed case study..."></textarea>
+        </div>
+
+        <div class="checkbox-row">
+          <label class="check-label">
+            <input v-model="editingProject.is_featured" type="checkbox" />
+            <span>Feature on Home page</span>
+          </label>
+          <label class="check-label">
+            <input v-model="editingProject.is_published" type="checkbox" />
+            <span>Published</span>
+          </label>
+        </div>
+
+        <div class="action-footer">
+          <BrutalButton type="submit" variant="yellow" :disabled="isSaving" style="font-size: 1.1rem; padding: 10px 24px">
+            {{ isSaving ? 'Saving...' : 'Save Project' }}
+          </BrutalButton>
+        </div>
+      </form>
+    </section>
+
+    <!-- TAB 3: POSTS / WRITING -->
+    <section v-if="activeTab === 'posts'" class="tab-pane">
+      <div v-if="!editingPost">
+        <div class="pane-bar">
+          <h3 class="pane-title">All Articles</h3>
+          <BrutalButton as="button" variant="mint" @click="openNewPost">
+            + Write New Article
+          </BrutalButton>
+        </div>
+
+        <div class="list-grid">
+          <div
+            v-for="post in portfolioStore.posts"
+            :key="post.id || post.slug"
+            class="card box proj-row"
+          >
+            <div class="info">
+              <div class="meta-row">
+                <time class="time-tag">{{ post.published_date }}</time>
+                <span class="st-pill">{{ post.reading_time }}</span>
+                <span v-if="post.is_featured" class="featured-badge">Featured on Home</span>
+              </div>
+              <h4 class="title">{{ post.title }}</h4>
+              <p v-if="post.subtitle" class="summary-text">{{ post.subtitle }}</p>
+            </div>
+
+            <div class="row-actions">
+              <BrutalButton as="button" variant="yellow" @click="editPost(post)">
+                Edit
+              </BrutalButton>
+              <BrutalButton as="button" variant="pink" @click="deletePost(post.id)">
+                Delete
+              </BrutalButton>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post Edit Form -->
+      <form v-else @submit.prevent="saveCurrentPost" class="card box admin-form">
+        <div class="pane-bar">
+          <h3 class="pane-title">{{ editingPost.id ? 'Edit Article' : 'New Article' }}</h3>
+          <BrutalButton as="button" variant="white" type="button" @click="editingPost = null">
+            Cancel
+          </BrutalButton>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Title</label>
+            <input v-model="editingPost.title" type="text" class="input-box" required />
+          </div>
+
+          <div class="field">
+            <label>Slug (URL key)</label>
+            <input v-model="editingPost.slug" type="text" class="input-box" placeholder="auto-generated-if-blank" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Subtitle / One-line Hook</label>
+            <input v-model="editingPost.subtitle" type="text" class="input-box" />
+          </div>
+
+          <div class="field">
+            <label>Reading Time</label>
+            <input v-model="editingPost.reading_time" type="text" class="input-box" placeholder="e.g. 5 min read" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Tags (Comma separated)</label>
+            <input v-model="postTagsRaw" type="text" class="input-box" />
+          </div>
+
+          <div class="field">
+            <label>Cover Image URL (Nullable)</label>
+            <input v-model="editingPost.image_url" type="text" class="input-box" placeholder="https://..." />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Markdown Content</label>
+          <div class="editor-split">
+            <textarea
+              v-model="editingPost.content"
+              rows="12"
+              class="input-box editor-area"
+              placeholder="# Write your article..."
+            ></textarea>
+            <div class="preview-area box markdown-body" v-html="renderedPostPreview"></div>
+          </div>
+        </div>
+
+        <div class="checkbox-row">
+          <label class="check-label">
+            <input v-model="editingPost.is_featured" type="checkbox" />
+            <span>Feature on Home page</span>
+          </label>
+          <label class="check-label">
+            <input v-model="editingPost.is_published" type="checkbox" />
+            <span>Published</span>
+          </label>
+        </div>
+
+        <div class="action-footer">
+          <BrutalButton type="submit" variant="yellow" :disabled="isSaving" style="font-size: 1.1rem; padding: 10px 24px">
+            {{ isSaving ? 'Saving...' : 'Save Article' }}
+          </BrutalButton>
+        </div>
+      </form>
+    </section>
+  </div>
+</template>
+
+<style scoped>
+.admin-container {
+  padding-top: 30px;
+  padding-bottom: 60px;
+}
+
+.admin-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.tagline {
+  margin: 6px 0 0;
+  font-size: 1rem;
+}
+
+.notif {
+  border: 3px solid var(--bd);
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-family: var(--mono);
+}
+
+.notif.success {
+  background: var(--mint);
+  color: #111;
+}
+
+.notif.error {
+  background: var(--pink);
+  color: #111;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: 3px solid var(--bd);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 8px 18px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--sh);
+}
+
+.tab-btn.active {
+  background: var(--yellow);
+  color: #111;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--sh);
+}
+
+.pane-title {
+  margin: 0 0 16px;
+  font-size: 1.3rem;
+  font-family: var(--sans);
+  font-weight: 700;
+}
+
+.pane-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.input-box {
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  padding: 8px 12px;
+  border: 3px solid var(--bd);
+  background: var(--paper);
+  color: var(--ink);
+  outline: none;
+}
+
+.input-box:focus {
+  border-color: var(--blue);
+}
+
+.divider {
+  border: 0;
+  border-top: 2px dashed var(--bd);
+  margin: 10px 0;
+}
+
+.stack-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kv-item {
+  display: flex;
+  gap: 12px;
+  background: var(--bg);
+  padding: 12px;
+  align-items: flex-start;
+}
+
+.list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.proj-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.meta-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.st-pill {
+  font: 700 0.75rem var(--mono);
+  background: #111;
+  color: #fff;
+  padding: 2px 8px;
+}
+
+.badge-pill {
+  font: 700 0.75rem var(--mono);
+  background: var(--yellow);
+  color: #111;
+  border: 2px solid #111;
+  padding: 1px 8px;
+}
+
+.featured-badge {
+  font: 700 0.75rem var(--mono);
+  background: var(--pink);
+  color: #111;
+  padding: 2px 8px;
+}
+
+.time-tag {
+  font: 700 0.8rem var(--mono);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.summary-text {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.row-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 24px;
+}
+
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.editor-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.preview-area {
+  padding: 16px;
+  background: var(--paper);
+  min-height: 250px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.action-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 760px) {
+  .grid-2,
+  .editor-split {
+    grid-template-columns: 1fr;
+  }
+  .proj-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>
