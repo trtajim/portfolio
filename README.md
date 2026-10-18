@@ -1,18 +1,18 @@
 # Hey there, I'm TR Tajim 👋
 
-Welcome to my personal corner on the web! This repository powers my portfolio and writing space, built to showcase the software, community projects, and hardware experiments I work on.
+Welcome to my personal corner on the web! This repository powers my portfolio and writing space, built to showcase the software, community platforms, and IoT hardware experiments I work on.
 
-I've always loved retro, high-contrast aesthetics, so I designed this site using a **neo-brutalist style**—bold black borders, playful shadows, and snappy page transitions.
+I've always loved retro, high-contrast aesthetics, so I designed this site using a **neo-brutalist style**—bold black borders, playful offset shadows, and snappy page transitions.
 
 ---
 
-## ✨ Highlights
+## ✨ What's Inside?
 
-- **Fast & Responsive**: Built with modern web tools so everything loads instantly and looks great on phones, tablets, and desktops.
+- **Fast & Responsive**: Everything loads instantly in 0ms using client-side caching and looks great on phones, tablets, and desktops.
 - **My Work & Case Studies**: A dedicated showcase of full-stack web platforms, mobile apps, and IoT hardware projects with detailed write-ups.
-- **Tech Journey**: A clean overview of the tools, languages, and frameworks I use every day (like Laravel, Vue, React, C++, and Arduino).
+- **Tech Journey**: An overview of the tools, languages, and frameworks I use every day (like Laravel, Vue, React, PHP, C++, and Arduino).
 - **Writing & Notes**: A simple space where I share lessons learned from building open-source tools and tinkering with technology.
-- **Live Admin Studio**: A custom dashboard where I can manage my projects and write articles in real time. It even has a **Guest Demo Mode** so anyone can click around and check out how it works behind the scenes without needing an account!
+- **Live Admin Studio**: A custom dashboard where I can manage my projects and write articles in real time. It even features a **Guest Demo Mode** so anyone can click around and inspect how it works behind the scenes!
 
 ---
 
