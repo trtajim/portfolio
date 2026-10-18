@@ -232,23 +232,23 @@ values
 insert into public.shorts (title, platform, video_url, is_published, order_index)
 values
 (
-  'SaaS UI Motion Teaser',
+  'Motion Design Reel',
   'youtube',
-  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  'https://www.youtube.com/shorts/KTHWFWPpukc',
   true,
   0
 ),
 (
-  'Developer Tool Launch Reel',
+  'Product UI Motion Demo',
   'facebook',
-  'https://www.facebook.com',
+  'https://www.facebook.com/reel/29151614751128890',
   true,
   1
 ),
 (
-  'Product Feature Walkthrough',
-  'youtube',
-  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  'Feature Showcase Reel',
+  'facebook',
+  'https://www.facebook.com/reel/1669477794769453',
   true,
   2
 );

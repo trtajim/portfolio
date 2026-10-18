@@ -25,7 +25,7 @@ const featuredPosts = computed(() => {
 })
 
 const activeShorts = computed(() => {
-  return portfolioStore.shorts.filter((s) => s.is_published)
+  return portfolioStore.shorts.filter((s) => s.is_published).slice(0, 3)
 })
 
 const selectedShort = ref<Short | null>(null)

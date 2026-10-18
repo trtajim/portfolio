@@ -101,27 +101,27 @@ const defaultPosts: Post[] = [
 const defaultShorts: Short[] = [
   {
     id: '1',
-    title: 'SaaS UI Motion Teaser',
+    title: 'Motion Design Reel',
     platform: 'youtube',
-    video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    video_url: 'https://www.youtube.com/shorts/KTHWFWPpukc',
     thumbnail_url: null,
     is_published: true,
     order_index: 0
   },
   {
     id: '2',
-    title: 'Developer Tool Launch Reel',
+    title: 'Product UI Motion Demo',
     platform: 'facebook',
-    video_url: 'https://www.facebook.com',
+    video_url: 'https://www.facebook.com/reel/29151614751128890',
     thumbnail_url: null,
     is_published: true,
     order_index: 1
   },
   {
     id: '3',
-    title: 'Product Feature Walkthrough',
-    platform: 'youtube',
-    video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    title: 'Feature Showcase Reel',
+    platform: 'facebook',
+    video_url: 'https://www.facebook.com/reel/1669477794769453',
     thumbnail_url: null,
     is_published: true,
     order_index: 2
