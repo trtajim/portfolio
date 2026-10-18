@@ -148,6 +148,7 @@ function getSocialVariant(idx: number) {
     <!-- MOTION & SHORTS SHOWCASE -->
     <section v-if="activeShorts.length > 0" id="motion">
       <h2 class="h">Motion & Shorts</h2>
+      <p class="section-sub">Motion videos and teasers I design to showcase and promote products.</p>
       <div class="shorts-track">
         <ShortCard
           v-for="short in activeShorts"
@@ -344,6 +345,14 @@ section {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.section-sub {
+  margin: 0 0 16px;
+  font-size: 1.05rem;
+  color: var(--ink);
+  opacity: 0.9;
+  max-width: 55ch;
 }
 
 .shorts-track {
