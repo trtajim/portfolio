@@ -1045,6 +1045,15 @@ label {
 }
 
 @media (max-width: 760px) {
+  .admin-top {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .top-actions {
+    display: flex;
+    justify-content: flex-start;
+  }
   .grid-2,
   .editor-split {
     grid-template-columns: 1fr;
@@ -1052,6 +1061,66 @@ label {
   .proj-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .row-actions {
+    width: 100%;
+    margin-top: 8px;
+  }
+  .row-actions :deep(.btn) {
+    flex: 1 1 auto;
+  }
+  .kv-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .kv-item .field {
+    flex: 1 1 auto !important;
+  }
+  .kv-item :deep(.btn) {
+    align-self: flex-start !important;
+  }
+  .pane-bar,
+  .stack-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .checkbox-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 540px) {
+  .admin-container {
+    padding-top: 20px;
+    padding-bottom: 40px;
+  }
+  .admin-tabs {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tab-btn {
+    width: 100%;
+    text-align: center;
+  }
+  .admin-form {
+    padding: 16px;
+  }
+  .input-box {
+    font-size: 16px; /* Prevents auto-zoom on iOS */
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .action-footer {
+    justify-content: stretch;
+  }
+  .action-footer :deep(.btn) {
+    width: 100%;
+  }
+  .upload-row {
+    flex-wrap: wrap;
   }
 }
 </style>
