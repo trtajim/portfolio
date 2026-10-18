@@ -200,6 +200,25 @@ async function deleteProject(id?: string) {
   }
 }
 
+const renderedProjectPreview = computed(() => {
+  if (!editingProject.value?.content) return ''
+  return marked.parse(editingProject.value.content)
+})
+
+const visibleProjects = computed(() => {
+  if (authStore.canEdit) {
+    return portfolioStore.projects
+  }
+  return portfolioStore.projects.filter((p) => p.is_published)
+})
+
+const visiblePosts = computed(() => {
+  if (authStore.canEdit) {
+    return portfolioStore.posts
+  }
+  return portfolioStore.posts.filter((p) => p.is_published)
+})
+
 const editingPost = ref<Post | null>(null)
 const postTagsRaw = ref('')
 
@@ -461,7 +480,7 @@ async function handleLogout() {
 
         <div class="list-grid">
           <div
-            v-for="proj in portfolioStore.projects"
+            v-for="proj in visibleProjects"
             :key="proj.id || proj.slug"
             class="card box proj-row"
           >
@@ -581,7 +600,15 @@ async function handleLogout() {
 
         <div class="field">
           <label>Markdown Deep-Dive Content</label>
-          <textarea v-model="editingProject.content" rows="8" class="input-box" placeholder="# Detailed case study..."></textarea>
+          <div class="editor-split">
+            <textarea
+              v-model="editingProject.content"
+              rows="10"
+              class="input-box editor-area"
+              placeholder="# Detailed case study..."
+            ></textarea>
+            <div class="preview-area box markdown-body" v-html="renderedProjectPreview"></div>
+          </div>
         </div>
 
         <div class="checkbox-row">
@@ -615,7 +642,7 @@ async function handleLogout() {
 
         <div class="list-grid">
           <div
-            v-for="post in portfolioStore.posts"
+            v-for="post in visiblePosts"
             :key="post.id || post.slug"
             class="card box proj-row"
           >
