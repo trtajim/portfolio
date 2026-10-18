@@ -54,17 +54,18 @@ function getSocialVariant(idx: number) {
     <div class="hero">
       <div class="name box">
         <span class="hi">hello, I’m</span>
-        <h1>{{ profile.name }}</h1>
-        <p>{{ profile.headline }}</p>
+        <h1>{{ profile.name || 'TR Tajim' }}</h1>
+        <p v-if="profile.headline">{{ profile.headline }}</p>
+        <p v-else class="hero-skeleton"></p>
       </div>
 
       <div class="side">
-        <div class="photo-card box" role="img" :aria-label="profile.name">
+        <div class="photo-card box" role="img" :aria-label="profile.name || 'TR Tajim'">
           <div class="photo-frame">
             <img
               v-if="profile.avatar_url"
               :src="profile.avatar_url"
-              :alt="profile.name"
+              :alt="profile.name || 'TR Tajim'"
               class="avatar-img"
             />
             <span v-else class="avatar-fallback">TR</span>
@@ -78,7 +79,7 @@ function getSocialVariant(idx: number) {
       </div>
     </div>
 
-    <ul class="links">
+    <ul v-if="profile.social_links && profile.social_links.length" class="links">
       <li v-for="(link, idx) in profile.social_links" :key="link.label">
         <BrutalButton
           as="a"
@@ -98,14 +99,22 @@ function getSocialVariant(idx: number) {
       </div>
       <div class="about">
         <div class="card box">
-          <p v-for="(p, i) in profile.whoami" :key="i">
-            {{ p }}
-          </p>
+          <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="skeleton-block">
+            <span class="loading-tag">Loading profile...</span>
+          </div>
+          <template v-else>
+            <p v-for="(p, i) in profile.whoami" :key="i">
+              {{ p }}
+            </p>
+          </template>
         </div>
 
         <div class="card box">
           <div><h2 class="h mobile-stack-heading">Tech stack</h2></div>
-          <dl class="stack" aria-label="Technologies">
+          <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="skeleton-block">
+            <span class="loading-tag">Loading stack...</span>
+          </div>
+          <dl v-else class="stack" aria-label="Technologies">
             <div v-for="group in profile.grouped_stacks" :key="group.category">
               <dt>{{ group.category }}</dt>
               <dd>{{ group.items }}</dd>
