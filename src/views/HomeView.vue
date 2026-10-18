@@ -34,12 +34,6 @@ function getSocialVariant(idx: number) {
   return socialColorVariants[idx % socialColorVariants.length]
 }
 
-const mainStackString = computed(() => {
-  if (Array.isArray(profile.value.main_stack)) {
-    return profile.value.main_stack.join(', ')
-  }
-  return profile.value.main_stack || ''
-})
 </script>
 
 <template>
@@ -60,11 +54,6 @@ const mainStackString = computed(() => {
             class="avatar-img"
           />
           <span v-else>TR</span>
-        </div>
-
-        <div class="stat box s1">
-          <b>Main stack</b>
-          <span>{{ mainStackString }}</span>
         </div>
       </div>
     </div>
@@ -180,8 +169,8 @@ h1 {
 }
 
 .side {
-  display: grid;
-  gap: 18px;
+  display: flex;
+  align-items: flex-start;
 }
 
 .photo {
@@ -203,22 +192,6 @@ h1 {
   height: 100%;
   object-fit: cover;
 }
-
-.stat {
-  padding: 14px 18px;
-  color: #111;
-}
-
-.stat b {
-  display: block;
-  font-size: 1.15rem;
-}
-
-.stat span {
-  font: 400 0.85rem var(--mono);
-}
-
-.stat.s1 { background: var(--pink); }
 
 .links {
   display: flex;
@@ -315,18 +288,12 @@ section {
     display: inline-block;
     margin-bottom: 16px;
   }
-  .side {
-    grid-template-columns: 1fr 1fr;
-  }
   .name {
     padding: 24px 20px;
   }
 }
 
 @media (max-width: 480px) {
-  .side {
-    grid-template-columns: 1fr;
-  }
   .stack div {
     grid-template-columns: 1fr;
     gap: 4px;

@@ -70,7 +70,7 @@ const renderedContent = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-bottom: 28px;
+  margin-bottom: 14px;
 }
 
 .meta {
@@ -110,7 +110,7 @@ h1 {
 }
 
 .featured-img {
-  margin-bottom: 28px;
+  margin-bottom: 14px;
   max-height: 480px;
   overflow: hidden;
 }

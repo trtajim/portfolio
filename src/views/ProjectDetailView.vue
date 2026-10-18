@@ -91,7 +91,7 @@ function getActionVariant(idx: number) {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-bottom: 28px;
+  margin-bottom: 14px;
 }
 
 .st {
@@ -143,7 +143,7 @@ h1 {
 }
 
 .featured-img {
-  margin-bottom: 28px;
+  margin-bottom: 14px;
   overflow: hidden;
   max-height: 480px;
   background: #111;
