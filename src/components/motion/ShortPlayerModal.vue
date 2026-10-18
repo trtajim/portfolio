@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import type { Short } from '@/types'
 
 const props = defineProps<{
@@ -10,6 +10,9 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
+const volume = ref(100)
+const iframeRef = ref<HTMLIFrameElement | null>(null)
+
 const embedUrl = computed(() => {
   if (!props.short) return ''
   const url = props.short.video_url
@@ -18,7 +21,7 @@ const embedUrl = computed(() => {
     // Extract video ID from youtube.com/watch?v=, youtu.be/, youtube.com/shorts/
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/)
     if (match && match[1]) {
-      return `https://www.youtube.com/embed/${match[1]}?autoplay=1&mute=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1`
+      return `https://www.youtube.com/embed/${match[1]}?autoplay=1&enablejsapi=1&mute=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1`
     }
     return url
   } else if (props.short.platform === 'facebook') {
@@ -28,6 +31,39 @@ const embedUrl = computed(() => {
 
   return url
 })
+
+function handleVolumeChange() {
+  if (!iframeRef.value?.contentWindow || props.short?.platform !== 'youtube') return
+  const val = Number(volume.value)
+  // Send setVolume command to YouTube IFrame API via postMessage
+  iframeRef.value.contentWindow.postMessage(
+    JSON.stringify({
+      event: 'command',
+      func: 'setVolume',
+      args: [val]
+    }),
+    '*'
+  )
+  if (val === 0) {
+    iframeRef.value.contentWindow.postMessage(
+      JSON.stringify({
+        event: 'command',
+        func: 'mute',
+        args: []
+      }),
+      '*'
+    )
+  } else {
+    iframeRef.value.contentWindow.postMessage(
+      JSON.stringify({
+        event: 'command',
+        func: 'unMute',
+        args: []
+      }),
+      '*'
+    )
+  }
+}
 
 function handleBackdrop(e: MouseEvent) {
   if ((e.target as HTMLElement).classList.contains('modal-backdrop')) {
@@ -47,11 +83,29 @@ function handleBackdrop(e: MouseEvent) {
       <div class="player-container">
         <iframe
           v-if="embedUrl"
+          ref="iframeRef"
           :src="embedUrl"
           class="video-frame"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowfullscreen
         ></iframe>
+      </div>
+
+      <!-- SOUND SLIDER FOR YOUTUBE VIDEOS -->
+      <div v-if="short.platform === 'youtube'" class="modal-bottom">
+        <div class="vol-control">
+          <span class="vol-icon" aria-hidden="true">{{ volume === 0 ? '🔇' : volume < 50 ? '🔉' : '🔊' }}</span>
+          <label class="vol-label">Volume: {{ volume }}%</label>
+          <input
+            v-model.number="volume"
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            class="vol-slider"
+            @input="handleVolumeChange"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -128,5 +182,34 @@ function handleBackdrop(e: MouseEvent) {
   height: 100%;
   border: 0;
   display: block;
+}
+
+.modal-bottom {
+  padding: 10px 16px;
+  background: var(--paper);
+  border-top: 2px solid var(--bd);
+}
+
+.vol-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vol-icon {
+  font-size: 1.1rem;
+}
+
+.vol-label {
+  font: 700 0.8rem var(--mono);
+  color: var(--ink);
+  min-width: 95px;
+}
+
+.vol-slider {
+  flex: 1;
+  accent-color: var(--yellow);
+  cursor: pointer;
+  height: 6px;
 }
 </style>
