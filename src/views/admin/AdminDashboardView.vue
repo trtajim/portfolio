@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { marked } from 'marked'
 import { usePortfolioStore } from '@/stores/portfolio'
 import { useAuthStore } from '@/stores/auth'
+import { uploadAsset } from '@/lib/supabase'
 import type { Project, Post, GroupedStack, SocialLink } from '@/types'
 import BrutalButton from '@/components/brutal/BrutalButton.vue'
 
@@ -14,12 +15,36 @@ const authStore = useAuthStore()
 const activeTab = ref<'profile' | 'projects' | 'posts'>('profile')
 const notification = ref<{ text: string; type: 'success' | 'error' } | null>(null)
 const isSaving = ref(false)
+const isUploading = ref(false)
 
 function notify(text: string, type: 'success' | 'error' = 'success') {
   notification.value = { text, type }
   setTimeout(() => {
     notification.value = null
   }, 3500)
+}
+
+async function handleFileUpload(event: Event, targetType: 'avatar' | 'project' | 'post') {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+
+  isUploading.value = true
+  try {
+    const url = await uploadAsset(file, targetType)
+    if (targetType === 'avatar') {
+      profileForm.value.avatar_url = url
+    } else if (targetType === 'project' && editingProject.value) {
+      editingProject.value.image_url = url
+    } else if (targetType === 'post' && editingPost.value) {
+      editingPost.value.image_url = url
+    }
+    notify('Image uploaded successfully!')
+  } catch (err: unknown) {
+    notify(err instanceof Error ? err.message : 'Error uploading image', 'error')
+  } finally {
+    isUploading.value = false
+    ;(event.target as HTMLInputElement).value = ''
+  }
 }
 
 const profileForm = ref({
@@ -283,8 +308,17 @@ async function handleLogout() {
           </div>
 
           <div class="field">
-            <label>Avatar / Image URL (Leave blank for initials)</label>
-            <input v-model="profileForm.avatar_url" type="text" class="input-box" placeholder="https://..." />
+            <label>Avatar Image (Upload or enter URL)</label>
+            <div class="upload-row">
+              <input v-model="profileForm.avatar_url" type="text" class="input-box" placeholder="https://..." style="flex: 1" />
+              <label class="btn white upload-btn">
+                {{ isUploading ? 'Uploading...' : 'Upload' }}
+                <input type="file" accept="image/*" class="file-hidden" @change="handleFileUpload($event, 'avatar')" />
+              </label>
+            </div>
+            <div v-if="profileForm.avatar_url" class="img-preview-mini">
+              <img :src="profileForm.avatar_url" alt="Avatar preview" />
+            </div>
           </div>
         </div>
 
@@ -463,8 +497,17 @@ async function handleLogout() {
         </div>
 
         <div class="field">
-          <label>Cover Image URL (Nullable)</label>
-          <input v-model="editingProject.image_url" type="text" class="input-box" placeholder="https://..." />
+          <label>Cover Image (Upload or enter URL)</label>
+          <div class="upload-row">
+            <input v-model="editingProject.image_url" type="text" class="input-box" placeholder="https://..." style="flex: 1" />
+            <label class="btn white upload-btn">
+              {{ isUploading ? 'Uploading...' : 'Upload' }}
+              <input type="file" accept="image/*" class="file-hidden" @change="handleFileUpload($event, 'project')" />
+            </label>
+          </div>
+          <div v-if="editingProject.image_url" class="img-preview-mini">
+            <img :src="editingProject.image_url" alt="Project image preview" />
+          </div>
         </div>
 
         <div class="stack-header">
@@ -604,8 +647,17 @@ async function handleLogout() {
           </div>
 
           <div class="field">
-            <label>Cover Image URL (Nullable)</label>
-            <input v-model="editingPost.image_url" type="text" class="input-box" placeholder="https://..." />
+            <label>Cover Image (Upload or enter URL)</label>
+            <div class="upload-row">
+              <input v-model="editingPost.image_url" type="text" class="input-box" placeholder="https://..." style="flex: 1" />
+              <label class="btn white upload-btn">
+                {{ isUploading ? 'Uploading...' : 'Upload' }}
+                <input type="file" accept="image/*" class="file-hidden" @change="handleFileUpload($event, 'post')" />
+              </label>
+            </div>
+            <div v-if="editingPost.image_url" class="img-preview-mini">
+              <img :src="editingPost.image_url" alt="Article image preview" />
+            </div>
           </div>
         </div>
 
@@ -876,6 +928,46 @@ label {
   margin-top: 10px;
   display: flex;
   justify-content: flex-end;
+}
+
+.upload-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.upload-btn {
+  position: relative;
+  overflow: hidden;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  white-space: nowrap;
+}
+
+.file-hidden {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.img-preview-mini {
+  margin-top: 8px;
+  width: 90px;
+  height: 90px;
+  border: 2px solid var(--bd);
+  overflow: hidden;
+  background: #111;
+}
+
+.img-preview-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 @media (max-width: 760px) {
