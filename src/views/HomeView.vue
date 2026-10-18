@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { usePortfolioStore } from '@/stores/portfolio'
 import ProjectCard from '@/components/projects/ProjectCard.vue'
 import PostCard from '@/components/writing/PostCard.vue'
 import BrutalButton from '@/components/brutal/BrutalButton.vue'
+import ShortCard from '@/components/motion/ShortCard.vue'
+import ShortPlayerModal from '@/components/motion/ShortPlayerModal.vue'
+import type { Short } from '@/types'
 
 const portfolioStore = usePortfolioStore()
 
@@ -20,6 +23,16 @@ const featuredPosts = computed(() => {
   if (featured.length <= 3) return featured
   return [...featured].sort(() => 0.5 - Math.random()).slice(0, 3)
 })
+
+const activeShorts = computed(() => {
+  return portfolioStore.shorts.filter((s) => s.is_published)
+})
+
+const selectedShort = ref<Short | null>(null)
+
+function playShort(short: Short) {
+  selectedShort.value = short
+}
 
 const projectCardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', 'pink']
 
@@ -131,6 +144,25 @@ function getSocialVariant(idx: number) {
         </BrutalButton>
       </div>
     </section>
+
+    <!-- MOTION & SHORTS SHOWCASE -->
+    <section v-if="activeShorts.length > 0" id="motion">
+      <h2 class="h">Motion & Shorts</h2>
+      <div class="shorts-track">
+        <ShortCard
+          v-for="short in activeShorts"
+          :key="short.id || short.title"
+          :short="short"
+          @play="playShort"
+        />
+      </div>
+    </section>
+
+    <!-- NATIVE VIDEO PLAYER MODAL -->
+    <ShortPlayerModal
+      :short="selectedShort"
+      @close="selectedShort = null"
+    />
   </div>
 </template>
 
@@ -312,6 +344,19 @@ section {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.shorts-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 10px 4px 20px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.shorts-track > * {
+  scroll-snap-align: start;
 }
 
 @media (max-width: 760px) {

@@ -5,14 +5,14 @@ import { marked } from 'marked'
 import { usePortfolioStore } from '@/stores/portfolio'
 import { useAuthStore } from '@/stores/auth'
 import { uploadAsset } from '@/lib/supabase'
-import type { Project, Post, GroupedStack, SocialLink } from '@/types'
+import type { Project, Post, Short, GroupedStack, SocialLink } from '@/types'
 import BrutalButton from '@/components/brutal/BrutalButton.vue'
 
 const router = useRouter()
 const portfolioStore = usePortfolioStore()
 const authStore = useAuthStore()
 
-const activeTab = ref<'profile' | 'projects' | 'posts'>('profile')
+const activeTab = ref<'profile' | 'projects' | 'posts' | 'shorts'>('profile')
 const notification = ref<{ text: string; type: 'success' | 'error' } | null>(null)
 const isSaving = ref(false)
 const isUploading = ref(false)
@@ -24,7 +24,7 @@ function notify(text: string, type: 'success' | 'error' = 'success') {
   }, 3500)
 }
 
-async function handleFileUpload(event: Event, targetType: 'avatar' | 'project' | 'post') {
+async function handleFileUpload(event: Event, targetType: 'avatar' | 'project' | 'post' | 'short') {
   if (!authStore.canEdit) {
     notify('Guest Demo Mode: Uploading assets is disabled.', 'error')
     ;(event.target as HTMLInputElement).value = ''
@@ -43,6 +43,8 @@ async function handleFileUpload(event: Event, targetType: 'avatar' | 'project' |
       editingProject.value.image_url = url
     } else if (targetType === 'post' && editingPost.value) {
       editingPost.value.image_url = url
+    } else if (targetType === 'short' && editingShort.value) {
+      editingShort.value.thumbnail_url = url
     }
     notify('Image uploaded successfully!')
   } catch (err: unknown) {
@@ -295,6 +297,64 @@ async function deletePost(id?: string) {
   }
 }
 
+// SHORTS MANAGEMENT
+const editingShort = ref<Short | null>(null)
+
+const visibleShorts = computed(() => {
+  if (authStore.isGuest) {
+    return portfolioStore.shorts.filter((s) => s.is_published)
+  }
+  return portfolioStore.shorts
+})
+
+function openNewShort() {
+  editingShort.value = {
+    title: '',
+    platform: 'youtube',
+    video_url: '',
+    thumbnail_url: null,
+    is_published: true,
+    order_index: portfolioStore.shorts.length
+  }
+}
+
+function editShort(short: Short) {
+  editingShort.value = JSON.parse(JSON.stringify(short))
+}
+
+async function saveCurrentShort() {
+  if (!editingShort.value) return
+  if (!authStore.canEdit) {
+    notify('Guest Demo Mode: You are in view-only inspection mode. Changes cannot be saved.', 'error')
+    return
+  }
+  isSaving.value = true
+  try {
+    await portfolioStore.saveShort(editingShort.value)
+    editingShort.value = null
+    notify('Motion short saved successfully!')
+  } catch (err: unknown) {
+    notify(err instanceof Error ? err.message : 'Error saving motion short', 'error')
+  } finally {
+    isSaving.value = false
+  }
+}
+
+async function deleteShort(id?: string) {
+  if (!id) return
+  if (!authStore.canEdit) {
+    notify('Guest Demo Mode: Deletion is disabled in view-only mode.', 'error')
+    return
+  }
+  if (!confirm('Are you sure you want to delete this video?')) return
+  try {
+    await portfolioStore.deleteShort(id)
+    notify('Motion short deleted.')
+  } catch (err: unknown) {
+    notify(err instanceof Error ? err.message : 'Error deleting motion short', 'error')
+  }
+}
+
 async function handleLogout() {
   await authStore.signOut()
   router.push('/')
@@ -345,6 +405,12 @@ async function handleLogout() {
         @click="activeTab = 'posts'"
       >
         Writing ({{ portfolioStore.posts.length }})
+      </button>
+      <button
+        :class="['tab-btn', { active: activeTab === 'shorts' }]"
+        @click="activeTab = 'shorts'"
+      >
+        Motion Shorts ({{ portfolioStore.shorts.length }})
       </button>
     </nav>
 
@@ -740,6 +806,101 @@ async function handleLogout() {
         <div class="action-footer">
           <BrutalButton type="submit" variant="yellow" :disabled="isSaving" style="font-size: 1.1rem; padding: 10px 24px">
             {{ isSaving ? 'Saving...' : 'Save Article' }}
+          </BrutalButton>
+        </div>
+      </form>
+    </section>
+
+    <!-- TAB 4: SHORTS / MOTION VIDEOS -->
+    <section v-if="activeTab === 'shorts'" class="tab-pane">
+      <div v-if="!editingShort">
+        <div class="pane-bar">
+          <h3 class="pane-title">All Motion Shorts</h3>
+          <BrutalButton as="button" variant="mint" @click="openNewShort">
+            + Add New Short
+          </BrutalButton>
+        </div>
+
+        <div class="list-grid">
+          <div
+            v-for="s in visibleShorts"
+            :key="s.id || s.title"
+            class="card box proj-row"
+          >
+            <div class="info">
+              <div class="meta-row">
+                <span class="st-pill">{{ s.platform.toUpperCase() }}</span>
+                <span v-if="!s.is_published" class="featured-badge" style="background: var(--yellow)">Draft</span>
+              </div>
+              <h4 class="title">{{ s.title }}</h4>
+              <p class="summary-text" style="word-break: break-all">{{ s.video_url }}</p>
+            </div>
+
+            <div class="row-actions">
+              <BrutalButton as="button" variant="yellow" @click="editShort(s)">
+                Edit
+              </BrutalButton>
+              <BrutalButton as="button" variant="pink" @click="deleteShort(s.id)">
+                Delete
+              </BrutalButton>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Short Edit Form -->
+      <form v-else @submit.prevent="saveCurrentShort" class="card box admin-form">
+        <div class="pane-bar">
+          <h3 class="pane-title">{{ editingShort.id ? 'Edit Motion Short' : 'Add Motion Short' }}</h3>
+          <BrutalButton as="button" variant="white" type="button" @click="editingShort = null">
+            Cancel
+          </BrutalButton>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Video Title</label>
+            <input v-model="editingShort.title" type="text" class="input-box" required placeholder="e.g. SaaS UI Motion Teaser" />
+          </div>
+
+          <div class="field">
+            <label>Platform (YouTube or Facebook)</label>
+            <select v-model="editingShort.platform" class="input-box" required>
+              <option value="youtube">YouTube (Short / Video)</option>
+              <option value="facebook">Facebook (Reel / Video)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Video URL (YouTube Watch/Shorts link or Facebook Video link)</label>
+          <input v-model="editingShort.video_url" type="url" class="input-box" required placeholder="https://www.youtube.com/shorts/... or https://www.facebook.com/..." />
+        </div>
+
+        <div class="field">
+          <label>Custom Thumbnail (Optional - auto-detects for YouTube if blank)</label>
+          <div class="upload-row">
+            <input v-model="editingShort.thumbnail_url" type="text" class="input-box" placeholder="https://..." style="flex: 1" />
+            <label class="btn white upload-btn">
+              {{ isUploading ? 'Uploading...' : 'Upload' }}
+              <input type="file" accept="image/*" class="file-hidden" @change="handleFileUpload($event, 'short')" />
+            </label>
+          </div>
+          <div v-if="editingShort.thumbnail_url" class="img-preview-mini">
+            <img :src="editingShort.thumbnail_url" alt="Thumbnail preview" />
+          </div>
+        </div>
+
+        <div class="checkbox-row">
+          <label class="check-label">
+            <input v-model="editingShort.is_published" type="checkbox" />
+            <span>Published</span>
+          </label>
+        </div>
+
+        <div class="action-footer">
+          <BrutalButton type="submit" variant="yellow" :disabled="isSaving" style="font-size: 1.1rem; padding: 10px 24px">
+            {{ isSaving ? 'Saving...' : 'Save Motion Short' }}
           </BrutalButton>
         </div>
       </form>

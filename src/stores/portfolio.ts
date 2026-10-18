@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
-import type { Profile, Project, Post } from '@/types'
+import type { Profile, Project, Post, Short } from '@/types'
 
 const defaultProfile: Profile = {
   name: 'TR Tajim',
@@ -98,10 +98,41 @@ const defaultPosts: Post[] = [
   }
 ]
 
+const defaultShorts: Short[] = [
+  {
+    id: '1',
+    title: 'SaaS UI Motion Teaser',
+    platform: 'youtube',
+    video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    thumbnail_url: null,
+    is_published: true,
+    order_index: 0
+  },
+  {
+    id: '2',
+    title: 'Developer Tool Launch Reel',
+    platform: 'facebook',
+    video_url: 'https://www.facebook.com',
+    thumbnail_url: null,
+    is_published: true,
+    order_index: 1
+  },
+  {
+    id: '3',
+    title: 'Product Feature Walkthrough',
+    platform: 'youtube',
+    video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    thumbnail_url: null,
+    is_published: true,
+    order_index: 2
+  }
+]
+
 export const usePortfolioStore = defineStore('portfolio', () => {
   const profile = ref<Profile>({ ...defaultProfile })
   const projects = ref<Project[]>([...defaultProjects])
   const posts = ref<Post[]>([...defaultPosts])
+  const shorts = ref<Short[]>([...defaultShorts])
 
   const loading = ref(false)
   const isLoaded = ref(false)
@@ -123,10 +154,11 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     try {
       loading.value = true
 
-      const [profileRes, projectsRes, postsRes] = await Promise.all([
+      const [profileRes, projectsRes, postsRes, shortsRes] = await Promise.all([
         supabase.from('profile').select('*').limit(1).maybeSingle(),
         supabase.from('projects').select('*').order('order_index', { ascending: true }),
-        supabase.from('posts').select('*').order('published_date', { ascending: false })
+        supabase.from('posts').select('*').order('published_date', { ascending: false }),
+        supabase.from('shorts').select('*').order('order_index', { ascending: true })
       ])
 
       if (profileRes.data) {
@@ -153,6 +185,10 @@ export const usePortfolioStore = defineStore('portfolio', () => {
 
       if (postsRes.data && postsRes.data.length > 0) {
         posts.value = postsRes.data
+      }
+
+      if (shortsRes.data && shortsRes.data.length > 0) {
+        shorts.value = shortsRes.data
       }
 
       isLoaded.value = true
@@ -264,6 +300,43 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     await fetchAll(true)
   }
 
+  async function saveShort(short: Partial<Short>) {
+    if (!isSupabaseConfigured) {
+      if (short.id) {
+        const idx = shorts.value.findIndex((s) => s.id === short.id)
+        if (idx !== -1) shorts.value[idx] = { ...shorts.value[idx], ...short } as Short
+      } else {
+        shorts.value.push({
+          ...short,
+          id: String(Date.now()),
+          created_at: new Date().toISOString()
+        } as Short)
+      }
+      return
+    }
+
+    if (short.id) {
+      const { error } = await supabase.from('shorts').update(short).eq('id', short.id)
+      if (error) throw error
+    } else {
+      const { error } = await supabase.from('shorts').insert([short])
+      if (error) throw error
+    }
+    invalidateCache()
+    await fetchAll(true)
+  }
+
+  async function deleteShort(id: string) {
+    if (!isSupabaseConfigured) {
+      shorts.value = shorts.value.filter((s) => s.id !== id)
+      return
+    }
+    const { error } = await supabase.from('shorts').delete().eq('id', id)
+    if (error) throw error
+    invalidateCache()
+    await fetchAll(true)
+  }
+
   function subscribeRealtime() {
     if (!isSupabaseConfigured) return
 
@@ -278,6 +351,9 @@ export const usePortfolioStore = defineStore('portfolio', () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
         fetchAll(true)
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'shorts' }, () => {
+        fetchAll(true)
+      })
       .subscribe()
 
     return () => {
@@ -289,6 +365,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     profile,
     projects,
     posts,
+    shorts,
     loading,
     isLoaded,
     fetchAll,
@@ -298,7 +375,9 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     saveProject,
     deleteProject,
     savePost,
-    deletePost
+    deletePost,
+    saveShort,
+    deleteShort
   }
 })
 
