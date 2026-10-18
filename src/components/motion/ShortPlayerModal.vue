@@ -18,12 +18,12 @@ const embedUrl = computed(() => {
     // Extract video ID from youtube.com/watch?v=, youtu.be/, youtube.com/shorts/
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/)
     if (match && match[1]) {
-      return `https://www.youtube.com/embed/${match[1]}?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1`
+      return `https://www.youtube.com/embed/${match[1]}?autoplay=1&mute=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1`
     }
     return url
   } else if (props.short.platform === 'facebook') {
-    // Facebook video / reel embed URL with minimal chrome
-    return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&show_captions=false&autoplay=true`
+    // Facebook video / reel embed URL with sound enabled
+    return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&show_captions=false&autoplay=true&mute=0`
   }
 
   return url
