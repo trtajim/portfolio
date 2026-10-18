@@ -30,7 +30,14 @@ const githubLink = computed(() => {
       <div class="foot-left">
         <span>© {{ year }} {{ portfolioStore.profile.name }}</span>
       </div>
-      <div class="foot-links">
+
+      <div class="foot-center">
+        <router-link to="/admin" class="admin-link">
+          Admin
+        </router-link>
+      </div>
+
+      <div class="foot-right">
         <a
           v-if="githubLink"
           :href="githubLink.url"
@@ -39,9 +46,6 @@ const githubLink = computed(() => {
         >
           {{ githubLink.handle }}
         </a>
-        <router-link to="/admin" class="admin-link">
-          Admin
-        </router-link>
       </div>
     </div>
   </footer>
@@ -54,30 +58,54 @@ footer {
   padding: 24px 0 34px;
   font: 400 0.85rem var(--mono);
 }
+
 footer .c {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.foot-links {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   gap: 16px;
-  flex-wrap: wrap;
 }
-.foot-links a {
+
+.foot-left {
+  text-align: left;
+}
+
+.foot-center {
+  text-align: center;
+}
+
+.foot-right {
+  text-align: right;
+}
+
+.foot-right a {
   text-decoration: underline;
   font-weight: 700;
 }
+
 .admin-link {
   color: var(--ink);
-  opacity: 0.7;
+  opacity: 0.65;
   text-decoration: none !important;
   font-weight: 600;
-  transition: opacity 0.15s;
+  padding: 3px 10px;
+  border: 1px dashed transparent;
+  transition: opacity 0.15s, border-color 0.15s;
 }
+
 .admin-link:hover {
   opacity: 1;
   text-decoration: underline !important;
+}
+
+@media (max-width: 600px) {
+  footer .c {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 12px;
+  }
+  .foot-left, .foot-center, .foot-right {
+    text-align: center;
+  }
 }
 </style>
