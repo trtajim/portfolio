@@ -30,13 +30,19 @@ async function handleLogin() {
     isSubmitting.value = false
   }
 }
+
+function handleGuestLogin() {
+  authStore.signInAsGuest()
+  const redirect = (route.query.redirect as string) || '/admin'
+  router.push(redirect)
+}
 </script>
 
 <template>
   <div class="c login-page">
     <div class="card box login-card">
       <span class="h">ADMIN LOGIN</span>
-      <p class="desc">Enter your Supabase credentials to access the portfolio dashboard.</p>
+      <p class="desc">Log in with credentials to manage the portfolio, or enter as a guest to inspect the dashboard.</p>
 
       <div v-if="errorMsg" class="error-box">
         {{ errorMsg }}
@@ -71,9 +77,22 @@ async function handleLogin() {
           :disabled="isSubmitting"
           style="width: 100%; margin-top: 8px;"
         >
-          {{ isSubmitting ? 'Signing In...' : 'Sign In →' }}
+          {{ isSubmitting ? 'Signing In...' : 'Sign In as Admin →' }}
         </BrutalButton>
       </form>
+
+      <div class="guest-divider">
+        <span>OR</span>
+      </div>
+
+      <BrutalButton
+        as="button"
+        variant="mint"
+        style="width: 100%"
+        @click="handleGuestLogin"
+      >
+        👀 Inspect Demo Mode (View Only)
+      </BrutalButton>
     </div>
   </div>
 </template>
@@ -135,5 +154,29 @@ label {
 
 .input-box:focus {
   border-color: var(--blue);
+}
+
+.guest-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 18px 0;
+  position: relative;
+}
+
+.guest-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 2px dashed var(--bd);
+}
+
+.guest-divider span {
+  position: relative;
+  background: var(--paper);
+  padding: 0 10px;
+  font: 700 0.8rem var(--mono);
 }
 </style>
