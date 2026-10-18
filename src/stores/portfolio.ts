@@ -10,7 +10,6 @@ const defaultProfile: Profile = {
     'I’m TR Tajim, a full-stack developer, competitive programmer and IoT enthusiast. I build web applications, Android apps and developer-focused projects.',
     'I mainly work with Laravel, Vue.js, React, PHP, Java and C++. I’m also part of HSCStack, an open-source community project for HSC and SSC students.'
   ],
-  main_stack: ['Laravel', 'Vue.js', 'React', 'PHP', 'Java', 'C++'],
   grouped_stacks: [
     { category: 'Web', items: 'Laravel, PHP, Vue.js, React.js, MySQL' },
     { category: 'Mobile', items: 'Java, Android SDK, XML' },
@@ -167,9 +166,6 @@ export const usePortfolioStore = defineStore('portfolio', () => {
           whoami: Array.isArray(profileRes.data.whoami)
             ? profileRes.data.whoami
             : defaultProfile.whoami,
-          main_stack: Array.isArray(profileRes.data.main_stack)
-            ? profileRes.data.main_stack
-            : defaultProfile.main_stack,
           grouped_stacks: Array.isArray(profileRes.data.grouped_stacks)
             ? profileRes.data.grouped_stacks
             : defaultProfile.grouped_stacks,

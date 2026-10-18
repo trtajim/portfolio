@@ -122,6 +122,7 @@ function getSocialVariant(idx: number) {
           :key="proj.slug"
           :project="proj"
           :color="projectCardColors[idx % projectCardColors.length]"
+          :class="{ 'span-wide': idx === 2 }"
         />
       </div>
       <div class="more">
@@ -332,6 +333,10 @@ section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 26px;
+}
+
+.proj .span-wide {
+  grid-column: 1 / -1;
 }
 
 .more {
