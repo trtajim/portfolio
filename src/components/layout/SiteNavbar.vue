@@ -35,14 +35,14 @@ function toggleTheme() {
         <BrutalButton
           as="router-link"
           to="/projects"
-          :variant="route.path.startsWith('/projects') ? 'mint' : 'yellow'"
+          variant="pink"
         >
           Projects
         </BrutalButton>
         <BrutalButton
           as="router-link"
           to="/writing"
-          :variant="route.path.startsWith('/writing') ? 'blue' : 'yellow'"
+          :variant="route.path.startsWith('/writing') ? 'blue' : 'mint'"
         >
           Writing
         </BrutalButton>
