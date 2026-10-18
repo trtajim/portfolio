@@ -58,7 +58,6 @@ create table if not exists public.posts (
   title text not null,
   subtitle text default null,
   content text not null default '',
-  reading_time text not null default '3 min read',
   tags text[] not null default array[]::text[],
   image_url text default null,
   is_featured boolean not null default false,
