@@ -59,20 +59,21 @@ function getSocialVariant(idx: number) {
       </div>
 
       <div class="side">
-        <div class="photo box" role="img" :aria-label="profile.name">
-          <img
-            v-if="profile.avatar_url"
-            :src="profile.avatar_url"
-            :alt="profile.name"
-            class="avatar-img"
-          />
-          <span v-else>TR</span>
-        </div>
+        <div class="photo-card box" role="img" :aria-label="profile.name">
+          <div class="photo-frame">
+            <img
+              v-if="profile.avatar_url"
+              :src="profile.avatar_url"
+              :alt="profile.name"
+              class="avatar-img"
+            />
+            <span v-else class="avatar-fallback">TR</span>
+          </div>
 
-        <div class="stat box s-loc">
-          <span class="pin-badge" aria-hidden="true">📍</span>
-          <b>Location</b>
-          <span>Based in Rangpur, Bangladesh</span>
+          <div class="photo-location-badge">
+            <span class="pin-badge" aria-hidden="true">📍</span>
+            <span class="loc-label">Rangpur, Bangladesh</span>
+          </div>
         </div>
       </div>
     </div>
@@ -173,8 +174,8 @@ function getSocialVariant(idx: number) {
 .hero {
   padding: 40px 0 28px;
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 28px;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
   align-items: stretch;
 }
 
@@ -183,6 +184,7 @@ function getSocialVariant(idx: number) {
   color: #111;
   padding: 28px 28px 26px;
   position: relative;
+  box-sizing: border-box;
 }
 
 .name .hi {
@@ -210,62 +212,88 @@ h1 {
 }
 
 .side {
-  display: grid;
-  gap: 18px;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  min-height: 0;
 }
 
-.photo {
+.photo-card {
   width: 100%;
-  max-width: 150px;
-  aspect-ratio: 1;
+  height: 100%;
+  box-sizing: border-box;
+  background: var(--paper);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  border: 3px solid var(--bd);
+  box-shadow: 6px 6px 0 var(--sh);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.photo-frame {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  position: relative;
   background: var(--blue);
   color: #111;
   display: grid;
   place-items: center;
-  font-size: 2.6rem;
-  font-weight: 700;
   overflow: hidden;
-  padding: 0;
+  border: 2px solid var(--bd);
 }
 
 .avatar-img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 65%;
+  display: block;
 }
 
-.stat {
-  padding: 14px 18px;
+.avatar-fallback {
+  font-size: 3rem;
+  font-weight: 700;
+  font-family: var(--mono);
+}
+
+.photo-location-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: var(--pink);
   color: #111;
-  position: relative;
+  border: 2px solid var(--bd);
+  box-shadow: 3px 3px 0 var(--sh);
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+  transform: rotate(-2deg);
+  transition: transform 0.15s ease;
+}
+
+.photo-location-badge:hover {
+  transform: rotate(0deg) scale(1.03);
 }
 
 .pin-badge {
-  position: absolute;
-  top: -14px;
-  left: -10px;
-  background: var(--yellow);
-  color: #111;
-  border: 2px solid var(--bd);
-  box-shadow: 2px 2px 0 var(--sh);
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1;
-  padding: 3px 6px;
-  transform: rotate(-8deg);
   user-select: none;
 }
 
-.stat b {
-  display: block;
-  font-size: 1.15rem;
-}
-
-.stat span {
-  font: 400 0.85rem var(--mono);
-}
-
-.stat.s-loc {
-  background: var(--pink);
+.loc-label {
+  font: 700 0.85rem var(--mono);
+  white-space: nowrap;
 }
 
 .links {
@@ -388,8 +416,8 @@ section {
     display: inline-block;
     margin-bottom: 16px;
   }
-  .side {
-    grid-template-columns: 1fr 1fr;
+  .photo-card {
+    min-height: 280px;
   }
   .name {
     padding: 24px 20px;
@@ -397,8 +425,8 @@ section {
 }
 
 @media (max-width: 480px) {
-  .side {
-    grid-template-columns: 1fr;
+  .photo-card {
+    min-height: 240px;
   }
   .stack div {
     grid-template-columns: 1fr;
