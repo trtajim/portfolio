@@ -8,38 +8,44 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: { title: 'TR Tajim | Full-Stack Developer, Competitive Programmer & IoT Enthusiast' }
     },
     {
       path: '/projects',
       name: 'projects',
-      component: () => import('@/views/ProjectsView.vue')
+      component: () => import('@/views/ProjectsView.vue'),
+      meta: { title: 'Projects | TR Tajim' }
     },
     {
       path: '/projects/:slug',
       name: 'project-detail',
-      component: () => import('@/views/ProjectDetailView.vue')
+      component: () => import('@/views/ProjectDetailView.vue'),
+      meta: { title: 'Project Details | TR Tajim' }
     },
     {
       path: '/writing',
       name: 'writing',
-      component: () => import('@/views/WritingView.vue')
+      component: () => import('@/views/WritingView.vue'),
+      meta: { title: 'Writing & Technical Notes | TR Tajim' }
     },
     {
       path: '/writing/:slug',
       name: 'post-detail',
-      component: () => import('@/views/PostDetailView.vue')
+      component: () => import('@/views/PostDetailView.vue'),
+      meta: { title: 'Article | TR Tajim' }
     },
     {
       path: '/admin/login',
       name: 'admin-login',
-      component: () => import('@/views/admin/AdminLoginView.vue')
+      component: () => import('@/views/admin/AdminLoginView.vue'),
+      meta: { title: 'Admin Login | TR Tajim' }
     },
     {
       path: '/admin',
       name: 'admin-dashboard',
       component: () => import('@/views/admin/AdminDashboardView.vue'),
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true, title: 'Admin Studio | TR Tajim' }
     }
   ],
   scrollBehavior() {
@@ -48,6 +54,10 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, _from, next) => {
+  if (to.meta.title) {
+    document.title = to.meta.title as string
+  }
+
   const authStore = useAuthStore()
 
   if (!authStore.initialized) {
