@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { Short } from '@/types'
 
 const props = defineProps<{
@@ -10,6 +10,8 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
+const iframeRef = ref<HTMLIFrameElement | null>(null)
+
 const embedUrl = computed(() => {
   if (!props.short) return ''
   const url = props.short.video_url
@@ -18,8 +20,7 @@ const embedUrl = computed(() => {
     // Extract video ID from youtube.com/watch?v=, youtu.be/, youtube.com/shorts/
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/)
     if (match && match[1]) {
-      // Standard YouTube player with controls=1 brings back the native volume slider on hover!
-      return `https://www.youtube.com/embed/${match[1]}?autoplay=1&controls=1&mute=0&rel=0&playsinline=1`
+      return `https://www.youtube.com/embed/${match[1]}?autoplay=1&controls=1&mute=0&rel=0&playsinline=1&enablejsapi=1`
     }
     return url
   } else if (props.short.platform === 'facebook') {
@@ -29,6 +30,20 @@ const embedUrl = computed(() => {
 
   return url
 })
+
+function onIframeLoad() {
+  if (props.short?.platform === 'youtube' && iframeRef.value?.contentWindow) {
+    // Set initial volume to 50%
+    iframeRef.value.contentWindow.postMessage(
+      JSON.stringify({ event: 'command', func: 'unMute', args: [] }),
+      '*'
+    )
+    iframeRef.value.contentWindow.postMessage(
+      JSON.stringify({ event: 'command', func: 'setVolume', args: [50] }),
+      '*'
+    )
+  }
+}
 
 function handleBackdrop(e: MouseEvent) {
   if ((e.target as HTMLElement).classList.contains('modal-backdrop')) {
@@ -48,10 +63,12 @@ function handleBackdrop(e: MouseEvent) {
       <div class="player-container">
         <iframe
           v-if="embedUrl"
+          ref="iframeRef"
           :src="embedUrl"
           class="video-frame"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowfullscreen
+          @load="onIframeLoad"
         ></iframe>
       </div>
     </div>
