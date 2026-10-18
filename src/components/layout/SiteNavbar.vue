@@ -1,10 +1,30 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import BrutalButton from '@/components/brutal/BrutalButton.vue'
 
 const route = useRoute()
 const authStore = useAuthStore()
+
+const isDark = ref(false)
+
+onMounted(() => {
+  const saved = localStorage.getItem('theme')
+  if (saved) {
+    isDark.value = saved === 'dark'
+    document.documentElement.setAttribute('data-theme', saved)
+  } else {
+    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+  }
+})
+
+function toggleTheme() {
+  isDark.value = !isDark.value
+  const theme = isDark.value ? 'dark' : 'light'
+  document.documentElement.setAttribute('data-theme', theme)
+  localStorage.setItem('theme', theme)
+}
 </script>
 
 <template>
@@ -39,6 +59,15 @@ const authStore = useAuthStore()
           :variant="route.path.startsWith('/admin') ? 'orange' : 'white'"
         >
           Admin
+        </BrutalButton>
+        <BrutalButton
+          as="button"
+          variant="blue"
+          @click="toggleTheme"
+          aria-label="Toggle theme"
+          style="padding: 6px 12px;"
+        >
+          {{ isDark ? '☀️ Light' : '🌙 Dark' }}
         </BrutalButton>
       </nav>
     </div>
@@ -75,5 +104,6 @@ const authStore = useAuthStore()
   gap: 10px;
   flex-wrap: wrap;
   justify-content: flex-end;
+  align-items: center;
 }
 </style>
