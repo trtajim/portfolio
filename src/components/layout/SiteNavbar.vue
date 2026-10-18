@@ -51,13 +51,6 @@ function toggleTheme() {
           Writing
         </BrutalButton>
         <BrutalButton
-          as="router-link"
-          to="/admin"
-          :variant="route.path.startsWith('/admin') ? 'orange' : 'white'"
-        >
-          Admin
-        </BrutalButton>
-        <BrutalButton
           as="button"
           variant="blue"
           @click="toggleTheme"
