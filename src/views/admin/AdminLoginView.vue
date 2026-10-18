@@ -179,4 +179,15 @@ label {
   padding: 0 10px;
   font: 700 0.8rem var(--mono);
 }
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: 30px 16px;
+  }
+  .input-box {
+    font-size: 16px; /* Prevents auto-zoom on mobile safari */
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
 </style>
