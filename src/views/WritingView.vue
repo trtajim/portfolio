@@ -19,8 +19,15 @@ const publishedPosts = computed(() => {
       </p>
     </div>
 
-    <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="empty-state card box">
-      <span class="loading-tag">Loading writing...</span>
+    <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="post-list">
+      <div v-for="n in 4" :key="n" class="card box skeleton-post-item">
+        <div class="skeleton-line" style="width: 80px; height: 16px;"></div>
+        <div style="flex: 1;">
+          <div class="skeleton-line" style="width: 60%; height: 22px; margin-bottom: 8px;"></div>
+          <div class="skeleton-line" style="width: 35%; height: 14px;"></div>
+        </div>
+        <div class="skeleton-line" style="width: 24px; height: 18px;"></div>
+      </div>
     </div>
 
     <div v-else-if="publishedPosts.length === 0" class="empty-state card box">
@@ -52,6 +59,14 @@ const publishedPosts = computed(() => {
   margin: 0;
   padding: 0 0 50px;
   list-style: none;
+}
+
+.skeleton-post-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 20px;
+  background: var(--paper);
 }
 
 .empty-state {

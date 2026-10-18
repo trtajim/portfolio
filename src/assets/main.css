@@ -189,3 +189,29 @@ a {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.75; transform: scale(0.98); }
 }
+
+/* Neobrutalist Skeleton Placeholders */
+.skeleton-line {
+  height: 18px;
+  background: var(--ink);
+  opacity: 0.12;
+  border-radius: 2px;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-pill {
+  display: inline-block;
+  height: 28px;
+  width: 90px;
+  background: var(--ink);
+  opacity: 0.12;
+  border: 2px solid var(--bd);
+  box-shadow: 2px 2px 0 var(--sh);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.06; }
+}
+
