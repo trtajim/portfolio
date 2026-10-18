@@ -13,6 +13,7 @@ onMounted(async () => {
     authStore.checkSession(),
     portfolioStore.fetchAll()
   ])
+  portfolioStore.subscribeRealtime()
 })
 </script>
 
