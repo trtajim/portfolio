@@ -64,8 +64,13 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
       </div>
     </div>
 
+    <!-- LOADING STATE -->
+    <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="empty-state card box">
+      <span class="loading-tag">Loading projects...</span>
+    </div>
+
     <!-- VIDEO SHORTS SECTION (WHEN "ALL" OR "VIDEO" IS ACTIVE) -->
-    <div v-if="filteredShorts.length > 0 && activeFilter === 'Video'" class="video-grid">
+    <div v-else-if="filteredShorts.length > 0 && activeFilter === 'Video'" class="video-grid">
       <ShortCard
         v-for="(short, idx) in filteredShorts"
         :key="short.id || short.title"
