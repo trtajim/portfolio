@@ -129,9 +129,9 @@ const defaultShorts: Short[] = [
 
 export const usePortfolioStore = defineStore('portfolio', () => {
   const profile = ref<Profile>({ ...defaultProfile })
-  const projects = ref<Project[]>([...defaultProjects])
-  const posts = ref<Post[]>([...defaultPosts])
-  const shorts = ref<Short[]>([...defaultShorts])
+  const projects = ref<Project[]>([])
+  const posts = ref<Post[]>([])
+  const shorts = ref<Short[]>([])
 
   const loading = ref(false)
   const isLoaded = ref(false)
@@ -175,15 +175,15 @@ export const usePortfolioStore = defineStore('portfolio', () => {
         }
       }
 
-      if (projectsRes.data && projectsRes.data.length > 0) {
+      if (projectsRes.data) {
         projects.value = projectsRes.data
       }
 
-      if (postsRes.data && postsRes.data.length > 0) {
+      if (postsRes.data) {
         posts.value = postsRes.data
       }
 
-      if (shortsRes.data && shortsRes.data.length > 0) {
+      if (shortsRes.data) {
         shorts.value = shortsRes.data
       }
 

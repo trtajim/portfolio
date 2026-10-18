@@ -19,7 +19,11 @@ const publishedPosts = computed(() => {
       </p>
     </div>
 
-    <div v-if="publishedPosts.length === 0" class="empty-state card box">
+    <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="empty-state card box">
+      <span class="loading-tag">Loading writing...</span>
+    </div>
+
+    <div v-else-if="publishedPosts.length === 0" class="empty-state card box">
       No articles published yet.
     </div>
 
