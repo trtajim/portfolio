@@ -26,17 +26,6 @@
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #17142b;
-    --dot: #ffffff22;
-    --paper: #26223f;
-    --ink: #f5f3ff;
-    --bd: #f5f3ff;
-    --sh: #f5f3ff;
-    color-scheme: dark;
-  }
-}
 
 * {
   box-sizing: border-box;
