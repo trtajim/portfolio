@@ -151,9 +151,10 @@ function getSocialVariant(idx: number) {
       <p class="section-sub">Motion videos and teasers I design to showcase and promote products.</p>
       <div class="shorts-track">
         <ShortCard
-          v-for="short in activeShorts"
+          v-for="(short, idx) in activeShorts"
           :key="short.id || short.title"
           :short="short"
+          :index="idx"
           @play="playShort"
         />
       </div>
