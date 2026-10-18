@@ -266,6 +266,27 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     await fetchAll(true)
   }
 
+  function subscribeRealtime() {
+    if (!isSupabaseConfigured) return
+
+    const channel = supabase
+      .channel('portfolio_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profile' }, () => {
+        fetchAll(true)
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => {
+        fetchAll(true)
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
+        fetchAll(true)
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }
+
   return {
     profile,
     projects,
@@ -274,6 +295,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     isLoaded,
     fetchAll,
     invalidateCache,
+    subscribeRealtime,
     updateProfile,
     saveProject,
     deleteProject,
@@ -281,3 +303,4 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     deletePost
   }
 })
+
