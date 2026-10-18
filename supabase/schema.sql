@@ -5,6 +5,7 @@
 create extension if not exists "uuid-ossp";
 
 -- 0. Clean / Drop existing tables in reverse dependency order
+drop table if exists public.shorts cascade;
 drop table if exists public.posts cascade;
 drop table if exists public.projects cascade;
 drop table if exists public.profile cascade;
@@ -74,10 +75,24 @@ create table public.posts (
   updated_at timestamp with time zone default timezone('utc'::text, now())
 );
 
+-- 4. Shorts (Motion Videos / Reels)
+create table public.shorts (
+  id uuid primary key default uuid_generate_v4(),
+  title text not null,
+  platform text not null check (platform in ('youtube', 'facebook')),
+  video_url text not null,
+  thumbnail_url text default null,
+  is_published boolean not null default true,
+  order_index int not null default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()),
+  updated_at timestamp with time zone default timezone('utc'::text, now())
+);
+
 -- Enable Row Level Security (RLS)
 alter table public.profile enable row level security;
 alter table public.projects enable row level security;
 alter table public.posts enable row level security;
+alter table public.shorts enable row level security;
 
 -- Public Read Policies
 create policy "Allow public read access on profile"
@@ -91,6 +106,10 @@ create policy "Allow public read access on posts"
   on public.posts for select
   using (is_published = true or auth.role() = 'authenticated');
 
+create policy "Allow public read access on shorts"
+  on public.shorts for select
+  using (is_published = true or auth.role() = 'authenticated');
+
 -- Authenticated Admin Full CRUD Policies
 create policy "Allow admin full access on profile"
   on public.profile for all to authenticated using (true) with check (true);
@@ -101,7 +120,10 @@ create policy "Allow admin full access on projects"
 create policy "Allow admin full access on posts"
   on public.posts for all to authenticated using (true) with check (true);
 
--- 4. Supabase Storage for Assets
+create policy "Allow admin full access on shorts"
+  on public.shorts for all to authenticated using (true) with check (true);
+
+-- 5. Supabase Storage for Assets
 insert into storage.buckets (id, name, public)
 values ('portfolio-assets', 'portfolio-assets', true)
 on conflict (id) do nothing;
@@ -123,7 +145,7 @@ create policy "Allow authenticated update/delete on portfolio-assets"
   to authenticated
   using (bucket_id = 'portfolio-assets');
 
--- 5. Realtime Publication (Safe Re-run)
+-- 6. Realtime Publication (Safe Re-run)
 do $$
 begin
   if not exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
@@ -131,9 +153,9 @@ begin
   end if;
 end $$;
 
-alter publication supabase_realtime add table public.profile, public.projects, public.posts;
+alter publication supabase_realtime add table public.profile, public.projects, public.posts, public.shorts;
 
--- 6. Seed Initial Data
+-- 7. Seed Initial Data
 insert into public.profile (name, headline, whoami, main_stack, grouped_stacks, social_links)
 values (
   'TR Tajim',
@@ -205,4 +227,28 @@ values
   true,
   true,
   '2026-07-22'
+);
+
+insert into public.shorts (title, platform, video_url, is_published, order_index)
+values
+(
+  'SaaS UI Motion Teaser',
+  'youtube',
+  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  true,
+  0
+),
+(
+  'Developer Tool Launch Reel',
+  'facebook',
+  'https://www.facebook.com',
+  true,
+  1
+),
+(
+  'Product Feature Walkthrough',
+  'youtube',
+  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  true,
+  2
 );
