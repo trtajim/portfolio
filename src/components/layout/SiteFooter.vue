@@ -27,15 +27,21 @@ const githubLink = computed(() => {
 <template>
   <footer>
     <div class="c">
-      <span>© {{ year }} {{ portfolioStore.profile.name }}</span>
-      <div v-if="githubLink" class="foot-links">
+      <div class="foot-left">
+        <span>© {{ year }} {{ portfolioStore.profile.name }}</span>
+      </div>
+      <div class="foot-links">
         <a
+          v-if="githubLink"
           :href="githubLink.url"
           target="_blank"
           rel="noopener noreferrer"
         >
           {{ githubLink.handle }}
         </a>
+        <router-link to="/admin" class="admin-link">
+          Admin
+        </router-link>
       </div>
     </div>
   </footer>
@@ -62,5 +68,16 @@ footer .c {
 .foot-links a {
   text-decoration: underline;
   font-weight: 700;
+}
+.admin-link {
+  color: var(--ink);
+  opacity: 0.7;
+  text-decoration: none !important;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+.admin-link:hover {
+  opacity: 1;
+  text-decoration: underline !important;
 }
 </style>
