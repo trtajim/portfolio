@@ -34,13 +34,6 @@ function toggleTheme() {
       <nav>
         <BrutalButton
           as="router-link"
-          to="/"
-          :variant="route.path === '/' ? 'pink' : 'yellow'"
-        >
-          Home
-        </BrutalButton>
-        <BrutalButton
-          as="router-link"
           to="/projects"
           :variant="route.path.startsWith('/projects') ? 'mint' : 'yellow'"
         >
