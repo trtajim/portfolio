@@ -18,7 +18,7 @@ export interface Profile {
   name: string
   headline: string
   whoami: string[]
-  main_stack: string[]
+  main_stack?: string[]
   grouped_stacks: GroupedStack[]
   social_links: SocialLink[]
   stats?: SiteStat[]

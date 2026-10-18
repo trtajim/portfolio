@@ -59,7 +59,6 @@ const profileForm = ref({
   name: portfolioStore.profile.name,
   headline: portfolioStore.profile.headline,
   whoamiRaw: portfolioStore.profile.whoami.join('\n\n'),
-  mainStackRaw: portfolioStore.profile.main_stack.join(', '),
   avatar_url: portfolioStore.profile.avatar_url || '',
   grouped_stacks: JSON.parse(JSON.stringify(portfolioStore.profile.grouped_stacks)) as GroupedStack[],
   social_links: JSON.parse(JSON.stringify(portfolioStore.profile.social_links)) as SocialLink[]
@@ -77,16 +76,10 @@ async function saveProfile() {
       .map((s) => s.trim())
       .filter(Boolean)
 
-    const main_stack = profileForm.value.mainStackRaw
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean)
-
     await portfolioStore.updateProfile({
       name: profileForm.value.name,
       headline: profileForm.value.headline,
       whoami,
-      main_stack,
       avatar_url: profileForm.value.avatar_url || null,
       grouped_stacks: profileForm.value.grouped_stacks,
       social_links: profileForm.value.social_links
@@ -131,7 +124,8 @@ function openNewProject() {
     content: '',
     image_url: null,
     is_featured: false,
-    is_published: true
+    is_published: true,
+    order_index: portfolioStore.projects.length
   }
   projectTagsRaw.value = ''
   projectActions.value = [{ label: 'Visit site', url: 'https://' }]
@@ -450,11 +444,6 @@ async function handleLogout() {
           <textarea v-model="profileForm.whoamiRaw" rows="4" class="input-box"></textarea>
         </div>
 
-        <div class="field">
-          <label>Main Stack (Comma separated)</label>
-          <input v-model="profileForm.mainStackRaw" type="text" class="input-box" />
-        </div>
-
         <hr class="divider" />
 
         <div class="stack-header">
@@ -552,6 +541,7 @@ async function handleLogout() {
             <div class="info">
               <div class="meta-row">
                 <span class="st-pill">{{ proj.pill }}</span>
+                <span v-if="proj.order_index !== undefined" class="order-pill">#{{ proj.order_index }}</span>
                 <span v-if="proj.top_metric" class="badge-pill">{{ proj.top_metric }}</span>
                 <span v-if="proj.is_featured" class="featured-badge">Featured on Home</span>
               </div>
@@ -676,15 +666,22 @@ async function handleLogout() {
           </div>
         </div>
 
-        <div class="checkbox-row">
-          <label class="check-label">
-            <input v-model="editingProject.is_featured" type="checkbox" />
-            <span>Feature on Home page</span>
-          </label>
-          <label class="check-label">
-            <input v-model="editingProject.is_published" type="checkbox" />
-            <span>Published</span>
-          </label>
+        <div class="grid-2">
+          <div class="field">
+            <label>Order / Serial # (Ascending e.g. 1, 2, 3...)</label>
+            <input v-model.number="editingProject.order_index" type="number" class="input-box" placeholder="0" />
+          </div>
+
+          <div class="checkbox-row" style="align-self: center">
+            <label class="check-label">
+              <input v-model="editingProject.is_featured" type="checkbox" />
+              <span>Feature on Home page</span>
+            </label>
+            <label class="check-label">
+              <input v-model="editingProject.is_published" type="checkbox" />
+              <span>Published</span>
+            </label>
+          </div>
         </div>
 
         <div class="action-footer">
@@ -1073,6 +1070,14 @@ label {
   background: #111;
   color: #fff;
   padding: 2px 8px;
+}
+
+.order-pill {
+  font: 700 0.75rem var(--mono);
+  background: var(--blue);
+  color: #111;
+  border: 2px solid #111;
+  padding: 1px 8px;
 }
 
 .badge-pill {

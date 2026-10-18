@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import type { Project } from '@/types'
 import BrutalButton from '@/components/brutal/BrutalButton.vue'
 
-defineProps<{
+const props = defineProps<{
   project: Project
   color?: 'mint' | 'orange' | 'pink' | 'blue'
 }>()
+
+const router = useRouter()
 
 const colorOrder: ('yellow' | 'pink' | 'blue' | 'mint' | 'orange')[] = [
   'yellow',
@@ -18,10 +21,19 @@ const colorOrder: ('yellow' | 'pink' | 'blue' | 'mint' | 'orange')[] = [
 function getButtonVariant(index: number) {
   return colorOrder[index % colorOrder.length]
 }
+
+function handleCardClick(e: MouseEvent) {
+  // If the user clicked an interactive element (link, button), let it handle its own action
+  const target = e.target as HTMLElement | null
+  if (target?.closest('a, button, .acts')) {
+    return
+  }
+  router.push(`/projects/${props.project.slug}`)
+}
 </script>
 
 <template>
-  <div :class="['p', color || 'mint']">
+  <div :class="['p', color || 'mint']" @click="handleCardClick">
     <span v-if="project.top_metric" class="badge">
       {{ project.top_metric }}
     </span>
@@ -65,6 +77,13 @@ function getButtonVariant(index: number) {
   position: relative;
   border: 3px solid var(--bd);
   box-shadow: 6px 6px 0 var(--sh);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.p:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 var(--sh);
 }
 
 .p.mint { background: var(--mint); }
