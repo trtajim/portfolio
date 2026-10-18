@@ -55,6 +55,12 @@ function getSocialVariant(idx: number) {
           />
           <span v-else>TR</span>
         </div>
+
+        <div class="stat box s-loc">
+          <span class="pin-badge" aria-hidden="true">📍</span>
+          <b>Location</b>
+          <span>Based in Rangpur, Bangladesh</span>
+        </div>
       </div>
     </div>
 
@@ -169,8 +175,8 @@ h1 {
 }
 
 .side {
-  display: flex;
-  align-items: flex-start;
+  display: grid;
+  gap: 18px;
 }
 
 .photo {
@@ -191,6 +197,40 @@ h1 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.stat {
+  padding: 14px 18px;
+  color: #111;
+  position: relative;
+}
+
+.pin-badge {
+  position: absolute;
+  top: -14px;
+  left: -10px;
+  background: var(--yellow);
+  color: #111;
+  border: 2px solid var(--bd);
+  box-shadow: 2px 2px 0 var(--sh);
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 3px 6px;
+  transform: rotate(-8deg);
+  user-select: none;
+}
+
+.stat b {
+  display: block;
+  font-size: 1.15rem;
+}
+
+.stat span {
+  font: 400 0.85rem var(--mono);
+}
+
+.stat.s-loc {
+  background: var(--pink);
 }
 
 .links {
@@ -288,12 +328,18 @@ section {
     display: inline-block;
     margin-bottom: 16px;
   }
+  .side {
+    grid-template-columns: 1fr 1fr;
+  }
   .name {
     padding: 24px 20px;
   }
 }
 
 @media (max-width: 480px) {
+  .side {
+    grid-template-columns: 1fr;
+  }
   .stack div {
     grid-template-columns: 1fr;
     gap: 4px;

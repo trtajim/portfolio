@@ -4,21 +4,37 @@ import { usePortfolioStore } from '@/stores/portfolio'
 
 const portfolioStore = usePortfolioStore()
 const year = computed(() => new Date().getFullYear())
+
+const githubLink = computed(() => {
+  const link = portfolioStore.profile.social_links?.find(
+    (l) => l.label.toLowerCase() === 'github' || l.url.includes('github.com')
+  )
+  if (!link) return null
+
+  // Extract username from URL if possible (e.g. https://github.com/trtajim -> @trtajim)
+  const cleanUrl = link.url.replace(/\/+$/, '')
+  const parts = cleanUrl.split('/')
+  const username = parts[parts.length - 1]
+  const handle = username ? `@${username.replace(/^@/, '')}` : link.label
+
+  return {
+    url: link.url,
+    handle
+  }
+})
 </script>
 
 <template>
   <footer>
     <div class="c">
       <span>© {{ year }} {{ portfolioStore.profile.name }}</span>
-      <div class="foot-links">
+      <div v-if="githubLink" class="foot-links">
         <a
-          v-for="link in portfolioStore.profile.social_links"
-          :key="link.label"
-          :href="link.url"
+          :href="githubLink.url"
           target="_blank"
           rel="noopener noreferrer"
         >
-          {{ link.label }}
+          {{ githubLink.handle }}
         </a>
       </div>
     </div>

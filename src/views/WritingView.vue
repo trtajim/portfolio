@@ -15,7 +15,7 @@ const publishedPosts = computed(() => {
     <div class="header-section">
       <span class="h">WRITING</span>
       <p class="sub">
-        Technical notes on architecture, serverless stacks, competitive programming, and hardware IoT experiments.
+        Thoughts on software architecture, engineering experiments, books I’m reading, movies, and ideas in progress.
       </p>
     </div>
 
