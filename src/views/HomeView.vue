@@ -99,8 +99,12 @@ function getSocialVariant(idx: number) {
       </div>
       <div class="about">
         <div class="card box">
-          <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="skeleton-block">
-            <span class="loading-tag">Loading profile...</span>
+          <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="skeleton-whoami">
+            <div class="skeleton-line" style="width: 95%; margin-bottom: 12px;"></div>
+            <div class="skeleton-line" style="width: 88%; margin-bottom: 12px;"></div>
+            <div class="skeleton-line" style="width: 70%; margin-bottom: 20px;"></div>
+            <div class="skeleton-line" style="width: 92%; margin-bottom: 12px;"></div>
+            <div class="skeleton-line" style="width: 65%;"></div>
           </div>
           <template v-else>
             <p v-for="(p, i) in profile.whoami" :key="i">
@@ -111,8 +115,11 @@ function getSocialVariant(idx: number) {
 
         <div class="card box">
           <div><h2 class="h mobile-stack-heading">Tech stack</h2></div>
-          <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="skeleton-block">
-            <span class="loading-tag">Loading stack...</span>
+          <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="skeleton-stack">
+            <div v-for="n in 5" :key="n" class="skeleton-stack-row">
+              <div class="skeleton-line" style="width: 70px; height: 16px;"></div>
+              <div class="skeleton-line" style="width: 140px; height: 16px;"></div>
+            </div>
           </div>
           <dl v-else class="stack" aria-label="Technologies">
             <div v-for="group in profile.grouped_stacks" :key="group.category">
@@ -126,8 +133,17 @@ function getSocialVariant(idx: number) {
 
     <section id="projects">
       <h2 class="h">What I built</h2>
-      <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="card box loading-box">
-        <span class="loading-tag">Loading projects...</span>
+      <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="proj">
+        <div v-for="n in 3" :key="n" :class="['card', 'box', 'skeleton-card', { 'span-wide': n === 3 }]">
+          <div class="skeleton-pill" style="margin-bottom: 16px; width: 80px;"></div>
+          <div class="skeleton-line" style="width: 60%; height: 26px; margin-bottom: 14px;"></div>
+          <div class="skeleton-line" style="width: 90%; margin-bottom: 8px;"></div>
+          <div class="skeleton-line" style="width: 75%; margin-bottom: 20px;"></div>
+          <div style="display: flex; gap: 8px;">
+            <div class="skeleton-pill" style="width: 70px; height: 22px;"></div>
+            <div class="skeleton-pill" style="width: 60px; height: 22px;"></div>
+          </div>
+        </div>
       </div>
       <div v-else-if="featuredProjects.length === 0" class="card box empty-box">
         No projects found.
@@ -150,8 +166,15 @@ function getSocialVariant(idx: number) {
 
     <section id="writing">
       <h2 class="h">What I write</h2>
-      <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="card box loading-box">
-        <span class="loading-tag">Loading writing...</span>
+      <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="posts">
+        <div v-for="n in 3" :key="n" class="card box skeleton-post-row">
+          <div class="skeleton-line" style="width: 80px; height: 16px;"></div>
+          <div style="flex: 1;">
+            <div class="skeleton-line" style="width: 65%; height: 20px; margin-bottom: 8px;"></div>
+            <div class="skeleton-line" style="width: 40%; height: 14px;"></div>
+          </div>
+          <div class="skeleton-line" style="width: 24px; height: 18px;"></div>
+        </div>
       </div>
       <div v-else-if="featuredPosts.length === 0" class="card box empty-box">
         No articles published yet.
@@ -378,12 +401,46 @@ section {
   font-weight: 700;
 }
 
+.hero-skeleton {
+  height: 24px;
+  width: 80%;
+  background: #111;
+  opacity: 0.15;
+  border-radius: 2px;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-stack-row {
+  display: flex;
+  gap: 16px;
+  padding: 10px 0;
+  border-top: 2px solid var(--bd);
+}
+
+.skeleton-stack-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.skeleton-card {
+  background: var(--paper);
+  padding: 24px;
+}
+
+.skeleton-post-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 20px;
+}
+
 .loading-box,
 .empty-box {
   padding: 30px 20px;
   text-align: center;
   font: 700 0.95rem var(--mono);
 }
+
 
 .loading-tag {
   background: var(--yellow);
