@@ -33,21 +33,26 @@ const socialColorVariants: ('yellow' | 'pink' | 'blue' | 'mint' | 'orange')[] = 
 function getSocialVariant(idx: number) {
   return socialColorVariants[idx % socialColorVariants.length]
 }
+
+const mainStackString = computed(() => {
+  if (Array.isArray(profile.value.main_stack)) {
+    return profile.value.main_stack.join(', ')
+  }
+  return profile.value.main_stack || ''
+})
 </script>
 
 <template>
   <div class="c">
-    <section class="hero">
+    <div class="hero">
       <div class="name box">
-        <span class="hi">HELLO WORLD</span>
-        <div class="sticker">READY TO BUILD</div>
+        <span class="hi">hello, I’m</span>
         <h1>{{ profile.name }}</h1>
         <p>{{ profile.headline }}</p>
-        <div class="roles">FULL-STACK • COMPETITIVE PROGRAMMER • IOT</div>
       </div>
 
       <div class="side">
-        <div class="photo box">
+        <div class="photo box" role="img" :aria-label="profile.name">
           <img
             v-if="profile.avatar_url"
             :src="profile.avatar_url"
@@ -57,32 +62,28 @@ function getSocialVariant(idx: number) {
           <span v-else>TR</span>
         </div>
 
-        <div
-          v-for="(st, idx) in profile.stats || []"
-          :key="st.label"
-          :class="['stat', 'box', idx % 2 === 0 ? 's1' : 's2']"
-        >
-          <b>{{ st.value }}</b>
-          <span>{{ st.label }}</span>
+        <div class="stat box s1">
+          <b>Main stack</b>
+          <span>{{ mainStackString }}</span>
         </div>
-
-        <ul class="links">
-          <li v-for="(link, idx) in profile.social_links" :key="link.label">
-            <BrutalButton
-              as="a"
-              :href="link.url"
-              target="_blank"
-              :variant="getSocialVariant(idx)"
-            >
-              {{ link.label }}
-            </BrutalButton>
-          </li>
-        </ul>
       </div>
-    </section>
+    </div>
 
-    <section>
-      <span class="h">WHO AM I</span>
+    <ul class="links">
+      <li v-for="(link, idx) in profile.social_links" :key="link.label">
+        <BrutalButton
+          as="a"
+          :href="link.url"
+          target="_blank"
+          :variant="getSocialVariant(idx)"
+        >
+          {{ link.label }}
+        </BrutalButton>
+      </li>
+    </ul>
+
+    <section id="about">
+      <h2 class="h">Who I am</h2>
       <div class="about">
         <div class="card box">
           <p v-for="(p, i) in profile.whoami" :key="i">
@@ -91,30 +92,18 @@ function getSocialVariant(idx: number) {
         </div>
 
         <div class="card box">
-          <p style="font-weight: 700; margin-bottom: 12px; font-family: var(--mono)">MAIN STACK</p>
-          <ul class="do">
-            <li v-for="tech in profile.main_stack" :key="tech">
-              {{ tech }}
-            </li>
-          </ul>
+          <dl class="stack" aria-label="Technologies">
+            <div v-for="group in profile.grouped_stacks" :key="group.category">
+              <dt>{{ group.category }}</dt>
+              <dd>{{ group.items }}</dd>
+            </div>
+          </dl>
         </div>
       </div>
     </section>
 
-    <section>
-      <span class="h">TECH STACK</span>
-      <div class="card box">
-        <dl class="stack">
-          <div v-for="group in profile.grouped_stacks" :key="group.category">
-            <dt>{{ group.category }}</dt>
-            <dd>{{ group.items }}</dd>
-          </div>
-        </dl>
-      </div>
-    </section>
-
-    <section>
-      <span class="h">FEATURED PROJECTS</span>
+    <section id="projects">
+      <h2 class="h">What I built</h2>
       <div class="proj">
         <ProjectCard
           v-for="(proj, idx) in featuredProjects"
@@ -130,8 +119,8 @@ function getSocialVariant(idx: number) {
       </div>
     </section>
 
-    <section>
-      <span class="h">WRITING</span>
+    <section id="writing">
+      <h2 class="h">What I write</h2>
       <ul class="posts">
         <li v-for="post in featuredPosts" :key="post.slug">
           <PostCard :post="post" />
@@ -173,7 +162,7 @@ function getSocialVariant(idx: number) {
 
 h1 {
   margin: 0;
-  font-size: clamp(3.4rem, 10vw, 5.5rem);
+  font-size: clamp(3.4rem, 10vw, 6rem);
   line-height: 0.9;
   letter-spacing: -0.04em;
   font-weight: 700;
@@ -184,11 +173,6 @@ h1 {
   font-size: 1.15rem;
   max-width: 34ch;
   font-weight: 500;
-}
-
-.roles {
-  margin-top: 14px;
-  font: 700 0.8rem var(--mono);
 }
 
 .side {
@@ -231,26 +215,12 @@ h1 {
 }
 
 .stat.s1 { background: var(--pink); }
-.stat.s2 { background: var(--mint); }
-
-.sticker {
-  position: absolute;
-  right: -10px;
-  top: -16px;
-  transform: rotate(6deg);
-  background: var(--blue);
-  color: #111;
-  border: 3px solid var(--bd);
-  box-shadow: 3px 3px 0 var(--sh);
-  font: 700 0.8rem var(--mono);
-  padding: 4px 10px;
-}
 
 .links {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 0;
+  gap: 12px;
+  margin: 0 0 20px;
   padding: 0;
   list-style: none;
 }
@@ -265,29 +235,6 @@ section {
   gap: 24px;
 }
 
-.do {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.do li {
-  border: 3px solid var(--bd);
-  padding: 3px 12px;
-  font-weight: 700;
-  font-family: var(--mono);
-  font-size: 0.85rem;
-  background: var(--yellow);
-  color: #111;
-}
-
-.do li:nth-child(2) { background: var(--pink); }
-.do li:nth-child(3) { background: var(--mint); }
-.do li:nth-child(4) { background: var(--blue); }
-
 .stack {
   margin: 0;
   display: grid;
@@ -295,9 +242,9 @@ section {
 
 .stack div {
   display: grid;
-  grid-template-columns: 130px 1fr;
+  grid-template-columns: 104px 1fr;
   gap: 12px;
-  padding: 10px 0;
+  padding: 9px 0;
   border-top: 2px solid var(--bd);
 }
 
@@ -311,8 +258,8 @@ section {
 }
 
 .stack dt {
-  font: 700 0.85rem var(--mono);
-  padding-top: 2px;
+  font: 700 0.8rem var(--mono);
+  padding-top: 3px;
 }
 
 .stack dd {
@@ -349,9 +296,6 @@ section {
   }
   .name {
     padding: 24px 20px;
-  }
-  .sticker {
-    right: 6px;
   }
 }
 
