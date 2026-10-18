@@ -233,7 +233,6 @@ function openNewPost() {
     title: '',
     subtitle: '',
     content: '# New Article\n\nWrite your thoughts here...',
-    reading_time: '3 min read',
     tags: [],
     image_url: null,
     is_featured: false,
@@ -649,7 +648,6 @@ async function handleLogout() {
             <div class="info">
               <div class="meta-row">
                 <time class="time-tag">{{ post.published_date }}</time>
-                <span class="st-pill">{{ post.reading_time }}</span>
                 <span v-if="post.is_featured" class="featured-badge">Featured on Home</span>
               </div>
               <h4 class="title">{{ post.title }}</h4>
@@ -689,16 +687,9 @@ async function handleLogout() {
           </div>
         </div>
 
-        <div class="grid-2">
-          <div class="field">
-            <label>Subtitle / One-line Hook</label>
-            <input v-model="editingPost.subtitle" type="text" class="input-box" />
-          </div>
-
-          <div class="field">
-            <label>Reading Time</label>
-            <input v-model="editingPost.reading_time" type="text" class="input-box" placeholder="e.g. 5 min read" />
-          </div>
+        <div class="field">
+          <label>Subtitle / One-line Hook</label>
+          <input v-model="editingPost.subtitle" type="text" class="input-box" />
         </div>
 
         <div class="grid-2">
