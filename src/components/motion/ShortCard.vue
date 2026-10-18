@@ -4,6 +4,7 @@ import type { Short } from '@/types'
 
 const props = defineProps<{
   short: Short
+  index?: number
 }>()
 
 const emit = defineEmits<{
@@ -26,6 +27,8 @@ const fallbackThumbnail = computed(() => {
 <template>
   <div class="short-card box" @click="emit('play', short)">
     <div class="thumb-container">
+      <span v-if="index !== undefined" class="idx-badge">#{{ index + 1 }}</span>
+
       <img
         v-if="short.thumbnail_url || fallbackThumbnail"
         :src="short.thumbnail_url || fallbackThumbnail!"
@@ -34,7 +37,7 @@ const fallbackThumbnail = computed(() => {
         loading="lazy"
       />
       <div v-else class="thumb-placeholder">
-        <span class="pl-tag">{{ short.platform.toUpperCase() }}</span>
+        <span class="pl-tag">MOTION</span>
       </div>
 
       <div class="play-overlay">
@@ -50,8 +53,8 @@ const fallbackThumbnail = computed(() => {
 
 <style scoped>
 .short-card {
-  flex: 0 0 210px;
-  width: 210px;
+  flex: 0 0 260px;
+  width: 260px;
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;
@@ -118,6 +121,20 @@ const fallbackThumbnail = computed(() => {
   background: rgba(0, 0, 0, 0.05);
 }
 
+.idx-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font: 700 0.8rem var(--mono);
+  background: var(--yellow);
+  color: #111;
+  border: 2px solid #111;
+  box-shadow: 2px 2px 0 #111;
+  padding: 2px 8px;
+  z-index: 2;
+  user-select: none;
+}
+
 .play-icon {
   width: 44px;
   height: 44px;
@@ -155,8 +172,8 @@ const fallbackThumbnail = computed(() => {
 
 @media (max-width: 600px) {
   .short-card {
-    flex: 0 0 175px;
-    width: 175px;
+    flex: 0 0 160px;
+    width: 160px;
   }
 }
 </style>

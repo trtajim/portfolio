@@ -67,9 +67,10 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
     <!-- VIDEO SHORTS SECTION (WHEN "ALL" OR "VIDEO" IS ACTIVE) -->
     <div v-if="filteredShorts.length > 0 && activeFilter === 'Video'" class="video-grid">
       <ShortCard
-        v-for="short in filteredShorts"
+        v-for="(short, idx) in filteredShorts"
         :key="short.id || short.title"
         :short="short"
+        :index="idx"
         @play="playShort"
       />
     </div>
@@ -161,8 +162,17 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
   .proj-grid {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 600px) {
   .video-grid {
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .video-grid :deep(.short-card) {
+    width: 100% !important;
+    flex: 1 1 100% !important;
   }
 }
 </style>
