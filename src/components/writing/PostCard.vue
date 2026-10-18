@@ -1,14 +1,35 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { Post } from '@/types'
 
-defineProps<{
+const props = defineProps<{
   post: Post
 }>()
+
+const formattedDate = computed(() => {
+  if (!props.post.published_date) return ''
+  try {
+    const parts = props.post.published_date.split('-')
+    if (parts.length === 3) {
+      const year = parts[0]
+      const month = parts[1]
+      const day = parts[2]
+      const date = new Date(Number(year), Number(month) - 1, Number(day))
+      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase()
+    }
+    const d = new Date(props.post.published_date)
+    return isNaN(d.getTime())
+      ? props.post.published_date
+      : d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase()
+  } catch {
+    return props.post.published_date
+  }
+})
 </script>
 
 <template>
   <router-link :to="`/writing/${post.slug}`" class="post-item">
-    <time>{{ post.published_date }}</time>
+    <time :datetime="post.published_date">{{ formattedDate }}</time>
     <div class="content">
       <h3>{{ post.title }}</h3>
       <p v-if="post.subtitle">{{ post.subtitle }}</p>
