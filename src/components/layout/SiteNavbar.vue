@@ -8,11 +8,12 @@ const isDark = ref(false)
 
 onMounted(() => {
   const saved = localStorage.getItem('theme')
-  if (saved) {
-    isDark.value = saved === 'dark'
-    document.documentElement.setAttribute('data-theme', saved)
+  if (saved === 'dark') {
+    isDark.value = true
+    document.documentElement.setAttribute('data-theme', 'dark')
   } else {
-    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+    isDark.value = false
+    document.documentElement.setAttribute('data-theme', 'light')
   }
 })
 
