@@ -184,3 +184,19 @@ a {
   padding-left: 24px;
   margin-bottom: 1em;
 }
+
+.loading-tag {
+  background: var(--yellow);
+  color: #111;
+  font: 700 0.85rem var(--mono);
+  padding: 4px 12px;
+  border: 2px solid var(--bd);
+  box-shadow: 2px 2px 0 var(--sh);
+  display: inline-block;
+  animation: brutal-pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes brutal-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(0.98); }
+}
