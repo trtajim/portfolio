@@ -26,7 +26,7 @@ const defaultProfile: Profile = {
     { label: 'years building', value: '4+' },
     { label: 'projects shipped', value: '15+' }
   ],
-  avatar_url: null
+  avatar_url: 'https://gotrsdvijclyhgsxsntf.supabase.co/storage/v1/object/public/portfolio/avatar/1792341673429-7ni5o0c.jpg'
 }
 
 const defaultProjects: Project[] = [
