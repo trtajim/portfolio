@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 import BrutalButton from '@/components/brutal/BrutalButton.vue'
 
 const route = useRoute()
-const authStore = useAuthStore()
-
 const isDark = ref(false)
 
 onMounted(() => {
@@ -30,7 +27,7 @@ function toggleTheme() {
 <template>
   <header class="top">
     <div class="c">
-      <router-link to="/" class="logo">TR Tajim</router-link>
+      <router-link to="/" class="logo">TR<span class="logo-full"> Tajim</span></router-link>
       <nav>
         <BrutalButton
           as="router-link"
@@ -65,9 +62,9 @@ function toggleTheme() {
           variant="blue"
           @click="toggleTheme"
           aria-label="Toggle theme"
-          style="padding: 6px 12px;"
+          class="theme-btn"
         >
-          {{ isDark ? '☀️ Light' : '🌙 Dark' }}
+          {{ isDark ? '☀️' : '🌙' }}
         </BrutalButton>
       </nav>
     </div>
@@ -82,6 +79,7 @@ function toggleTheme() {
   background: var(--bg);
   border-bottom: 3px solid var(--bd);
 }
+
 .top .c {
   display: flex;
   justify-content: space-between;
@@ -90,6 +88,7 @@ function toggleTheme() {
   padding-top: 10px;
   padding-bottom: 10px;
 }
+
 .logo {
   font: 700 1.3rem var(--sans);
   text-decoration: none;
@@ -98,12 +97,47 @@ function toggleTheme() {
   border: 3px solid var(--bd);
   padding: 2px 10px;
   box-shadow: 3px 3px 0 var(--sh);
+  white-space: nowrap;
 }
+
 .top nav {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
+  flex-wrap: nowrap;
   justify-content: flex-end;
   align-items: center;
+}
+
+.theme-btn {
+  padding: 4px 10px;
+  min-width: 42px;
+  font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .top .c {
+    padding: 6px 12px;
+    gap: 6px;
+  }
+  .logo {
+    font-size: 1.1rem;
+    padding: 2px 6px;
+  }
+  .logo-full {
+    display: none;
+  }
+  .top nav {
+    gap: 4px;
+    flex-wrap: nowrap;
+  }
+  .top nav :deep(.btn) {
+    padding: 4px 7px;
+    font-size: 0.8rem;
+    box-shadow: 2px 2px 0 var(--sh);
+  }
+  .theme-btn {
+    padding: 4px 6px;
+    min-width: 32px;
+  }
 }
 </style>

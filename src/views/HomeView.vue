@@ -84,8 +84,8 @@ const mainStackString = computed(() => {
 
     <section id="about">
       <div class="about-headers">
-        <h2 class="h">Who I am</h2>
-        <h2 class="h stack-heading">Tech stack</h2>
+        <div><h2 class="h">Who I am</h2></div>
+        <div><h2 class="h stack-heading">Tech stack</h2></div>
       </div>
       <div class="about">
         <div class="card box">
@@ -95,7 +95,7 @@ const mainStackString = computed(() => {
         </div>
 
         <div class="card box">
-          <h2 class="h mobile-stack-heading">Tech stack</h2>
+          <div><h2 class="h mobile-stack-heading">Tech stack</h2></div>
           <dl class="stack" aria-label="Technologies">
             <div v-for="group in profile.grouped_stacks" :key="group.category">
               <dt>{{ group.category }}</dt>
