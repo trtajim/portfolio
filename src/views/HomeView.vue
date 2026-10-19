@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { usePortfolioStore } from '@/stores/portfolio'
 import ProjectCard from '@/components/projects/ProjectCard.vue'
 import PostCard from '@/components/writing/PostCard.vue'
@@ -8,6 +9,7 @@ import ShortCard from '@/components/motion/ShortCard.vue'
 import ShortPlayerModal from '@/components/motion/ShortPlayerModal.vue'
 import type { Short } from '@/types'
 
+const router = useRouter()
 const portfolioStore = usePortfolioStore()
 
 const isAvatarLoaded = ref(false)
@@ -28,6 +30,16 @@ const otherProjects = computed(() => {
   if (!spotlightProject.value) return []
   return featuredProjects.value.filter((p) => p.slug !== spotlightProject.value?.slug)
 })
+
+function handleSpotlightClick(e: MouseEvent) {
+  const target = e.target as HTMLElement | null
+  if (target?.closest('a, button, .acts, [role="button"]')) {
+    return
+  }
+  if (spotlightProject.value?.slug) {
+    router.push(`/projects/${spotlightProject.value.slug}`)
+  }
+}
 
 function parseMetric(metric?: string | null): { value: string; label: string } {
   if (!metric) return { value: '', label: '' }
@@ -333,7 +345,8 @@ async function copyEmail() {
         <!-- SPOTLIGHT / FLAGSHIP PROJECT -->
         <div
           v-if="spotlightProject"
-          class="box spotlight-card !bg-[var(--green)] !text-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden"
+          class="box spotlight-card !bg-[var(--green)] !text-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden cursor-pointer transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)]"
+          @click="handleSpotlightClick"
         >
           <div class="flex flex-col gap-4 min-w-0">
             <span class="font-mono font-bold text-[0.75rem] bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2.5 py-1 self-start">

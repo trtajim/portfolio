@@ -25,6 +25,30 @@ const renderedContent = computed(() => {
 
   return marked.parse(cleaned)
 })
+
+const tagColors: ('yellow' | 'pink' | 'blue' | 'green' | 'orange')[] = [
+  'yellow',
+  'pink',
+  'blue',
+  'green',
+  'orange'
+]
+
+function getTagColorClass(idx: number) {
+  const color = tagColors[idx % tagColors.length]
+  switch (color) {
+    case 'yellow':
+      return '!bg-[var(--yellow)] !text-[#0b0b0f]'
+    case 'pink':
+      return '!bg-[var(--pink)] !text-[#0b0b0f]'
+    case 'blue':
+      return '!bg-[var(--blue)] !text-white'
+    case 'green':
+      return '!bg-[var(--green)] !text-[#0b0b0f]'
+    case 'orange':
+      return '!bg-[var(--orange)] !text-[#0b0b0f]'
+  }
+}
 </script>
 
 <template>
@@ -59,10 +83,7 @@ const renderedContent = computed(() => {
           <span
             v-for="(tag, idx) in post.tags"
             :key="tag"
-            :class="[
-              'chip',
-              idx === 0 && '!bg-[var(--yellow)] !text-[#0b0b0f]'
-            ]"
+            :class="['chip', getTagColorClass(idx)]"
           >
             {{ tag }}
           </span>
