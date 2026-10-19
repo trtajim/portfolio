@@ -375,7 +375,7 @@ async function handleLogout() {
     <header class="admin-top">
       <div>
         <span class="h">ADMIN DASHBOARD</span>
-        <p class="tagline">Manage site copy, projects, key-value tech stacks, and articles.</p>
+        <p class="tagline">Manage site copy, projects, tech stacks, and articles.</p>
       </div>
       <div class="top-actions">
         <BrutalButton as="button" variant="white" @click="handleLogout">
@@ -435,7 +435,7 @@ async function handleLogout() {
           </div>
 
           <div class="field">
-            <label>Avatar Image (Upload or enter URL)</label>
+            <label>Avatar Image</label>
             <div class="upload-row">
               <input v-model="profileForm.avatar_url" type="text" class="input-box" placeholder="https://..." style="flex: 1" />
               <label class="btn white upload-btn">
@@ -455,14 +455,14 @@ async function handleLogout() {
         </div>
 
         <div class="field">
-          <label>WhoAmI Bio (Separate paragraphs with double Enter / blank line)</label>
+          <label>Who I am Bio</label>
           <textarea v-model="profileForm.whoamiRaw" rows="4" class="input-box"></textarea>
         </div>
 
         <hr class="divider" />
 
         <div class="stack-header">
-          <h3 class="pane-title" style="margin: 0">Tech Stack Categories (Key-Value)</h3>
+          <h3 class="pane-title" style="margin: 0">Tech Stack</h3>
           <BrutalButton as="button" variant="mint" type="button" @click="addGroupedStack">
             + Add Category
           </BrutalButton>
@@ -479,7 +479,7 @@ async function handleLogout() {
               <input v-model="stack.category" type="text" class="input-box" placeholder="Category" required />
             </div>
             <div class="field" style="flex: 1">
-              <label>Technologies (Comma separated)</label>
+              <label>Technologies</label>
               <input v-model="stack.items" type="text" class="input-box" placeholder="Item 1, Item 2" required />
             </div>
             <BrutalButton
@@ -585,26 +585,19 @@ async function handleLogout() {
           </BrutalButton>
         </div>
 
-        <div class="grid-2">
-          <div class="field">
-            <label>Title</label>
-            <input v-model="editingProject.title" type="text" class="input-box" required />
-          </div>
-
-          <div class="field">
-            <label>Slug (URL key)</label>
-            <input v-model="editingProject.slug" type="text" class="input-box" placeholder="auto-generated-if-blank" />
-          </div>
+        <div class="field">
+          <label>Title</label>
+          <input v-model="editingProject.title" type="text" class="input-box" required />
         </div>
 
         <div class="grid-2">
           <div class="field">
-            <label>Top-Left Pill (Category/Stack e.g. Web, IoT, Mobile)</label>
+            <label>Category Pill</label>
             <input v-model="editingProject.pill" type="text" class="input-box" required />
           </div>
 
           <div class="field">
-            <label>Top-Right Metric (Nullable e.g. 1,000+ registered users)</label>
+            <label>Highlight Metric</label>
             <input v-model="editingProject.top_metric" type="text" class="input-box" placeholder="Optional" />
           </div>
         </div>
@@ -615,12 +608,12 @@ async function handleLogout() {
         </div>
 
         <div class="field">
-          <label>Tags (Comma separated e.g. Open source, Education, Community)</label>
+          <label>Tags</label>
           <input v-model="projectTagsRaw" type="text" class="input-box" />
         </div>
 
         <div class="field">
-          <label>Cover Image (Upload or enter URL)</label>
+          <label>Cover Image</label>
           <div class="upload-row">
             <input v-model="editingProject.image_url" type="text" class="input-box" placeholder="https://..." style="flex: 1" />
             <label class="btn white upload-btn">
@@ -683,7 +676,7 @@ async function handleLogout() {
 
         <div class="grid-2">
           <div class="field">
-            <label>Order / Serial # (Ascending e.g. 1, 2, 3...)</label>
+            <label>Display Order</label>
             <input v-model.number="editingProject.order_index" type="number" class="input-box" placeholder="0" />
           </div>
 
@@ -753,16 +746,9 @@ async function handleLogout() {
           </BrutalButton>
         </div>
 
-        <div class="grid-2">
-          <div class="field">
-            <label>Title</label>
-            <input v-model="editingPost.title" type="text" class="input-box" required />
-          </div>
-
-          <div class="field">
-            <label>Slug (URL key)</label>
-            <input v-model="editingPost.slug" type="text" class="input-box" placeholder="auto-generated-if-blank" />
-          </div>
+        <div class="field">
+          <label>Title</label>
+          <input v-model="editingPost.title" type="text" class="input-box" required />
         </div>
 
         <div class="field">
@@ -772,12 +758,12 @@ async function handleLogout() {
 
         <div class="grid-2">
           <div class="field">
-            <label>Tags (Comma separated)</label>
+            <label>Tags</label>
             <input v-model="postTagsRaw" type="text" class="input-box" />
           </div>
 
           <div class="field">
-            <label>Cover Image (Upload or enter URL)</label>
+            <label>Cover Image</label>
             <div class="upload-row">
               <input v-model="editingPost.image_url" type="text" class="input-box" placeholder="https://..." style="flex: 1" />
               <label class="btn white upload-btn">
@@ -876,7 +862,7 @@ async function handleLogout() {
           </div>
 
           <div class="field">
-            <label>Platform (YouTube or Facebook)</label>
+            <label>Platform</label>
             <select v-model="editingShort.platform" class="input-box" required>
               <option value="youtube">YouTube (Short / Video)</option>
               <option value="facebook">Facebook (Reel / Video)</option>
@@ -885,12 +871,12 @@ async function handleLogout() {
         </div>
 
         <div class="field">
-          <label>Video URL (YouTube Watch/Shorts link or Facebook Video link)</label>
+          <label>Video URL</label>
           <input v-model="editingShort.video_url" type="url" class="input-box" required placeholder="https://www.youtube.com/shorts/... or https://www.facebook.com/..." />
         </div>
 
         <div class="field">
-          <label>Custom Thumbnail (Optional - auto-detects for YouTube if blank)</label>
+          <label>Custom Thumbnail</label>
           <div class="upload-row">
             <input v-model="editingShort.thumbnail_url" type="text" class="input-box" placeholder="https://..." style="flex: 1" />
             <label class="btn white upload-btn">
