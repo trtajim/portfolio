@@ -333,7 +333,7 @@ async function copyEmail() {
         <!-- SPOTLIGHT / FLAGSHIP PROJECT -->
         <div
           v-if="spotlightProject"
-          class="box !bg-[var(--green)] !text-[#0b0b0f] !border-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden"
+          class="box spotlight-card !bg-[var(--green)] !text-[#0b0b0f] !border-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden"
         >
           <div class="flex flex-col gap-4 min-w-0">
             <span class="font-mono font-bold text-[0.75rem] bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2.5 py-1 self-start">
@@ -355,7 +355,7 @@ async function copyEmail() {
                 :href="action.url"
                 target="_blank"
                 :variant="index === 0 ? 'white' : index === 1 ? 'yellow' : 'blue'"
-                class="max-sm:flex-1 max-sm:text-center"
+                class="max-sm:flex-1 max-sm:text-center !border-[#0b0b0f] !shadow-[4px_4px_0_#0b0b0f] hover:!shadow-[6px_6px_0_#0b0b0f] active:!shadow-none"
               >
                 {{ action.label }} ↗
               </BrutalButton>
@@ -528,3 +528,22 @@ async function copyEmail() {
     />
   </div>
 </template>
+
+<style scoped>
+.spotlight-card :deep(.btn),
+.spotlight-card .btn {
+  border-color: #0b0b0f !important;
+  box-shadow: 4px 4px 0 #0b0b0f !important;
+}
+
+.spotlight-card :deep(.btn:hover),
+.spotlight-card .btn:hover {
+  border-color: #0b0b0f !important;
+  box-shadow: 6px 6px 0 #0b0b0f !important;
+}
+
+.spotlight-card :deep(.btn:active),
+.spotlight-card .btn:active {
+  box-shadow: 0 0 0 #0b0b0f !important;
+}
+</style>
