@@ -34,7 +34,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
       return
     }
 
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured.value) {
       isLoaded.value = true
       lastFetched.value = now
       return
@@ -93,7 +93,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   async function updateProfile(updated: Partial<Profile>) {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured.value) {
       profile.value = { ...profile.value, ...updated }
       return
     }
@@ -114,7 +114,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   async function saveProject(project: Partial<Project>) {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured.value) {
       if (project.id) {
         const idx = projects.value.findIndex((p) => p.id === project.id)
         if (idx !== -1) projects.value[idx] = { ...projects.value[idx], ...project } as Project
@@ -140,7 +140,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   async function deleteProject(id: string) {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured.value) {
       projects.value = projects.value.filter((p) => p.id !== id)
       return
     }
@@ -151,7 +151,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   async function savePost(post: Partial<Post>) {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured.value) {
       if (post.id) {
         const idx = posts.value.findIndex((p) => p.id === post.id)
         if (idx !== -1) posts.value[idx] = { ...posts.value[idx], ...post } as Post
@@ -177,7 +177,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   async function deletePost(id: string) {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured.value) {
       posts.value = posts.value.filter((p) => p.id !== id)
       return
     }
@@ -195,7 +195,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     }
     projects.value.sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
 
-    if (!isSupabaseConfigured) return
+    if (!isSupabaseConfigured.value) return
 
     const updates = orderedItems.map((item) =>
       supabase.from('projects').update({ order_index: item.order_index }).eq('id', item.id)
@@ -214,7 +214,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     }
     posts.value.sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
 
-    if (!isSupabaseConfigured) return
+    if (!isSupabaseConfigured.value) return
 
     const updates = orderedItems.map((item) =>
       supabase.from('posts').update({ order_index: item.order_index }).eq('id', item.id)
@@ -226,7 +226,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   async function saveShort(short: Partial<Short>) {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured.value) {
       if (short.id) {
         const idx = shorts.value.findIndex((s) => s.id === short.id)
         if (idx !== -1) shorts.value[idx] = { ...shorts.value[idx], ...short } as Short
@@ -252,7 +252,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   async function deleteShort(id: string) {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured.value) {
       shorts.value = shorts.value.filter((s) => s.id !== id)
       return
     }
@@ -263,7 +263,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   function subscribeRealtime() {
-    if (!isSupabaseConfigured) return
+    if (!isSupabaseConfigured.value) return
 
     const channel = supabase
       .channel('portfolio_changes')

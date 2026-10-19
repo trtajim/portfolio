@@ -6,13 +6,11 @@ import PostCard from '@/components/writing/PostCard.vue'
 import BrutalButton from '@/components/brutal/BrutalButton.vue'
 import ShortCard from '@/components/motion/ShortCard.vue'
 import ShortPlayerModal from '@/components/motion/ShortPlayerModal.vue'
-import type { Short, GroupedStack, Project } from '@/types'
+import type { Short } from '@/types'
 
 const portfolioStore = usePortfolioStore()
 
 const profile = computed(() => portfolioStore.profile)
-
-
 
 const featuredProjects = computed(() => {
   return portfolioStore.projects.filter((p) => p.is_featured && p.is_published)
@@ -102,7 +100,7 @@ function parseItems(items: string): string[] {
   return items.split(',').map((s) => s.trim()).filter(Boolean)
 }
 
-const accentColors = ['mint', 'yellow', 'pink', 'blue', 'orange'] as const
+const accentColors = ['green', 'yellow', 'pink', 'blue', 'orange'] as const
 function getAccentColor(idx: number) {
   return accentColors[idx % accentColors.length]
 }
@@ -165,98 +163,132 @@ async function copyEmail() {
 
 <template>
   <div class="c">
-    <div class="hero">
-      <div class="name box">
-        <span class="hi">hello, I’m</span>
-        <h1>{{ profile.name || 'TR Tajim' }}</h1>
-        <p v-if="portfolioStore.isLoaded && profile.headline">{{ profile.headline }}</p>
-        <div v-else class="hero-skeleton-wrap" aria-hidden="true">
-          <div class="hero-shimmer-line line-1"></div>
-          <div class="hero-shimmer-line line-2"></div>
+    <!-- HERO SECTION -->
+    <div class="grid grid-cols-[1.4fr_1fr] max-md:grid-cols-1 gap-6 pt-10 max-sm:pt-6 pb-6 items-stretch">
+      <div class="box bg-[var(--yellow)] text-[#0b0b0f] p-[30px_30px_28px] max-md:p-[24px_20px] max-sm:p-[20px_18px] relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <span class="inline-block font-mono font-bold text-[0.8rem] bg-[#0b0b0f] text-white rounded-[6px] px-2.5 py-[3px] mb-4">
+            hello, I’m
+          </span>
+          <h1 class="m-0 font-extrabold tracking-[-0.05em] leading-[0.88] text-[clamp(3.4rem,10.5vw,7rem)] max-sm:text-[clamp(3rem,15vw,4.2rem)] [text-shadow:5px_5px_0_#fff] max-sm:[text-shadow:3px_3px_0_#fff]">
+            {{ profile.name || 'TR Tajim' }}
+          </h1>
+          <p v-if="portfolioStore.isLoaded && profile.headline" class="mt-5 max-sm:mt-3.5 text-[1.2rem] max-sm:text-[1.05rem] font-semibold max-w-[32ch]">
+            {{ profile.headline }}
+          </p>
+          <div v-else class="mt-4 flex flex-col gap-2 max-w-[32ch]" aria-hidden="true">
+            <div class="skeleton-line h-5 w-[92%]"></div>
+            <div class="skeleton-line h-5 w-[65%]"></div>
+          </div>
         </div>
+        <div class="absolute -right-[34px] -bottom-[34px] w-[120px] h-[120px] max-sm:w-[84px] max-sm:h-[84px] max-sm:-right-[26px] max-sm:-bottom-[26px] border-[3px] border-[#0b0b0f] rounded-full bg-[var(--pink)] pointer-events-none" aria-hidden="true"></div>
       </div>
 
-      <div class="side">
-        <div class="photo-card box" role="img" :aria-label="profile.name || 'TR Tajim'">
-          <div class="photo-frame">
+      <div class="flex items-stretch w-full h-full min-h-0">
+        <div class="box w-full h-full min-h-[280px] max-xs:min-h-[240px] relative flex flex-col p-2 overflow-hidden" role="img" :aria-label="profile.name || 'TR Tajim'">
+          <div class="w-full h-full flex-1 relative bg-[var(--blue)] text-white grid place-items-center overflow-hidden border-2 border-[var(--bd)] rounded-[calc(var(--r)-4px)]">
             <img
               v-if="profile.avatar_url"
               :src="profile.avatar_url"
               :alt="profile.name || 'TR Tajim'"
-              class="avatar-img"
+              class="absolute inset-0 w-full h-full object-cover object-[center_65%] block"
             />
-            <span v-else class="avatar-fallback">{{ (profile.name || 'TR Tajim').slice(0, 2).toUpperCase() }}</span>
+            <span v-else class="font-extrabold text-[3.2rem] tracking-[-0.04em] select-none">
+              {{ (profile.name || 'TR Tajim').slice(0, 2).toUpperCase() }}
+            </span>
           </div>
 
-          <div class="photo-location-badge">
-            <span class="pin-badge" aria-hidden="true">📍</span>
-            <span class="loc-label">Rangpur, Bangladesh</span>
+          <div class="absolute bottom-3.5 right-3.5 bg-[var(--pink)] text-[#0b0b0f] border-2 border-[var(--bd)] rounded-[6px] shadow-[3px_3px_0_var(--sh)] px-2.5 py-1 inline-flex items-center gap-1.5 -rotate-2 hover:rotate-0 hover:scale-[1.03] transition-transform z-10 select-none">
+            <span aria-hidden="true">📍</span>
+            <span class="font-mono font-bold text-[0.82rem] whitespace-nowrap">Rangpur, Bangladesh</span>
           </div>
         </div>
       </div>
     </div>
 
-    <ul v-if="!portfolioStore.isLoaded" class="links skeleton-links" aria-hidden="true">
-      <li v-for="n in 4" :key="n">
-        <div class="skeleton-pill" style="width: 88px; height: 38px;"></div>
+    <!-- SOCIAL LINKS -->
+    <ul v-if="!portfolioStore.isLoaded" class="flex flex-wrap gap-3.5 mt-1.5 max-sm:gap-2 mb-0 p-0 list-none" aria-hidden="true">
+      <li v-for="n in 4" :key="n" class="max-sm:flex-1">
+        <div class="skeleton-pill w-[90px] h-[44px]"></div>
       </li>
     </ul>
-    <ul v-else-if="profile.social_links && profile.social_links.length" class="links">
-      <li v-for="(link, idx) in profile.social_links" :key="link.label">
+    <ul v-else-if="profile.social_links && profile.social_links.length" class="flex flex-wrap gap-3.5 mt-1.5 max-sm:gap-2 mb-0 p-0 list-none">
+      <li v-for="(link, idx) in profile.social_links" :key="link.label" class="max-sm:flex-1">
         <BrutalButton
           as="a"
           :href="link.url"
           target="_blank"
           :variant="getSocialVariant(idx)"
+          class="max-sm:w-full"
         >
           {{ link.label }}
         </BrutalButton>
       </li>
     </ul>
 
-    <section id="about">
-      <h2 class="h">Who I am</h2>
-      <div class="card box about-card">
-        <div v-if="!portfolioStore.isLoaded" class="skeleton-whoami">
-          <div class="skeleton-line" style="width: 95%; margin-bottom: 12px;"></div>
-          <div class="skeleton-line" style="width: 88%; margin-bottom: 12px;"></div>
-          <div class="skeleton-line" style="width: 70%; margin-bottom: 20px;"></div>
-          <div class="skeleton-line" style="width: 92%; margin-bottom: 12px;"></div>
-          <div class="skeleton-line" style="width: 65%;"></div>
+    <!-- WHO I AM -->
+    <section id="about" class="pt-14 max-sm:pt-9 pb-1.5">
+      <div class="sh">
+        <span class="n">01</span>
+        <h2>Who I am</h2>
+      </div>
+
+      <div class="box p-[26px_28px] max-sm:p-[18px]">
+        <div v-if="!portfolioStore.isLoaded" class="space-y-3">
+          <div class="skeleton-line w-[95%]"></div>
+          <div class="skeleton-line w-[88%]"></div>
+          <div class="skeleton-line w-[70%]"></div>
         </div>
         <template v-else>
-          <p v-for="(p, i) in profile.whoami" :key="i">
+          <p
+            v-for="(p, i) in profile.whoami"
+            :key="i"
+            :class="['m-0 text-[1.15rem] max-sm:text-[1.02rem] leading-[1.7]', { 'mb-3.5': i < profile.whoami.length - 1 }]"
+          >
             {{ p }}
           </p>
         </template>
       </div>
     </section>
 
-    <section id="stack">
-      <h2 class="h">Tech stack</h2>
-      <div v-if="!portfolioStore.isLoaded" class="stack-grid">
-        <div v-for="n in 6" :key="n" class="card box skeleton-stack-card">
-          <div class="skeleton-line" style="width: 80px; height: 18px; margin-bottom: 12px;"></div>
-          <div class="skeleton-badges">
-            <div class="skeleton-pill" style="width: 50px; height: 24px;"></div>
-            <div class="skeleton-pill" style="width: 70px; height: 24px;"></div>
-            <div class="skeleton-pill" style="width: 60px; height: 24px;"></div>
-            <div class="skeleton-pill" style="width: 75px; height: 24px;"></div>
+    <!-- TECH STACK -->
+    <section id="stack" class="pt-14 max-sm:pt-9 pb-1.5">
+      <div class="sh">
+        <span class="n">02</span>
+        <h2>Tech stack</h2>
+      </div>
+
+      <div v-if="!portfolioStore.isLoaded" class="grid grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1 gap-5">
+        <div v-for="n in 6" :key="n" class="box p-5 flex flex-col gap-3">
+          <div class="skeleton-line w-20 h-5"></div>
+          <div class="flex flex-wrap gap-2">
+            <div class="skeleton-pill w-14 h-6"></div>
+            <div class="skeleton-pill w-16 h-6"></div>
+            <div class="skeleton-pill w-20 h-6"></div>
           </div>
         </div>
       </div>
-      <div v-else class="stack-grid">
+      <div v-else class="grid grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1 gap-5">
         <div
           v-for="(group, gIdx) in profile.grouped_stacks"
           :key="group.category"
-          class="card box stack-cat-card"
+          class="box p-[20px_22px] flex flex-col gap-3.5"
         >
-          <span class="stack-cat-title">{{ group.category }}</span>
-          <ul class="stack-accent-badges" :aria-label="group.category + ' technologies'">
+          <span class="font-mono font-bold text-[0.82rem] tracking-[-0.01em] bg-[var(--ink)] text-[var(--paper)] rounded-[6px] px-2.5 py-[3px] self-start">
+            {{ group.category }}
+          </span>
+          <ul class="flex flex-wrap gap-2 m-0 p-0 list-none" :aria-label="group.category + ' technologies'">
             <li
               v-for="(item, iIdx) in parseItems(group.items)"
               :key="item"
-              :class="['stack-accent-badge', getAccentColor(gIdx + iIdx)]"
+              :class="[
+                'font-mono font-bold text-[0.82rem] text-[#0b0b0f] border-2 border-[var(--bd)] rounded-[6px] shadow-[2px_2px_0_var(--sh)] px-2.5 py-[3px]',
+                getAccentColor(gIdx + iIdx) === 'green' && 'bg-[var(--green)]',
+                getAccentColor(gIdx + iIdx) === 'yellow' && 'bg-[var(--yellow)]',
+                getAccentColor(gIdx + iIdx) === 'pink' && 'bg-[var(--pink)]',
+                getAccentColor(gIdx + iIdx) === 'blue' && 'bg-[var(--blue)] text-white',
+                getAccentColor(gIdx + iIdx) === 'orange' && 'bg-[var(--orange)]'
+              ]"
             >
               {{ item }}
             </li>
@@ -265,36 +297,44 @@ async function copyEmail() {
       </div>
     </section>
 
-    <section id="projects">
-      <h2 class="h">What I built</h2>
+    <!-- WHAT I BUILT -->
+    <section id="projects" class="pt-14 max-sm:pt-9 pb-1.5">
+      <div class="sh">
+        <span class="n">03</span>
+        <h2>What I built</h2>
+      </div>
 
-      <div v-if="!portfolioStore.isLoaded && portfolioStore.loading" class="proj">
-        <div v-for="n in 3" :key="n" :class="['card', 'box', 'skeleton-card', { 'span-wide': n === 3 }]">
-          <div class="skeleton-pill" style="margin-bottom: 16px; width: 80px;"></div>
-          <div class="skeleton-line" style="width: 60%; height: 26px; margin-bottom: 14px;"></div>
-          <div class="skeleton-line" style="width: 90%; margin-bottom: 8px;"></div>
-          <div class="skeleton-line" style="width: 75%; margin-bottom: 20px;"></div>
+      <div v-if="!portfolioStore.isLoaded && portfolioStore.loading" class="grid grid-cols-2 max-md:grid-cols-1 gap-7">
+        <div v-for="n in 3" :key="n" class="box p-6 space-y-3">
+          <div class="skeleton-pill w-20 mb-4"></div>
+          <div class="skeleton-line w-[60%] h-6"></div>
+          <div class="skeleton-line w-[90%]"></div>
         </div>
       </div>
 
-      <div v-else-if="featuredProjects.length === 0" class="card box empty-box">
+      <div v-else-if="featuredProjects.length === 0" class="box p-7 text-center font-mono font-bold">
         No projects found.
       </div>
 
-      <div v-else class="showcase-wrap">
-        <!-- SPOTLIGHT SHOWCASE (FLAGSHIP PROJECT) -->
-        <div v-if="spotlightProject" class="spotlight-card spotlight-split box">
-          <div class="spotlight-left">
-            <div class="spotlight-pill-row">
-              <span class="spotlight-kicker">★ FEATURED {{ spotlightProject.pill ? spotlightProject.pill.toUpperCase() : '' }}</span>
-            </div>
-            <h3 class="spotlight-title">
-              <router-link :to="`/projects/${spotlightProject.slug}`" class="title-link">
+      <div v-else class="flex flex-col gap-7">
+        <!-- SPOTLIGHT / FLAGSHIP PROJECT -->
+        <div
+          v-if="spotlightProject"
+          class="box bg-[var(--green)] text-[#0b0b0f] p-[30px] max-md:p-[22px_18px] max-sm:p-[18px_14px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-7 max-sm:gap-4.5 items-center rounded-[var(--r)]"
+        >
+          <div class="flex flex-col gap-3.5">
+            <span class="font-mono font-bold text-[0.75rem] bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2 py-0.5 self-start">
+              ★ FEATURED {{ spotlightProject.pill ? spotlightProject.pill.toUpperCase() : 'PROJECT' }}
+            </span>
+            <h3 class="m-0 text-[clamp(1.85rem,4.5vw,2.5rem)] leading-[1.1] tracking-[-0.03em] font-extrabold">
+              <router-link :to="`/projects/${spotlightProject.slug}`" class="no-underline text-inherit hover:underline">
                 {{ spotlightProject.title }}
               </router-link>
             </h3>
-            <p class="spotlight-summary">{{ splitSummary(spotlightProject.summary).main }}</p>
-            <div v-if="spotlightProject.actions?.length" class="acts">
+            <p class="m-0 text-[1.05rem] leading-[1.55]">
+              {{ splitSummary(spotlightProject.summary).main }}
+            </p>
+            <div v-if="spotlightProject.actions?.length" class="flex flex-wrap gap-2.5 mt-2">
               <BrutalButton
                 v-for="(action, index) in spotlightProject.actions"
                 :key="action.label"
@@ -302,36 +342,44 @@ async function copyEmail() {
                 :href="action.url"
                 target="_blank"
                 :variant="getSocialVariant(index)"
+                class="max-sm:flex-1 max-sm:text-center"
               >
                 {{ action.label }} ↗
               </BrutalButton>
             </div>
           </div>
-          <div class="spotlight-right">
-            <div class="browser-frame box">
-              <div class="browser-top">
-                <div class="browser-dots">
-                  <span class="browser-dot red"></span>
-                  <span class="browser-dot yellow"></span>
-                  <span class="browser-dot green"></span>
+
+          <div class="w-full">
+            <div class="bg-white text-[#0b0b0f] border-[3px] border-[var(--bd)] rounded-[8px] shadow-[4px_4px_0_var(--sh)] overflow-hidden">
+              <div class="flex items-center gap-2 bg-[#f0eee6] border-b-2 border-[var(--bd)] p-[8px_12px]">
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <span class="w-[9px] h-[9px] rounded-full border-[1.5px] border-[#0b0b0f] bg-[#ff5f56] inline-block"></span>
+                  <span class="w-[9px] h-[9px] rounded-full border-[1.5px] border-[#0b0b0f] bg-[#ffd400] inline-block"></span>
+                  <span class="w-[9px] h-[9px] rounded-full border-[1.5px] border-[#0b0b0f] bg-[#22d18b] inline-block"></span>
                 </div>
-                <span class="browser-address">
+                <span class="font-mono font-bold text-[0.72rem] text-[#333] bg-white border-[1.5px] border-[#0b0b0f] rounded-[4px] px-2 py-0.5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
                   {{ spotlightProject.actions?.[0]?.url || `https://${spotlightProject.slug}` }}
                 </span>
               </div>
-              <div class="browser-body">
-                <div v-if="spotlightProject.top_metric" class="browser-stat-highlight">
-                  <span class="stat-number">{{ parseMetric(spotlightProject.top_metric).value }}</span>
-                  <span v-if="parseMetric(spotlightProject.top_metric).label" class="stat-sub">
+              <div class="p-[18px_20px] max-sm:p-3.5 flex flex-col gap-3">
+                <div v-if="spotlightProject.top_metric" class="flex flex-col border-b-2 border-dashed border-[#ddd] pb-2.5">
+                  <span class="text-[clamp(2rem,5vw,2.5rem)] font-extrabold leading-none tracking-[-0.03em]">
+                    {{ parseMetric(spotlightProject.top_metric).value }}
+                  </span>
+                  <span v-if="parseMetric(spotlightProject.top_metric).label" class="font-mono font-bold text-[0.8rem] text-[#555] mt-1">
                     {{ parseMetric(spotlightProject.top_metric).label }}
                   </span>
                 </div>
-                <div v-if="spotlightProject.tags?.length" class="browser-tech-badges">
-                  <span v-for="tag in spotlightProject.tags" :key="tag" class="b-badge">
+                <div v-if="spotlightProject.tags?.length" class="flex flex-wrap gap-1.5">
+                  <span
+                    v-for="tag in spotlightProject.tags"
+                    :key="tag"
+                    class="chip"
+                  >
                     {{ tag }}
                   </span>
                 </div>
-                <p v-if="splitSummary(spotlightProject.summary).note" class="browser-note">
+                <p v-if="splitSummary(spotlightProject.summary).note" class="m-0 text-[0.88rem] leading-[1.45] text-[#333]">
                   {{ splitSummary(spotlightProject.summary).note }}
                 </p>
               </div>
@@ -340,10 +388,12 @@ async function copyEmail() {
         </div>
 
         <!-- OTHER FEATURED PROJECTS -->
-        <div v-if="otherProjects.length > 0" class="other-heading-row">
-          <span class="other-section-tag">More Featured Work</span>
+        <div v-if="otherProjects.length > 0" class="mt-2.5 -mb-2.5">
+          <span class="font-mono font-bold text-[0.82rem] bg-[var(--ink)] text-[var(--bg)] rounded-[6px] px-3 py-[3px] inline-block">
+            More Featured Work
+          </span>
         </div>
-        <div v-if="otherProjects.length > 0" class="proj">
+        <div v-if="otherProjects.length > 0" class="grid grid-cols-2 max-md:grid-cols-1 gap-7 max-sm:gap-5.5">
           <ProjectCard
             v-for="(proj, idx) in otherProjects"
             :key="proj.slug"
@@ -353,85 +403,106 @@ async function copyEmail() {
         </div>
       </div>
 
-      <div class="more">
-        <BrutalButton as="router-link" to="/projects" variant="yellow" style="font-size: 1.05rem; padding: 10px 22px;">
+      <div class="mt-7 flex justify-center">
+        <BrutalButton as="router-link" to="/projects" variant="yellow" class="text-[1.02rem] px-6 py-2.5 max-sm:w-full">
           View all projects →
         </BrutalButton>
       </div>
     </section>
 
-    <section id="writing">
-      <h2 class="h">What I write</h2>
-      <div v-if="!portfolioStore.isLoaded" class="posts">
-        <div v-for="n in 3" :key="n" class="card box skeleton-post-row">
-          <div class="skeleton-line" style="width: 80px; height: 16px;"></div>
-          <div style="flex: 1;">
-            <div class="skeleton-line" style="width: 65%; height: 20px; margin-bottom: 8px;"></div>
-            <div class="skeleton-line" style="width: 40%; height: 14px;"></div>
+    <!-- WHAT I WRITE -->
+    <section id="writing" class="pt-14 max-sm:pt-9 pb-1.5">
+      <div class="sh">
+        <span class="n">04</span>
+        <h2>What I write</h2>
+      </div>
+
+      <div v-if="!portfolioStore.isLoaded" class="grid gap-4.5">
+        <div v-for="n in 3" :key="n" class="box p-4 flex items-center gap-5">
+          <div class="skeleton-line w-20 h-4"></div>
+          <div class="flex-1 space-y-2">
+            <div class="skeleton-line w-[65%] h-5"></div>
+            <div class="skeleton-line w-[40%] h-3.5"></div>
           </div>
-          <div class="skeleton-line" style="width: 24px; height: 18px;"></div>
+          <div class="skeleton-line w-6 h-5"></div>
         </div>
       </div>
-      <div v-else-if="featuredPosts.length === 0" class="card box empty-box">
+      <div v-else-if="featuredPosts.length === 0" class="box p-7 text-center font-mono font-bold">
         No articles published yet.
       </div>
-      <ul v-else class="posts">
+      <ul v-else class="grid gap-4.5 max-sm:gap-3.5 m-0 p-0 list-none">
         <li v-for="post in featuredPosts" :key="post.slug">
           <PostCard :post="post" />
         </li>
       </ul>
-      <div v-if="featuredPosts.length > 0" class="more">
-        <BrutalButton as="router-link" to="/writing" variant="yellow" style="font-size: 1.05rem; padding: 10px 22px;">
+
+      <div v-if="featuredPosts.length > 0" class="mt-7 flex justify-center">
+        <BrutalButton as="router-link" to="/writing" variant="yellow" class="text-[1.02rem] px-6 py-2.5 max-sm:w-full">
           View all writing →
         </BrutalButton>
       </div>
     </section>
 
-    <!-- MOTION & SHORTS SHOWCASE -->
-    <section v-if="activeShorts.length > 0" id="motion">
-      <h2 class="h">Motion & Shorts</h2>
-      <p class="section-sub">Motion videos and teasers I design to showcase and promote products.</p>
-      <div class="shorts-track">
-        <ShortCard
+    <!-- MOTION & SHORTS -->
+    <section v-if="activeShorts.length > 0" id="motion" class="pt-14 max-sm:pt-9 pb-1.5">
+      <div class="sh">
+        <span class="n">05</span>
+        <h2>Motion & Shorts</h2>
+      </div>
+      <p class="-mt-3 mb-5 text-[1.05rem] opacity-85">
+        Motion videos and teasers I design to showcase and promote products.
+      </p>
+      <div class="flex gap-5 overflow-x-auto py-2.5 px-1 pb-5 snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
+        <div
           v-for="(short, idx) in activeShorts"
           :key="short.id || short.title"
-          :short="short"
-          :index="idx"
-          @play="playShort"
-        />
+          class="snap-start"
+        >
+          <ShortCard
+            :short="short"
+            :index="idx"
+            @play="playShort"
+          />
+        </div>
       </div>
     </section>
 
-    <!-- CONNECT / GET IN TOUCH CTA -->
-    <section id="contact" class="contact-section">
-      <div class="card box contact-card">
-        <div class="contact-content">
-          <span class="contact-badge">LET’S CONNECT</span>
-          <h2 class="contact-title">Have an idea or want to talk tech?</h2>
-          <p class="contact-sub">
-            Always down to chat about programming, new ideas, or interesting projects. Feel free to say hi anytime!
-          </p>
-        </div>
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="pt-14 max-sm:pt-9 pb-1.5">
+      <div class="box p-[32px_30px] max-sm:p-[24px_18px] flex flex-col gap-4.5">
+        <span class="font-mono font-bold text-[0.8rem] bg-[var(--ink)] text-[var(--yellow)] rounded-[6px] inline-block px-2.5 py-[3px] self-start">
+          LET’S CONNECT
+        </span>
+        <h2 class="m-0 text-[clamp(1.5rem,4vw,2rem)] font-extrabold leading-[1.2] tracking-[-0.02em]">
+          Have an idea or want to talk tech?
+        </h2>
+        <p class="m-0 text-[1.05rem] leading-[1.55] opacity-85 max-w-[58ch]">
+          Always down to chat about programming, new ideas, or interesting projects. Feel free to say hi anytime!
+        </p>
 
-        <div class="contact-actions">
+        <div class="flex flex-wrap items-center max-sm:flex-col max-sm:items-stretch gap-3.5 mt-1.5">
           <BrutalButton
             as="a"
             :href="`mailto:${contactEmail}`"
             variant="yellow"
-            style="font-size: 1.05rem; padding: 12px 24px;"
+            class="text-[1.02rem] px-6 py-3 max-sm:w-full text-center"
           >
             Say Hello ✉️
           </BrutalButton>
 
           <button
             type="button"
-            class="copy-email-btn"
-            :class="{ copied: isCopied }"
             @click="copyEmail"
             :aria-label="isCopied ? 'Email address copied' : 'Copy email address'"
+            class="inline-flex items-center gap-3 bg-[var(--paper)] text-[var(--ink)] border-[3px] border-[var(--bd)] rounded-[var(--r)] shadow-[4px_4px_0_var(--sh)] px-4 py-2 font-mono font-bold text-[0.95rem] cursor-pointer transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_var(--sh)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none max-sm:w-full max-sm:justify-between"
           >
-            <span class="copy-email-text">{{ contactEmail }}</span>
-            <span class="copy-pill">
+            <span class="truncate">{{ contactEmail }}</span>
+            <span
+              :class="[
+                'font-mono font-bold text-[0.78rem] border-2 border-[var(--bd)] rounded-[6px] px-2 py-0.5 min-w-[65px] text-center transition-colors',
+                isCopied ? 'bg-[var(--yellow)] text-[#0b0b0f]' : 'bg-[var(--green)] text-[#0b0b0f]'
+              ]"
+            >
               {{ isCopied ? 'Copied! ✓' : 'Copy' }}
             </span>
           </button>
@@ -446,757 +517,3 @@ async function copyEmail() {
     />
   </div>
 </template>
-
-<style scoped>
-.hero {
-  padding: 40px 0 28px;
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 24px;
-  align-items: stretch;
-}
-
-.name {
-  background: var(--yellow);
-  color: #111;
-  padding: 28px 28px 26px;
-  position: relative;
-  box-sizing: border-box;
-}
-
-.name .hi {
-  font: 700 0.85rem var(--mono);
-  background: #111;
-  color: #fff;
-  display: inline-block;
-  padding: 2px 10px;
-  margin-bottom: 14px;
-}
-
-h1 {
-  margin: 0;
-  font-size: clamp(3.4rem, 10vw, 6rem);
-  line-height: 0.9;
-  letter-spacing: -0.04em;
-  font-weight: 700;
-}
-
-.name p {
-  margin: 16px 0 0;
-  font-size: 1.15rem;
-  max-width: 34ch;
-  font-weight: 500;
-}
-
-.side {
-  display: flex;
-  align-items: stretch;
-  width: 100%;
-  height: 100%;
-  position: relative;
-  min-height: 0;
-}
-
-.photo-card {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  background: var(--paper);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: 8px;
-  border: 3px solid var(--bd);
-  box-shadow: 6px 6px 0 var(--sh);
-  min-height: 0;
-  overflow: hidden;
-}
-
-.photo-frame {
-  width: 100%;
-  height: 100%;
-  flex: 1;
-  position: relative;
-  background: var(--blue);
-  color: #111;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border: 2px solid var(--bd);
-}
-
-.avatar-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 65%;
-  display: block;
-}
-
-.avatar-fallback {
-  font-size: 3rem;
-  font-weight: 700;
-  font-family: var(--mono);
-}
-
-.photo-location-badge {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
-  background: var(--pink);
-  color: #111;
-  border: 2px solid var(--bd);
-  box-shadow: 3px 3px 0 var(--sh);
-  padding: 4px 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  z-index: 2;
-  transform: rotate(-2deg);
-  transition: transform 0.15s ease;
-}
-
-.photo-location-badge:hover {
-  transform: rotate(0deg) scale(1.03);
-}
-
-.pin-badge {
-  font-size: 1rem;
-  line-height: 1;
-  user-select: none;
-}
-
-.loc-label {
-  font: 700 0.85rem var(--mono);
-  white-space: nowrap;
-}
-
-.links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 0 0 20px;
-  padding: 0;
-  list-style: none;
-}
-
-section {
-  padding: 30px 0;
-}
-
-.about-card {
-  font-size: 1.15rem;
-  line-height: 1.7;
-}
-
-.about-card p {
-  margin: 0 0 14px;
-}
-
-.about-card p:last-child {
-  margin-bottom: 0;
-}
-
-.stack-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.stack-cat-card {
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.stack-cat-title {
-  font: 700 0.85rem var(--mono);
-  background: var(--ink);
-  color: var(--paper);
-  display: inline-block;
-  align-self: flex-start;
-  padding: 3px 8px;
-  letter-spacing: -0.01em;
-}
-
-/* Option D: Colorful accent badges */
-.stack-accent-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.stack-accent-badge {
-  font: 700 0.82rem var(--mono);
-  color: #111;
-  border: 2px solid var(--bd);
-  box-shadow: 2px 2px 0 var(--sh);
-  padding: 2px 8px;
-}
-
-.stack-accent-badge.mint { background: var(--mint); }
-.stack-accent-badge.yellow { background: var(--yellow); }
-.stack-accent-badge.pink { background: var(--pink); }
-.stack-accent-badge.blue { background: var(--blue); }
-.stack-accent-badge.orange { background: var(--orange); }
-
-.skeleton-stack-card {
-  padding: 18px 20px;
-}
-
-.skeleton-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.hero-skeleton-wrap {
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-width: 34ch;
-}
-
-.hero-shimmer-line {
-  height: 20px;
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    rgba(17, 17, 17, 0.08) 0%,
-    rgba(17, 17, 17, 0.24) 50%,
-    rgba(17, 17, 17, 0.08) 100%
-  );
-  background-size: 200% 100%;
-  animation: hero-shimmer-sweep 1.4s ease-in-out infinite;
-}
-
-.hero-shimmer-line.line-1 {
-  width: 92%;
-}
-
-.hero-shimmer-line.line-2 {
-  width: 60%;
-}
-
-@keyframes hero-shimmer-sweep {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-.hero-name-shimmer {
-  height: clamp(3.2rem, 9vw, 5.5rem);
-  width: 75%;
-  border-radius: 4px;
-  background: linear-gradient(
-    90deg,
-    rgba(17, 17, 17, 0.1) 0%,
-    rgba(17, 17, 17, 0.28) 50%,
-    rgba(17, 17, 17, 0.1) 100%
-  );
-  background-size: 200% 100%;
-  animation: hero-shimmer-sweep 1.4s ease-in-out infinite;
-  margin: 6px 0 10px;
-}
-
-.avatar-shimmer {
-  width: 100%;
-  height: 100%;
-  min-height: 220px;
-  background: linear-gradient(
-    90deg,
-    rgba(17, 17, 17, 0.05) 0%,
-    rgba(17, 17, 17, 0.16) 50%,
-    rgba(17, 17, 17, 0.05) 100%
-  );
-  background-size: 200% 100%;
-  animation: hero-shimmer-sweep 1.4s ease-in-out infinite;
-}
-
-.skeleton-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 16px 0 32px;
-  padding: 0;
-  list-style: none;
-}
-
-.skeleton-card {
-  background: var(--paper);
-  padding: 24px;
-}
-
-.skeleton-post-row {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 18px 20px;
-}
-
-.loading-box,
-.empty-box {
-  padding: 30px 20px;
-  text-align: center;
-  font: 700 0.95rem var(--mono);
-}
-
-
-.loading-tag {
-  background: var(--yellow);
-  color: #111;
-  padding: 4px 12px;
-  border: 2px solid var(--bd);
-  box-shadow: 2px 2px 0 var(--sh);
-  display: inline-block;
-  animation: pulse 1.2s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.75; transform: scale(0.98); }
-}
-
-.showcase-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
-/* Base Spotlight Card */
-.spotlight-card {
-  position: relative;
-  color: #111;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  box-sizing: border-box;
-}
-
-.spotlight-pill-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.spotlight-kicker {
-  font: 700 0.75rem var(--mono);
-  background: var(--yellow);
-  color: #111;
-  border: 2px solid var(--bd);
-  box-shadow: 2px 2px 0 var(--sh);
-  padding: 2px 8px;
-  letter-spacing: -0.01em;
-}
-
-.spotlight-title {
-  margin: 0;
-  font-size: clamp(1.75rem, 5vw, 2.4rem);
-  line-height: 1.12;
-  letter-spacing: -0.03em;
-  font-weight: 700;
-  word-break: break-word;
-}
-
-.spotlight-summary {
-  margin: 0;
-  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
-  line-height: 1.55;
-  color: #111;
-}
-
-/* ========================================= */
-/* DESIGN 1: SPLIT HERO SHOWCASE STYLES      */
-/* ========================================= */
-.spotlight-split {
-  background: var(--mint);
-  padding: 30px;
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 28px;
-  align-items: center;
-  border: 3px solid var(--bd);
-  box-shadow: 6px 6px 0 var(--sh);
-}
-
-.spotlight-left {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.spotlight-left .acts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 18px;
-}
-
-.browser-frame {
-  background: #ffffff;
-  color: #111;
-  border: 3px solid var(--bd);
-  box-shadow: 4px 4px 0 var(--sh);
-  overflow: hidden;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.browser-top {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f1f1f1;
-  border-bottom: 2px solid var(--bd);
-  padding: 8px 12px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.browser-dots {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.browser-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  border: 1.5px solid #111;
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.browser-dot.red { background: #ff5f56; }
-.browser-dot.yellow { background: #ffbd2e; }
-.browser-dot.green { background: #27c93f; }
-
-.browser-address {
-  font: 700 0.72rem var(--mono);
-  color: #333;
-  background: #fff;
-  border: 1.5px solid #111;
-  padding: 2px 8px;
-  border-radius: 2px;
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.browser-body {
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  box-sizing: border-box;
-}
-
-.browser-stat-highlight {
-  display: flex;
-  flex-direction: column;
-  border-bottom: 2px dashed #ddd;
-  padding-bottom: 10px;
-}
-
-.stat-number {
-  font-size: clamp(2rem, 5vw, 2.5rem);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: #111;
-}
-
-.stat-sub {
-  font: 700 0.82rem var(--mono);
-  color: #444;
-  margin-top: 4px;
-}
-
-.browser-tech-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.b-badge {
-  font: 700 0.72rem var(--mono);
-  background: var(--yellow);
-  color: #111;
-  border: 1.5px solid #111;
-  padding: 2px 7px;
-  box-shadow: 1px 1px 0 #111;
-}
-
-.browser-note {
-  margin: 0;
-  font-size: 0.88rem;
-  line-height: 1.45;
-  color: #222;
-}
-
-.other-heading-row {
-  margin-top: 10px;
-  margin-bottom: -10px;
-}
-
-.other-section-tag {
-  font: 700 0.85rem var(--mono);
-  background: #111;
-  color: #fff;
-  padding: 3px 12px;
-  display: inline-block;
-}
-
-/* ========================================= */
-/* RESPONSIVE & MOBILE-FRIENDLY ADJUSTMENTS  */
-/* ========================================= */
-@media (max-width: 768px) {
-  .spotlight-split {
-    grid-template-columns: 1fr;
-    gap: 22px;
-    padding: 22px 18px;
-    box-shadow: 5px 5px 0 var(--sh);
-  }
-}
-
-@media (max-width: 480px) {
-  .spotlight-split {
-    padding: 18px 14px;
-    gap: 18px;
-    box-shadow: 4px 4px 0 var(--sh);
-  }
-
-  .spotlight-title {
-    font-size: 1.65rem;
-  }
-
-  .spotlight-left .acts {
-    gap: 8px;
-  }
-
-  .spotlight-left .acts a,
-  .spotlight-left .acts button {
-    flex: 1 1 calc(50% - 8px);
-    text-align: center;
-    justify-content: center;
-  }
-
-  .browser-body {
-    padding: 14px;
-    gap: 10px;
-  }
-
-  .browser-address {
-    font-size: 0.66rem;
-    padding: 1px 6px;
-  }
-}
-
-.proj {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 26px;
-}
-
-.proj .span-wide {
-  grid-column: 1 / -1;
-}
-
-.more {
-  margin-top: 30px;
-  display: flex;
-  justify-content: center;
-}
-
-.posts {
-  display: grid;
-  gap: 16px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.section-sub {
-  margin: 0 0 16px;
-  font-size: 1.05rem;
-  color: var(--ink);
-  opacity: 0.9;
-  max-width: 55ch;
-}
-
-.shorts-track {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  padding: 10px 4px 20px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-
-.shorts-track > * {
-  scroll-snap-align: start;
-}
-
-.contact-section {
-  margin-top: 48px;
-}
-
-.contact-card {
-  padding: 34px 30px;
-  background: var(--paper);
-  border: 3px solid var(--bd);
-  box-shadow: 6px 6px 0 var(--sh);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.contact-badge {
-  font: 700 0.8rem var(--mono);
-  background: var(--ink);
-  color: var(--yellow);
-  display: inline-block;
-  padding: 3px 10px;
-  margin-bottom: 14px;
-  letter-spacing: -0.01em;
-}
-
-.contact-title {
-  margin: 0 0 10px;
-  font-size: clamp(1.4rem, 4vw, 1.9rem);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-
-.contact-sub {
-  margin: 0;
-  font-size: 1.05rem;
-  line-height: 1.55;
-  color: var(--ink);
-  opacity: 0.9;
-  max-width: 58ch;
-}
-
-.contact-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 14px;
-  margin-top: 6px;
-}
-
-.copy-email-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--paper);
-  color: var(--ink);
-  border: 3px solid var(--bd);
-  box-shadow: 4px 4px 0 var(--sh);
-  padding: 9px 16px;
-  font: 700 0.95rem var(--mono);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
-}
-
-@media (hover: hover) {
-  .copy-email-btn:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 var(--sh);
-  }
-}
-
-.copy-email-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0 0 0 var(--sh);
-}
-
-.copy-email-text {
-  font-size: clamp(0.82rem, 3.8vw, 0.95rem);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: -0.01em;
-}
-
-.copy-pill {
-  font: 700 0.78rem var(--mono);
-  background: var(--mint);
-  color: #111;
-  border: 2px solid var(--bd);
-  padding: 2px 8px;
-  box-shadow: 1px 1px 0 var(--sh);
-  min-width: 70px;
-  text-align: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.copy-email-btn.copied .copy-pill {
-  background: var(--yellow);
-  color: #111;
-}
-
-@media (max-width: 860px) {
-  .stack-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 760px) {
-  .hero, .proj {
-    grid-template-columns: 1fr;
-  }
-  .photo-card {
-    min-height: 280px;
-  }
-  .name {
-    padding: 24px 20px;
-  }
-}
-
-@media (max-width: 540px) {
-  .stack-grid {
-    grid-template-columns: 1fr;
-  }
-  .contact-card {
-    padding: 24px 18px;
-  }
-  .contact-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .copy-email-btn {
-    width: 100%;
-    box-sizing: border-box;
-    justify-content: space-between;
-    padding: 10px 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .photo-card {
-    min-height: 240px;
-  }
-}
-</style>

@@ -1,129 +1,67 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import BrutalButton from '@/components/brutal/BrutalButton.vue'
 
-const route = useRoute()
 const isDark = ref(false)
+
+function applyTheme(dark: boolean) {
+  isDark.value = dark
+  const theme = dark ? 'dark' : 'light'
+  document.documentElement.setAttribute('data-theme', theme)
+  try {
+    localStorage.setItem('theme', theme)
+  } catch {}
+}
 
 onMounted(() => {
   const saved = localStorage.getItem('theme')
-  if (saved === 'dark') {
-    isDark.value = true
-    document.documentElement.setAttribute('data-theme', 'dark')
+  if (saved) {
+    applyTheme(saved === 'dark')
   } else {
-    isDark.value = false
-    document.documentElement.setAttribute('data-theme', 'light')
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    applyTheme(prefersDark)
   }
 })
 
 function toggleTheme() {
-  isDark.value = !isDark.value
-  const theme = isDark.value ? 'dark' : 'light'
-  document.documentElement.setAttribute('data-theme', theme)
-  localStorage.setItem('theme', theme)
+  applyTheme(!isDark.value)
 }
 </script>
 
 <template>
-  <header class="top">
-    <div class="c">
-      <router-link to="/" class="logo">
+  <header class="sticky top-0 z-50 border-b-[3px] border-[var(--bd)] bg-[var(--bg)] pt-[env(safe-area-inset-top,0px)]">
+    <div class="c flex items-center justify-between gap-2.5 py-2.5">
+      <router-link
+        to="/"
+        class="inline-flex items-center text-[1.25rem] font-extrabold tracking-[-0.02em] text-[#0b0b0f] no-underline bg-[var(--yellow)] border-[3px] border-[var(--bd)] rounded-[var(--r)] px-3.5 py-1 shadow-[3px_3px_0_var(--sh)]"
+      >
         Tajim
       </router-link>
-      <nav>
-        <BrutalButton
-          as="router-link"
+
+      <nav class="flex items-center gap-2">
+        <router-link
           to="/projects"
-          variant="pink"
+          class="inline-flex items-center min-h-[40px] px-3.5 py-1 text-[0.9rem] font-bold text-[var(--ink)] no-underline rounded-[var(--r)] border-[3px] border-transparent transition-all hover:border-[var(--bd)] hover:bg-[var(--pink)] hover:text-[#0b0b0f] hover:shadow-[3px_3px_0_var(--sh)]"
         >
           Projects
-        </BrutalButton>
-        <BrutalButton
-          as="router-link"
+        </router-link>
+
+        <router-link
           to="/writing"
-          :variant="route.path.startsWith('/writing') ? 'blue' : 'yellow'"
+          class="inline-flex items-center min-h-[40px] px-3.5 py-1 text-[0.9rem] font-bold text-[var(--ink)] no-underline rounded-[var(--r)] border-[3px] border-transparent transition-all hover:border-[var(--bd)] hover:bg-[var(--pink)] hover:text-[#0b0b0f] hover:shadow-[3px_3px_0_var(--sh)]"
         >
           Writing
-        </BrutalButton>
-        <BrutalButton
-          as="button"
-          variant="blue"
+        </router-link>
+
+        <button
+          id="theme"
+          type="button"
           @click="toggleTheme"
-          aria-label="Toggle theme"
-          class="theme-btn"
+          aria-label="Switch colour theme"
+          class="inline-flex items-center justify-center min-h-[40px] px-3 py-1 text-[1.1rem] text-white bg-[var(--blue)] border-[3px] border-[var(--bd)] rounded-[var(--r)] shadow-[3px_3px_0_var(--sh)] cursor-pointer transition-colors hover:bg-[var(--yellow)] hover:text-[#0b0b0f]"
         >
           {{ isDark ? '☀️' : '🌙' }}
-        </BrutalButton>
+        </button>
       </nav>
     </div>
   </header>
 </template>
-
-<style scoped>
-.top {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: var(--bg);
-  border-bottom: 3px solid var(--bd);
-}
-
-.top .c {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.logo {
-  font: 700 1.3rem var(--sans);
-  text-decoration: none;
-  background: var(--yellow);
-  color: #111;
-  border: 3px solid var(--bd);
-  padding: 2px 10px;
-  box-shadow: 3px 3px 0 var(--sh);
-  white-space: nowrap;
-}
-
-.top nav {
-  display: flex;
-  gap: 8px;
-  flex-wrap: nowrap;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.theme-btn {
-  padding: 4px 10px;
-  min-width: 42px;
-  font-size: 1rem;
-}
-
-@media (max-width: 600px) {
-  .top .c {
-    padding: 6px 12px;
-    gap: 6px;
-  }
-  .logo {
-    font-size: 1.05rem;
-    padding: 2px 8px;
-  }
-  .top nav {
-    gap: 4px;
-    flex-wrap: nowrap;
-  }
-  .top nav :deep(.btn) {
-    padding: 4px 7px;
-    font-size: 0.8rem;
-    box-shadow: 2px 2px 0 var(--sh);
-  }
-  .theme-btn {
-    padding: 4px 6px;
-    min-width: 32px;
-  }
-}
-</style>

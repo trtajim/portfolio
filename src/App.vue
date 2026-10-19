@@ -4,6 +4,7 @@ import { usePortfolioStore } from '@/stores/portfolio'
 import { useAuthStore } from '@/stores/auth'
 import SiteNavbar from '@/components/layout/SiteNavbar.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
+import SessionSupabasePrompt from '@/components/layout/SessionSupabasePrompt.vue'
 
 const portfolioStore = usePortfolioStore()
 const authStore = useAuthStore()
@@ -19,6 +20,7 @@ onMounted(async () => {
 
 <template>
   <div class="app-layout">
+    <SessionSupabasePrompt />
     <SiteNavbar />
     <main class="main-content">
       <router-view />

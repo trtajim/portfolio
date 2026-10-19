@@ -46,17 +46,25 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
 
 <template>
   <div class="c">
-    <div class="header-section">
-      <span class="h">PROJECTS</span>
-      <p class="sub">
+    <div class="pt-10 max-sm:pt-6 pb-6">
+      <div class="sh">
+        <span class="n">★</span>
+        <h2>PROJECTS</h2>
+      </div>
+      <p class="-mt-3 mb-6 text-[1.1rem] max-w-[65ch] opacity-85">
         Production applications, community platforms, open-source libraries, IoT firmware, and motion reels.
       </p>
 
-      <div class="filters">
+      <div class="flex flex-wrap gap-2.5">
         <button
           v-for="cat in categories"
           :key="cat"
-          :class="['filter-btn', { active: activeFilter === cat }]"
+          :class="[
+            'font-mono font-bold text-[0.85rem] px-3.5 py-1.5 border-[3px] border-[var(--bd)] rounded-[var(--r)] cursor-pointer transition-transform shadow-[3px_3px_0_var(--sh)]',
+            activeFilter === cat
+              ? 'bg-[var(--yellow)] text-[#0b0b0f] -translate-x-0.5 -translate-y-0.5 shadow-[5px_5px_0_var(--sh)]'
+              : 'bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--pink)] hover:text-[#0b0b0f]'
+          ]"
           @click="activeFilter = cat"
         >
           {{ cat }}
@@ -65,21 +73,16 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
     </div>
 
     <!-- LOADING STATE -->
-    <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="proj-grid">
-      <div v-for="n in 6" :key="n" class="card box skeleton-project-card">
-        <div class="skeleton-pill" style="margin-bottom: 16px; width: 85px;"></div>
-        <div class="skeleton-line" style="width: 70%; height: 26px; margin-bottom: 14px;"></div>
-        <div class="skeleton-line" style="width: 95%; margin-bottom: 8px;"></div>
-        <div class="skeleton-line" style="width: 80%; margin-bottom: 24px;"></div>
-        <div style="display: flex; gap: 8px; margin-top: auto;">
-          <div class="skeleton-pill" style="width: 65px; height: 22px;"></div>
-          <div class="skeleton-pill" style="width: 75px; height: 22px;"></div>
-        </div>
+    <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="grid grid-cols-2 max-md:grid-cols-1 gap-7 pb-12">
+      <div v-for="n in 6" :key="n" class="box p-6 space-y-3">
+        <div class="skeleton-pill w-20 mb-4"></div>
+        <div class="skeleton-line w-[70%] h-6"></div>
+        <div class="skeleton-line w-[90%]"></div>
       </div>
     </div>
 
     <!-- VIDEO SHORTS SECTION (WHEN "ALL" OR "VIDEO" IS ACTIVE) -->
-    <div v-else-if="filteredShorts.length > 0 && activeFilter === 'Video'" class="video-grid">
+    <div v-else-if="filteredShorts.length > 0 && activeFilter === 'Video'" class="grid grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1 gap-6 pb-12">
       <ShortCard
         v-for="(short, idx) in filteredShorts"
         :key="short.id || short.title"
@@ -89,11 +92,11 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
       />
     </div>
 
-    <div v-else-if="filteredProjects.length === 0 && filteredShorts.length === 0" class="empty-state card box">
+    <div v-else-if="filteredProjects.length === 0 && filteredShorts.length === 0" class="box p-8 text-center font-mono font-bold mb-12">
       No projects found under this category.
     </div>
 
-    <div v-else class="proj-grid">
+    <div v-else class="grid grid-cols-2 max-md:grid-cols-1 gap-7 max-sm:gap-5.5 pb-12">
       <ProjectCard
         v-for="(proj, idx) in filteredProjects"
         :key="proj.slug"
@@ -102,99 +105,9 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
       />
     </div>
 
-    <!-- NATIVE VIDEO PLAYER MODAL -->
     <ShortPlayerModal
       :short="selectedShort"
       @close="selectedShort = null"
     />
   </div>
 </template>
-
-<style scoped>
-.header-section {
-  padding: 40px 0 24px;
-}
-
-.sub {
-  font-size: 1.1rem;
-  max-width: 60ch;
-  margin: 0 0 20px;
-}
-
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.filter-btn {
-  font-family: var(--mono);
-  font-size: 0.85rem;
-  font-weight: 700;
-  border: 3px solid var(--bd);
-  background: var(--paper);
-  color: var(--ink);
-  padding: 6px 14px;
-  cursor: pointer;
-  box-shadow: 3px 3px 0 var(--sh);
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.filter-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0 var(--sh);
-}
-
-.filter-btn.active {
-  background: var(--yellow);
-  color: #111;
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 var(--sh);
-}
-
-.proj-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 26px;
-  padding-bottom: 40px;
-}
-
-.video-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  padding-bottom: 40px;
-}
-
-.skeleton-project-card {
-  background: var(--paper);
-  padding: 24px;
-  min-height: 220px;
-  display: flex;
-  flex-direction: column;
-}
-
-.empty-state {
-  margin: 20px 0;
-  font-family: var(--mono);
-}
-
-@media (max-width: 760px) {
-  .proj-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .video-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  .video-grid :deep(.short-card) {
-    width: 100% !important;
-    flex: 1 1 100% !important;
-  }
-}
-</style>

@@ -9,9 +9,8 @@ const githubLink = computed(() => {
   const link = portfolioStore.profile.social_links?.find(
     (l) => l.label.toLowerCase() === 'github' || l.url.includes('github.com')
   )
-  if (!link) return null
+  if (!link) return { url: 'https://github.com/trtajim', handle: '@trtajim' }
 
-  // Extract username from URL if possible (e.g. https://github.com/trtajim -> @trtajim)
   const cleanUrl = link.url.replace(/\/+$/, '')
   const parts = cleanUrl.split('/')
   const username = parts[parts.length - 1]
@@ -25,24 +24,30 @@ const githubLink = computed(() => {
 </script>
 
 <template>
-  <footer>
-    <div class="c">
-      <div class="foot-left">
-        <span>© {{ year }} {{ portfolioStore.profile.name }}</span>
-      </div>
+  <footer class="mt-[72px] max-sm:mt-[44px] border-t-[3px] border-[var(--bd)] overflow-hidden">
+    <div
+      class="text-center font-extrabold tracking-[-0.06em] whitespace-nowrap text-transparent [-webkit-text-stroke:3px_var(--ink)] max-sm:[-webkit-text-stroke-width:2px] select-none text-[clamp(4rem,19vw,14rem)] leading-[0.85] mt-[22px]"
+      aria-hidden="true"
+    >
+      TAJIM
+    </div>
 
-      <div class="foot-center">
-        <router-link to="/admin" class="admin-link">
+    <div class="c">
+      <div class="grid grid-cols-[1fr_auto_1fr] max-sm:grid-cols-1 max-sm:text-center items-center gap-3 py-3.5 pb-6 font-bold text-[0.85rem] font-mono">
+        <span class="text-left max-sm:text-center">© {{ year }} {{ portfolioStore.profile.name || 'TR Tajim' }}</span>
+
+        <router-link
+          to="/admin"
+          class="text-center no-underline opacity-65 hover:opacity-100 hover:underline transition-opacity"
+        >
           Admin
         </router-link>
-      </div>
 
-      <div class="foot-right">
         <a
-          v-if="githubLink"
           :href="githubLink.url"
           target="_blank"
           rel="noopener noreferrer"
+          class="text-right max-sm:text-center underline hover:opacity-80"
         >
           {{ githubLink.handle }}
         </a>
@@ -50,62 +55,3 @@ const githubLink = computed(() => {
     </div>
   </footer>
 </template>
-
-<style scoped>
-footer {
-  border-top: 3px solid var(--bd);
-  margin-top: 40px;
-  padding: 24px 0 34px;
-  font: 400 0.85rem var(--mono);
-}
-
-footer .c {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 16px;
-}
-
-.foot-left {
-  text-align: left;
-}
-
-.foot-center {
-  text-align: center;
-}
-
-.foot-right {
-  text-align: right;
-}
-
-.foot-right a {
-  text-decoration: underline;
-  font-weight: 700;
-}
-
-.admin-link {
-  color: var(--ink);
-  opacity: 0.65;
-  text-decoration: none !important;
-  font-weight: 600;
-  padding: 3px 10px;
-  border: 1px dashed transparent;
-  transition: opacity 0.15s, border-color 0.15s;
-}
-
-.admin-link:hover {
-  opacity: 1;
-  text-decoration: underline !important;
-}
-
-@media (max-width: 600px) {
-  footer .c {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: 12px;
-  }
-  .foot-left, .foot-center, .foot-right {
-    text-align: center;
-  }
-}
-</style>

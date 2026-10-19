@@ -28,67 +28,30 @@ const formattedDate = computed(() => {
 </script>
 
 <template>
-  <router-link :to="`/writing/${post.slug}`" class="post-item">
-    <time :datetime="post.published_date">{{ formattedDate }}</time>
-    <div class="content">
-      <h3>{{ post.title }}</h3>
-      <p v-if="post.subtitle">{{ post.subtitle }}</p>
+  <router-link
+    :to="`/writing/${post.slug}`"
+    class="box p-[16px_18px] max-sm:p-3.5 grid grid-cols-[104px_1fr_44px] max-sm:grid-cols-[1fr_40px] gap-4 max-sm:gap-[6px_12px] items-center no-underline text-inherit transition-all hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] hover:bg-[var(--yellow)] hover:text-[#0b0b0f] group"
+  >
+    <time
+      :datetime="post.published_date"
+      class="justify-self-start font-mono font-bold text-[0.78rem] bg-[var(--blue)] text-white border-2 border-[#0b0b0f] rounded-[6px] px-2 py-0.5 max-sm:col-span-full"
+    >
+      {{ formattedDate }}
+    </time>
+
+    <div class="min-w-0">
+      <h3 class="m-0 text-[1.25rem] max-sm:text-[1.08rem] leading-[1.2] tracking-[-0.02em] font-extrabold">
+        {{ post.title }}
+      </h3>
+      <p v-if="post.subtitle" class="mt-[3px] mb-0 text-[0.92rem] font-medium opacity-75">
+        {{ post.subtitle }}
+      </p>
     </div>
-    <span class="arr">→</span>
+
+    <span
+      class="grid place-items-center w-10 h-10 max-sm:w-9 max-sm:h-9 border-[3px] border-[#0b0b0f] rounded-full bg-white text-[#0b0b0f] font-extrabold text-[1.1rem] transition-transform group-hover:translate-x-1 group-hover:bg-[#0b0b0f] group-hover:text-white"
+    >
+      →
+    </span>
   </router-link>
 </template>
-
-<style scoped>
-.post-item {
-  display: grid;
-  grid-template-columns: 110px 1fr auto;
-  gap: 16px;
-  align-items: center;
-  padding: 16px 20px;
-  background: var(--paper);
-  color: var(--ink);
-  text-decoration: none;
-  border: 3px solid var(--bd);
-  box-shadow: 5px 5px 0 var(--sh);
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.post-item:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: 8px 8px 0 var(--sh);
-  background: var(--yellow);
-  color: #111;
-}
-
-time {
-  font: 700 0.8rem var(--mono);
-}
-
-h3 {
-  margin: 0;
-  font-size: 1.15rem;
-  line-height: 1.25;
-}
-
-p {
-  margin: 4px 0 0;
-  font-size: 0.9rem;
-  font-weight: 400;
-  opacity: 0.9;
-}
-
-.arr {
-  font-weight: 700;
-  font-size: 1.3rem;
-}
-
-@media (max-width: 760px) {
-  .post-item {
-    grid-template-columns: 1fr auto;
-    gap: 6px 12px;
-  }
-  time {
-    grid-column: 1 / -1;
-  }
-}
-</style>

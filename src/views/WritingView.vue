@@ -12,65 +12,35 @@ const publishedPosts = computed(() => {
 
 <template>
   <div class="c">
-    <div class="header-section">
-      <span class="h">WRITING</span>
-      <p class="sub">
+    <div class="pt-10 max-sm:pt-6 pb-6">
+      <div class="sh">
+        <span class="n">✍</span>
+        <h2>WRITING</h2>
+      </div>
+      <p class="-mt-3 mb-6 text-[1.1rem] max-w-[65ch] opacity-85">
         Thoughts on software architecture, engineering experiments, books I’m reading, movies, and ideas in progress.
       </p>
     </div>
 
-    <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="post-list">
-      <div v-for="n in 4" :key="n" class="card box skeleton-post-item">
-        <div class="skeleton-line" style="width: 80px; height: 16px;"></div>
-        <div style="flex: 1;">
-          <div class="skeleton-line" style="width: 60%; height: 22px; margin-bottom: 8px;"></div>
-          <div class="skeleton-line" style="width: 35%; height: 14px;"></div>
+    <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="grid gap-4.5 pb-12">
+      <div v-for="n in 4" :key="n" class="box p-4 flex items-center gap-5">
+        <div class="skeleton-line w-20 h-4"></div>
+        <div class="flex-1 space-y-2">
+          <div class="skeleton-line w-[60%] h-5"></div>
+          <div class="skeleton-line w-[35%] h-3.5"></div>
         </div>
-        <div class="skeleton-line" style="width: 24px; height: 18px;"></div>
+        <div class="skeleton-line w-6 h-5"></div>
       </div>
     </div>
 
-    <div v-else-if="publishedPosts.length === 0" class="empty-state card box">
+    <div v-else-if="publishedPosts.length === 0" class="box p-8 text-center font-mono font-bold mb-12">
       No articles published yet.
     </div>
 
-    <ul v-else class="post-list">
+    <ul v-else class="grid gap-4.5 max-sm:gap-3.5 m-0 p-0 pb-12 list-none">
       <li v-for="post in publishedPosts" :key="post.slug">
         <PostCard :post="post" />
       </li>
     </ul>
   </div>
 </template>
-
-<style scoped>
-.header-section {
-  padding: 40px 0 24px;
-}
-
-.sub {
-  font-size: 1.1rem;
-  max-width: 60ch;
-  margin: 0;
-}
-
-.post-list {
-  display: grid;
-  gap: 16px;
-  margin: 0;
-  padding: 0 0 50px;
-  list-style: none;
-}
-
-.skeleton-post-item {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 18px 20px;
-  background: var(--paper);
-}
-
-.empty-state {
-  margin: 20px 0;
-  font-family: var(--mono);
-}
-</style>
