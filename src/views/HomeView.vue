@@ -12,40 +12,7 @@ const portfolioStore = usePortfolioStore()
 
 const profile = computed(() => portfolioStore.profile)
 
-const knownTechSet = computed(() => {
-  const set = new Set<string>()
-  const stacks = profile.value.grouped_stacks || []
 
-  for (const group of stacks) {
-    if (!group.items) continue
-    const items = group.items.split(',').map((s) => s.trim().toLowerCase())
-    for (const item of items) {
-      if (item) set.add(item)
-    }
-  }
-  return set
-})
-
-function categorizeTags(tags?: string[]) {
-  if (!tags || !tags.length) return { domainTags: [] as string[], techTags: [] as string[] }
-  const techSet = knownTechSet.value
-  const domainTags: string[] = []
-  const techTags: string[] = []
-
-  for (const tag of tags) {
-    const raw = tag.trim()
-    const norm = raw.toLowerCase()
-    const isTech = techSet.has(norm)
-
-    if (isTech) {
-      techTags.push(raw)
-    } else {
-      domainTags.push(raw)
-    }
-  }
-
-  return { domainTags, techTags }
-}
 
 const featuredProjects = computed(() => {
   return portfolioStore.projects.filter((p) => p.is_featured && p.is_published)
@@ -327,9 +294,6 @@ async function copyEmail() {
               </router-link>
             </h3>
             <p class="spotlight-summary">{{ splitSummary(spotlightProject.summary).main }}</p>
-            <ul v-if="categorizeTags(spotlightProject.tags).domainTags.length" class="t">
-              <li v-for="tag in categorizeTags(spotlightProject.tags).domainTags" :key="tag">{{ tag }}</li>
-            </ul>
             <div v-if="spotlightProject.actions?.length" class="acts">
               <BrutalButton
                 v-for="(action, index) in spotlightProject.actions"
@@ -362,8 +326,8 @@ async function copyEmail() {
                     {{ parseMetric(spotlightProject.top_metric).label }}
                   </span>
                 </div>
-                <div v-if="categorizeTags(spotlightProject.tags).techTags.length" class="browser-tech-badges">
-                  <span v-for="tag in categorizeTags(spotlightProject.tags).techTags" :key="tag" class="b-badge">
+                <div v-if="spotlightProject.tags?.length" class="browser-tech-badges">
+                  <span v-for="tag in spotlightProject.tags" :key="tag" class="b-badge">
                     {{ tag }}
                   </span>
                 </div>
@@ -874,7 +838,7 @@ section {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 4px;
+  margin-top: 18px;
 }
 
 .browser-frame {
