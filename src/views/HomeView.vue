@@ -325,10 +325,10 @@ async function copyEmail() {
         <!-- SPOTLIGHT / FLAGSHIP PROJECT -->
         <div
           v-if="spotlightProject"
-          class="box !bg-[var(--green)] !text-[#0b0b0f] !border-[#0b0b0f] p-[30px] max-md:p-[22px_18px] max-sm:p-[18px_14px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-7 max-sm:gap-4.5 items-center rounded-[var(--r)]"
+          class="box !bg-[var(--green)] !text-[#0b0b0f] !border-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)]"
         >
-          <div class="flex flex-col gap-3.5">
-            <span class="font-mono font-bold text-[0.75rem] bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2 py-0.5 self-start">
+          <div class="flex flex-col gap-4">
+            <span class="font-mono font-bold text-[0.75rem] bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2.5 py-1 self-start">
               ★ FEATURED {{ spotlightProject.pill ? spotlightProject.pill.toUpperCase() : 'WEBSITE' }}
             </span>
             <h3 class="m-0 text-[clamp(1.85rem,4.5vw,2.5rem)] leading-[1.1] tracking-[-0.03em] font-extrabold !text-[#0b0b0f]">
@@ -336,7 +336,7 @@ async function copyEmail() {
                 {{ spotlightProject.title }}
               </router-link>
             </h3>
-            <p class="m-0 text-[1.05rem] leading-[1.55] !text-[#0b0b0f]">
+            <p class="m-0 text-[1.05rem] leading-[1.6] !text-[#0b0b0f]">
               {{ splitSummary(spotlightProject.summary).main }}
             </p>
             <div v-if="spotlightProject.actions?.length" class="flex flex-wrap gap-2.5 mt-2">
@@ -366,16 +366,16 @@ async function copyEmail() {
                   {{ spotlightProject.actions?.[0]?.url || `https://${spotlightProject.slug}` }}
                 </span>
               </div>
-              <div class="p-[18px_20px] max-sm:p-3.5 flex flex-col gap-3">
-                <div v-if="spotlightProject.top_metric" class="flex flex-col border-b-2 border-dashed border-[#ddd] pb-2.5">
-                  <span class="text-[clamp(2rem,5vw,2.5rem)] font-extrabold leading-none tracking-[-0.03em] !text-[#0b0b0f]">
+              <div class="p-[22px_22px] max-sm:p-4 flex flex-col gap-3.5">
+                <div v-if="spotlightProject.top_metric" class="flex flex-col border-b-2 border-dashed border-[#ddd] pb-3">
+                  <span class="text-[clamp(2.1rem,5vw,2.6rem)] font-extrabold leading-none tracking-[-0.03em] !text-[#0b0b0f]">
                     {{ parseMetric(spotlightProject.top_metric).value }}
                   </span>
-                  <span v-if="parseMetric(spotlightProject.top_metric).label" class="font-mono font-bold text-[0.8rem] text-[#555] mt-1">
+                  <span v-if="parseMetric(spotlightProject.top_metric).label" class="font-mono font-bold text-[0.82rem] text-[#555] mt-1.5">
                     {{ parseMetric(spotlightProject.top_metric).label }}
                   </span>
                 </div>
-                <div v-if="spotlightProject.tags?.length" class="flex flex-wrap gap-1.5">
+                <div v-if="spotlightProject.tags?.length" class="flex flex-wrap gap-2">
                   <span
                     v-for="tag in spotlightProject.tags"
                     :key="tag"
@@ -384,7 +384,7 @@ async function copyEmail() {
                     {{ tag }}
                   </span>
                 </div>
-                <p v-if="splitSummary(spotlightProject.summary).note" class="m-0 text-[0.88rem] leading-[1.45] text-[#333]">
+                <p v-if="splitSummary(spotlightProject.summary).note" class="m-0 text-[0.9rem] leading-[1.5] text-[#333]">
                   {{ splitSummary(spotlightProject.summary).note }}
                 </p>
               </div>
@@ -459,7 +459,7 @@ async function copyEmail() {
         <div
           v-for="(short, idx) in activeShorts"
           :key="short.id || short.title"
-          class="snap-start"
+          class="snap-start flex-[0_0_240px] max-sm:flex-[0_0_200px]"
         >
           <ShortCard
             :short="short"
@@ -473,7 +473,7 @@ async function copyEmail() {
     <!-- CONTACT SECTION -->
     <section id="contact" class="pt-14 max-sm:pt-9 pb-1.5">
       <div class="box p-[32px_30px] max-sm:p-[24px_18px] flex flex-col gap-4.5">
-        <span class="font-mono font-bold text-[0.8rem] bg-[var(--ink)] text-[var(--yellow)] rounded-[6px] inline-block px-2.5 py-[3px] self-start">
+        <span class="font-mono font-bold text-[0.8rem] bg-[#0b0b0f] text-[var(--yellow)] border-2 border-[#0b0b0f] rounded-[6px] inline-block px-2.5 py-[3px] self-start shadow-[2px_2px_0_var(--sh)]">
           LET’S CONNECT
         </span>
         <h2 class="m-0 text-[clamp(1.5rem,4vw,2rem)] font-extrabold leading-[1.2] tracking-[-0.02em]">

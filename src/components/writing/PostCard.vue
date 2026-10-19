@@ -5,7 +5,7 @@ import type { Post } from '@/types'
 const props = withDefaults(
   defineProps<{
     post: Post
-    color?: 'blue' | 'yellow' | 'pink' | 'green' | 'orange'
+    color?: 'blue' | 'pink' | 'green' | 'orange' | 'yellow'
   }>(),
   {
     color: 'blue'
@@ -74,9 +74,22 @@ const badgeColorClass = computed(() => {
     </div>
 
     <span
-      class="grid place-items-center w-10 h-10 max-sm:w-9 max-sm:h-9 border-[3px] border-[#0b0b0f] rounded-full bg-white text-[#0b0b0f] font-extrabold text-[1.1rem] transition-transform group-hover:translate-x-1 group-hover:bg-[#0b0b0f] group-hover:text-white"
+      class="flex items-center justify-center w-10 h-10 max-sm:w-9 max-sm:h-9 border-[3px] border-[#0b0b0f] rounded-full bg-white text-[#0b0b0f] font-sans font-extrabold text-[1.2rem] leading-none transition-transform group-hover:translate-x-1 group-hover:bg-[#0b0b0f] group-hover:text-white select-none shrink-0"
     >
-      →
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="w-4 h-4 max-sm:w-3.5 max-sm:h-3.5"
+        aria-hidden="true"
+      >
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
     </span>
   </router-link>
 </template>

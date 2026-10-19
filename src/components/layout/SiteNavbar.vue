@@ -35,11 +35,11 @@ function toggleTheme() {
       </router-link>
 
       <nav aria-label="Sections">
-        <router-link to="/projects">
+        <router-link to="/projects" class="nav-projects">
           Projects
         </router-link>
 
-        <router-link to="/writing">
+        <router-link to="/writing" class="nav-writing">
           Writing
         </router-link>
 
@@ -137,7 +137,6 @@ function toggleTheme() {
 .theme-icon {
   display: inline-block;
   line-height: 1;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
 }
 
 @media (max-width: 600px) {
@@ -157,6 +156,25 @@ function toggleTheme() {
     padding: 4px 10px;
     font-size: 0.85rem;
     min-height: 36px;
+  }
+
+  /* Distinct visible backgrounds on phone where hover is not available */
+  .top nav a.nav-projects {
+    background: var(--pink);
+    color: #0b0b0f;
+    border-color: #0b0b0f;
+    box-shadow: 2px 2px 0 var(--sh);
+  }
+
+  .top nav a.nav-writing {
+    background: var(--green);
+    color: #0b0b0f;
+    border-color: #0b0b0f;
+    box-shadow: 2px 2px 0 var(--sh);
+  }
+
+  #theme {
+    box-shadow: 2px 2px 0 var(--sh);
   }
 }
 </style>
