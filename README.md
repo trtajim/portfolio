@@ -18,8 +18,11 @@ I've always loved retro, high-contrast aesthetics, so I designed this site using
 
 ## 🚀 Make It Yours
 
-Want to build your own portfolio with this? It's completely server-driven via Supabase.
-Just clone the repo, connect your Supabase project, input your data, and boom!
+Want to build your own portfolio with this? It's completely server-driven via Supabase:
+
+1. Clone the repo
+2. Connect your Supabase project
+3. Input your data, and boom!
 
 ---
 
