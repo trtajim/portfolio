@@ -118,6 +118,16 @@
   }
 }
 
+.card {
+  padding: 24px;
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 16px;
+  }
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

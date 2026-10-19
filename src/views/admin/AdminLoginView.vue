@@ -40,9 +40,11 @@ function handleGuestLogin() {
 
 <template>
   <div class="c login-page">
-    <div class="card box login-card">
-      <span class="h">ADMIN LOGIN</span>
-      <p class="desc">Log in with credentials to manage the portfolio, or enter as a guest to inspect the dashboard.</p>
+    <div class="box card login-card">
+      <div class="login-header">
+        <span class="h">ADMIN LOGIN</span>
+        <p class="desc">Log in with credentials to manage the portfolio, or enter as a guest to inspect the dashboard.</p>
+      </div>
 
       <div v-if="errorMsg" class="error-box">
         {{ errorMsg }}
@@ -102,22 +104,33 @@ function handleGuestLogin() {
   padding: 60px 20px;
   display: flex;
   justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 220px);
 }
 
 .login-card {
   max-width: 440px;
   width: 100%;
+  padding: 34px 28px;
+}
+
+.login-header {
+  margin-bottom: 20px;
 }
 
 .desc {
-  margin: 0 0 20px;
+  margin: 12px 0 0;
   font-size: 0.95rem;
+  line-height: 1.5;
+  opacity: 0.85;
 }
 
 .error-box {
   background: var(--pink);
-  color: #111;
-  border: 3px solid var(--bd);
+  color: #0b0b0f;
+  border: 2px solid var(--bd);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 var(--sh);
   padding: 10px 14px;
   margin-bottom: 16px;
   font-weight: 700;
@@ -145,11 +158,15 @@ label {
 .input-box {
   font-family: var(--sans);
   font-size: 1rem;
-  padding: 10px 12px;
-  border: 3px solid var(--bd);
+  padding: 10px 14px;
+  border: 2px solid var(--bd);
+  border-radius: 6px;
   background: var(--paper);
   color: var(--ink);
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
 }
 
 .input-box:focus {
@@ -160,7 +177,7 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 18px 0;
+  margin: 20px 0;
   position: relative;
 }
 
@@ -178,16 +195,18 @@ label {
   background: var(--paper);
   padding: 0 10px;
   font: 700 0.8rem var(--mono);
+  color: var(--ink);
 }
 
 @media (max-width: 480px) {
   .login-page {
-    padding: 30px 16px;
+    padding: 30px 14px;
+  }
+  .login-card {
+    padding: 24px 18px;
   }
   .input-box {
     font-size: 16px; /* Prevents auto-zoom on mobile safari */
-    width: 100%;
-    box-sizing: border-box;
   }
 }
 </style>
