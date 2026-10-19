@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, START_LOCATION } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import HomeView from '@/views/HomeView.vue'
 
@@ -55,11 +55,14 @@ const router = createRouter({
     if (to.hash) {
       return { el: to.hash, behavior: 'smooth' }
     }
+    if (from === START_LOCATION) {
+      return false
+    }
     return { top: 0 }
   }
 })
 
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach(async (to, _from) => {
   if (to.meta.title) {
     document.title = to.meta.title as string
   }
@@ -71,11 +74,9 @@ router.beforeEach(async (to, _from, next) => {
   }
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next({ name: 'admin-login', query: { redirect: to.fullPath } })
+    return { name: 'admin-login', query: { redirect: to.fullPath } }
   } else if (to.name === 'admin-login' && authStore.isAuthenticated) {
-    next({ name: 'admin-dashboard' })
-  } else {
-    next()
+    return { name: 'admin-dashboard' }
   }
 })
 

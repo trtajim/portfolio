@@ -56,6 +56,61 @@ const accentColors = ['mint', 'yellow', 'pink', 'blue', 'orange'] as const
 function getAccentColor(idx: number) {
   return accentColors[idx % accentColors.length]
 }
+
+const contactEmail = computed(() => {
+  return portfolioStore.profile.email || 'com.tajim@gmail.com'
+})
+
+const isCopied = ref(false)
+let copyTimeout: ReturnType<typeof setTimeout> | null = null
+
+async function copyEmail() {
+  let copied = false
+  const text = contactEmail.value
+
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text)
+      copied = true
+    } catch {
+      copied = false
+    }
+  }
+
+  if (!copied) {
+    try {
+      const textarea = document.createElement('textarea')
+      textarea.value = text
+      textarea.style.position = 'fixed'
+      textarea.style.top = '0'
+      textarea.style.left = '0'
+      textarea.style.width = '2em'
+      textarea.style.height = '2em'
+      textarea.style.padding = '0'
+      textarea.style.border = 'none'
+      textarea.style.outline = 'none'
+      textarea.style.boxShadow = 'none'
+      textarea.style.background = 'transparent'
+      textarea.setAttribute('readonly', '')
+      document.body.appendChild(textarea)
+      textarea.focus()
+      textarea.select()
+      textarea.setSelectionRange(0, text.length)
+      copied = document.execCommand('copy')
+      document.body.removeChild(textarea)
+    } catch (err) {
+      console.error('Fallback copy error:', err)
+    }
+  }
+
+  if (copied) {
+    isCopied.value = true
+    if (copyTimeout) clearTimeout(copyTimeout)
+    copyTimeout = setTimeout(() => {
+      isCopied.value = false
+    }, 2000)
+  }
+}
 </script>
 
 <template>
@@ -64,8 +119,11 @@ function getAccentColor(idx: number) {
       <div class="name box">
         <span class="hi">hello, I’m</span>
         <h1>{{ profile.name || 'TR Tajim' }}</h1>
-        <p v-if="profile.headline">{{ profile.headline }}</p>
-        <p v-else class="hero-skeleton"></p>
+        <p v-if="portfolioStore.isLoaded && profile.headline">{{ profile.headline }}</p>
+        <div v-else class="hero-skeleton-wrap" aria-hidden="true">
+          <div class="hero-shimmer-line line-1"></div>
+          <div class="hero-shimmer-line line-2"></div>
+        </div>
       </div>
 
       <div class="side">
@@ -77,7 +135,7 @@ function getAccentColor(idx: number) {
               :alt="profile.name || 'TR Tajim'"
               class="avatar-img"
             />
-            <span v-else class="avatar-fallback">TR</span>
+            <span v-else class="avatar-fallback">{{ (profile.name || 'TR Tajim').slice(0, 2).toUpperCase() }}</span>
           </div>
 
           <div class="photo-location-badge">
@@ -88,7 +146,12 @@ function getAccentColor(idx: number) {
       </div>
     </div>
 
-    <ul v-if="profile.social_links && profile.social_links.length" class="links">
+    <ul v-if="!portfolioStore.isLoaded" class="links skeleton-links" aria-hidden="true">
+      <li v-for="n in 4" :key="n">
+        <div class="skeleton-pill" style="width: 88px; height: 38px;"></div>
+      </li>
+    </ul>
+    <ul v-else-if="profile.social_links && profile.social_links.length" class="links">
       <li v-for="(link, idx) in profile.social_links" :key="link.label">
         <BrutalButton
           as="a"
@@ -104,7 +167,7 @@ function getAccentColor(idx: number) {
     <section id="about">
       <h2 class="h">Who I am</h2>
       <div class="card box about-card">
-        <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="skeleton-whoami">
+        <div v-if="!portfolioStore.isLoaded" class="skeleton-whoami">
           <div class="skeleton-line" style="width: 95%; margin-bottom: 12px;"></div>
           <div class="skeleton-line" style="width: 88%; margin-bottom: 12px;"></div>
           <div class="skeleton-line" style="width: 70%; margin-bottom: 20px;"></div>
@@ -121,7 +184,7 @@ function getAccentColor(idx: number) {
 
     <section id="stack">
       <h2 class="h">Tech stack</h2>
-      <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="stack-grid">
+      <div v-if="!portfolioStore.isLoaded" class="stack-grid">
         <div v-for="n in 6" :key="n" class="card box skeleton-stack-card">
           <div class="skeleton-line" style="width: 80px; height: 18px; margin-bottom: 12px;"></div>
           <div class="skeleton-badges">
@@ -154,7 +217,7 @@ function getAccentColor(idx: number) {
 
     <section id="projects">
       <h2 class="h">What I built</h2>
-      <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="proj">
+      <div v-if="!portfolioStore.isLoaded" class="proj">
         <div v-for="n in 3" :key="n" :class="['card', 'box', 'skeleton-card', { 'span-wide': n === 3 }]">
           <div class="skeleton-pill" style="margin-bottom: 16px; width: 80px;"></div>
           <div class="skeleton-line" style="width: 60%; height: 26px; margin-bottom: 14px;"></div>
@@ -187,7 +250,7 @@ function getAccentColor(idx: number) {
 
     <section id="writing">
       <h2 class="h">What I write</h2>
-      <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="posts">
+      <div v-if="!portfolioStore.isLoaded" class="posts">
         <div v-for="n in 3" :key="n" class="card box skeleton-post-row">
           <div class="skeleton-line" style="width: 80px; height: 16px;"></div>
           <div style="flex: 1;">
@@ -224,6 +287,43 @@ function getAccentColor(idx: number) {
           :index="idx"
           @play="playShort"
         />
+      </div>
+    </section>
+
+    <!-- CONNECT / GET IN TOUCH CTA -->
+    <section id="contact" class="contact-section">
+      <div class="card box contact-card">
+        <div class="contact-content">
+          <span class="contact-badge">LET’S CONNECT</span>
+          <h2 class="contact-title">Have an idea or want to talk tech?</h2>
+          <p class="contact-sub">
+            Always down to chat about programming, new ideas, or interesting projects. Feel free to say hi anytime!
+          </p>
+        </div>
+
+        <div class="contact-actions">
+          <BrutalButton
+            as="a"
+            :href="`mailto:${contactEmail}`"
+            variant="yellow"
+            style="font-size: 1.05rem; padding: 12px 24px;"
+          >
+            Say Hello ✉️
+          </BrutalButton>
+
+          <button
+            type="button"
+            class="copy-email-btn"
+            :class="{ copied: isCopied }"
+            @click="copyEmail"
+            :aria-label="isCopied ? 'Email address copied' : 'Copy email address'"
+          >
+            <span class="copy-email-text">{{ contactEmail }}</span>
+            <span class="copy-pill">
+              {{ isCopied ? 'Copied! ✓' : 'Copy' }}
+            </span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -444,13 +544,80 @@ section {
   gap: 8px;
 }
 
-.hero-skeleton {
-  height: 24px;
-  width: 80%;
-  background: #111;
-  opacity: 0.15;
+.hero-skeleton-wrap {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 34ch;
+}
+
+.hero-shimmer-line {
+  height: 20px;
   border-radius: 2px;
-  animation: skeleton-pulse 1.4s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(17, 17, 17, 0.08) 0%,
+    rgba(17, 17, 17, 0.24) 50%,
+    rgba(17, 17, 17, 0.08) 100%
+  );
+  background-size: 200% 100%;
+  animation: hero-shimmer-sweep 1.4s ease-in-out infinite;
+}
+
+.hero-shimmer-line.line-1 {
+  width: 92%;
+}
+
+.hero-shimmer-line.line-2 {
+  width: 60%;
+}
+
+@keyframes hero-shimmer-sweep {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.hero-name-shimmer {
+  height: clamp(3.2rem, 9vw, 5.5rem);
+  width: 75%;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(17, 17, 17, 0.1) 0%,
+    rgba(17, 17, 17, 0.28) 50%,
+    rgba(17, 17, 17, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: hero-shimmer-sweep 1.4s ease-in-out infinite;
+  margin: 6px 0 10px;
+}
+
+.avatar-shimmer {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  background: linear-gradient(
+    90deg,
+    rgba(17, 17, 17, 0.05) 0%,
+    rgba(17, 17, 17, 0.16) 50%,
+    rgba(17, 17, 17, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: hero-shimmer-sweep 1.4s ease-in-out infinite;
+}
+
+.skeleton-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0 32px;
+  padding: 0;
+  list-style: none;
 }
 
 .skeleton-card {
@@ -533,6 +700,113 @@ section {
   scroll-snap-align: start;
 }
 
+.contact-section {
+  margin-top: 48px;
+}
+
+.contact-card {
+  padding: 34px 30px;
+  background: var(--paper);
+  border: 3px solid var(--bd);
+  box-shadow: 6px 6px 0 var(--sh);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-badge {
+  font: 700 0.8rem var(--mono);
+  background: var(--ink);
+  color: var(--yellow);
+  display: inline-block;
+  padding: 3px 10px;
+  margin-bottom: 14px;
+  letter-spacing: -0.01em;
+}
+
+.contact-title {
+  margin: 0 0 10px;
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.contact-sub {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--ink);
+  opacity: 0.9;
+  max-width: 58ch;
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.copy-email-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--bd);
+  box-shadow: 4px 4px 0 var(--sh);
+  padding: 9px 16px;
+  font: 700 0.95rem var(--mono);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+}
+
+@media (hover: hover) {
+  .copy-email-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--sh);
+  }
+}
+
+.copy-email-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--sh);
+}
+
+.copy-email-text {
+  font-size: clamp(0.82rem, 3.8vw, 0.95rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.copy-pill {
+  font: 700 0.78rem var(--mono);
+  background: var(--mint);
+  color: #111;
+  border: 2px solid var(--bd);
+  padding: 2px 8px;
+  box-shadow: 1px 1px 0 var(--sh);
+  min-width: 70px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.copy-email-btn.copied .copy-pill {
+  background: var(--yellow);
+  color: #111;
+}
+
 @media (max-width: 860px) {
   .stack-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -554,6 +828,19 @@ section {
 @media (max-width: 540px) {
   .stack-grid {
     grid-template-columns: 1fr;
+  }
+  .contact-card {
+    padding: 24px 18px;
+  }
+  .contact-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .copy-email-btn {
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: space-between;
+    padding: 10px 14px;
   }
 }
 
