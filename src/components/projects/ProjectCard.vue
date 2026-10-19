@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Project } from '@/types'
+import { splitSummary } from '@/lib/text'
 import BrutalButton from '@/components/brutal/BrutalButton.vue'
 
 const props = defineProps<{
@@ -9,6 +11,10 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
+
+const summaryText = computed(() => {
+  return splitSummary(props.project.summary).main
+})
 
 const colorOrder: ('yellow' | 'pink' | 'blue' | 'mint' | 'orange')[] = [
   'yellow',
@@ -61,7 +67,7 @@ function handleCardClick(e: MouseEvent) {
       </h3>
 
       <p class="m-0 text-[0.95rem] leading-[1.5] max-w-[60ch] opacity-90">
-        {{ project.summary }}
+        {{ summaryText }}
       </p>
 
       <ul v-if="project.tags && project.tags.length" class="flex flex-wrap gap-1.5 m-0 p-0 list-none">

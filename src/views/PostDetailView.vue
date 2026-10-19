@@ -57,9 +57,12 @@ const renderedContent = computed(() => {
 
         <div v-if="post.tags && post.tags.length" class="flex flex-wrap gap-2 mt-1.5">
           <span
-            v-for="tag in post.tags"
+            v-for="(tag, idx) in post.tags"
             :key="tag"
-            class="chip"
+            :class="[
+              'chip',
+              idx === 0 && '!bg-[var(--yellow)] !text-[#0b0b0f]'
+            ]"
           >
             {{ tag }}
           </span>
