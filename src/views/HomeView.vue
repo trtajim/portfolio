@@ -224,19 +224,18 @@ async function copyEmail() {
     </div>
 
     <!-- SOCIAL LINKS -->
-    <ul v-if="!portfolioStore.isLoaded" class="grid grid-cols-4 max-sm:grid-cols-2 gap-3.5 mt-1.5 max-sm:gap-2.5 mb-0 p-0 list-none" aria-hidden="true">
-      <li v-for="n in 4" :key="n" class="w-full">
-        <div class="skeleton-pill w-full h-[44px]"></div>
+    <ul v-if="!portfolioStore.isLoaded" class="flex flex-wrap gap-3 max-sm:gap-2 mt-1.5 mb-0 p-0 list-none" aria-hidden="true">
+      <li v-for="n in 4" :key="n">
+        <div class="skeleton-pill w-[96px] h-[40px] max-sm:h-[36px]"></div>
       </li>
     </ul>
-    <ul v-else-if="profile.social_links && profile.social_links.length" class="grid grid-cols-4 max-sm:grid-cols-2 gap-3.5 mt-1.5 max-sm:gap-2.5 mb-0 p-0 list-none">
-      <li v-for="(link, idx) in profile.social_links" :key="link.label" class="w-full">
+    <ul v-else-if="profile.social_links && profile.social_links.length" class="flex flex-wrap gap-3 max-sm:gap-2 mt-1.5 mb-0 p-0 list-none">
+      <li v-for="(link, idx) in profile.social_links" :key="link.label">
         <BrutalButton
           as="a"
           :href="link.url"
           target="_blank"
           :variant="getSocialVariant(idx)"
-          class="w-full text-center"
         >
           {{ link.label }}
         </BrutalButton>
@@ -334,13 +333,13 @@ async function copyEmail() {
         <!-- SPOTLIGHT / FLAGSHIP PROJECT -->
         <div
           v-if="spotlightProject"
-          class="box !bg-[var(--green)] !text-[#0b0b0f] !border-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)]"
+          class="box !bg-[var(--green)] !text-[#0b0b0f] !border-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden"
         >
-          <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-4 min-w-0">
             <span class="font-mono font-bold text-[0.75rem] bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2.5 py-1 self-start">
               ★ FEATURED {{ spotlightProject.pill ? spotlightProject.pill.toUpperCase() : 'WEBSITE' }}
             </span>
-            <h3 class="m-0 text-[clamp(1.85rem,4.5vw,2.5rem)] leading-[1.1] tracking-[-0.03em] font-extrabold !text-[#0b0b0f]">
+            <h3 class="m-0 text-[clamp(1.85rem,4.5vw,2.5rem)] leading-[1.1] tracking-[-0.03em] font-extrabold !text-[#0b0b0f] break-words">
               <router-link :to="`/projects/${spotlightProject.slug}`" class="no-underline !text-[#0b0b0f] hover:underline">
                 {{ spotlightProject.title }}
               </router-link>
@@ -363,15 +362,15 @@ async function copyEmail() {
             </div>
           </div>
 
-          <div class="w-full">
+          <div class="w-full min-w-0">
             <div class="bg-white text-[#0b0b0f] border-[3px] border-[#0b0b0f] rounded-[8px] shadow-[4px_4px_0_#0b0b0f] overflow-hidden">
-              <div class="flex items-center gap-2 bg-[#f0eee6] border-b-2 border-[#0b0b0f] p-[8px_12px]">
+              <div class="flex items-center gap-2 bg-[#f0eee6] border-b-2 border-[#0b0b0f] p-[8px_12px] min-w-0">
                 <div class="flex items-center gap-1.5 shrink-0">
                   <span class="w-[9px] h-[9px] rounded-full border-[1.5px] border-[#0b0b0f] bg-[#ff5f56] inline-block"></span>
                   <span class="w-[9px] h-[9px] rounded-full border-[1.5px] border-[#0b0b0f] bg-[#ffd400] inline-block"></span>
                   <span class="w-[9px] h-[9px] rounded-full border-[1.5px] border-[#0b0b0f] bg-[#22d18b] inline-block"></span>
                 </div>
-                <span class="font-mono font-bold text-[0.72rem] text-[#333] bg-white border-[1.5px] border-[#0b0b0f] rounded-[4px] px-2 py-0.5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                <span class="font-mono font-bold text-[0.72rem] text-[#333] bg-white border-[1.5px] border-[#0b0b0f] rounded-[4px] px-2 py-0.5 flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
                   {{ spotlightProject.actions?.[0]?.url || `https://${spotlightProject.slug}` }}
                 </span>
               </div>
@@ -457,18 +456,18 @@ async function copyEmail() {
     </section>
 
     <!-- MOTION & SHORTS -->
-    <section v-if="activeShorts.length > 0" id="motion" class="pt-14 max-sm:pt-9 pb-1.5">
+    <section v-if="activeShorts.length > 0" id="motion" class="pt-14 max-sm:pt-9 pb-1.5 w-full min-w-0 max-w-full overflow-hidden">
       <div class="sh">
         <h2>Motion & Shorts</h2>
       </div>
       <p class="-mt-3 mb-5 text-[1.05rem] opacity-85">
         Motion videos and teasers I design to showcase and promote products.
       </p>
-      <div class="flex gap-5 overflow-x-auto py-2.5 px-1 pb-5 snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
+      <div class="flex gap-5 overflow-x-auto py-2.5 px-1 pb-5 snap-x snap-mandatory [-webkit-overflow-scrolling:touch] w-full min-w-0 max-w-full">
         <div
           v-for="(short, idx) in activeShorts"
           :key="short.id || short.title"
-          class="snap-start flex-[0_0_240px] max-sm:flex-[0_0_200px]"
+          class="snap-start flex-[0_0_240px] max-sm:flex-[0_0_200px] shrink-0"
         >
           <ShortCard
             :short="short"

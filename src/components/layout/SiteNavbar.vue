@@ -150,11 +150,28 @@ function toggleTheme() {
   transition: transform 0.12s, box-shadow 0.12s, background-color 0.12s, border-color 0.12s;
 }
 
-.top nav a:hover {
-  border-color: var(--bd);
+.top nav a.nav-projects {
   background: var(--pink);
   color: #0b0b0f;
+  border-color: var(--bd);
   box-shadow: 3px 3px 0 var(--sh);
+}
+
+.top nav a.nav-projects:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--sh);
+}
+
+.top nav a.nav-writing {
+  background: var(--green);
+  color: #0b0b0f;
+  border-color: var(--bd);
+  box-shadow: 3px 3px 0 var(--sh);
+}
+
+.top nav a.nav-writing:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--sh);
 }
 
 #theme {
@@ -204,18 +221,11 @@ function toggleTheme() {
     box-shadow: 2px 2px 0 var(--sh);
   }
 
-  /* Distinct visible backgrounds on phone where hover is not available */
   .top nav a.nav-projects {
-    background: var(--pink);
-    color: #0b0b0f;
-    border-color: #0b0b0f;
     box-shadow: 2px 2px 0 var(--sh);
   }
 
   .top nav a.nav-writing {
-    background: var(--green);
-    color: #0b0b0f;
-    border-color: #0b0b0f;
     box-shadow: 2px 2px 0 var(--sh);
   }
 

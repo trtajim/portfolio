@@ -34,6 +34,9 @@ onMounted(async () => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: clip;
 }
 
 .main-content {
@@ -41,5 +44,9 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 80px);
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
 }
 </style>
