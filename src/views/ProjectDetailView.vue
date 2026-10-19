@@ -15,7 +15,15 @@ const project = computed(() => {
 
 const renderedContent = computed(() => {
   if (!project.value?.content) return ''
-  return marked.parse(project.value.content)
+  const cleaned = project.value.content
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line) => {
+      return line.startsWith('    ') || line.startsWith('\t') ? line.trimStart() : line
+    })
+    .join('\n')
+
+  return marked.parse(cleaned)
 })
 
 const colorOrder: ('yellow' | 'pink' | 'blue' | 'mint' | 'orange')[] = [
