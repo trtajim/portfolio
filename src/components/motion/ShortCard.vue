@@ -46,27 +46,15 @@ const fallbackThumbnail = computed(() => {
       <!-- CUSTOM FALLBACK ARTWORK WHEN NO THUMBNAIL (E.G. FACEBOOK REELS) -->
       <div
         v-else
-        class="w-full h-full relative p-4 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#1c1a32] via-[#24223f] to-[#121124] text-white"
+        class="w-full h-full relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#1c1a32] via-[#24223f] to-[#121124] text-white"
       >
         <!-- Atmospheric decorative geometric shapes in the background -->
         <div class="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-[var(--blue)]/20 blur-xl pointer-events-none" aria-hidden="true"></div>
         <div class="absolute -left-8 -bottom-8 w-28 h-28 rounded-full bg-[var(--pink)]/20 blur-xl pointer-events-none" aria-hidden="true"></div>
 
-        <!-- Spacer for top badge -->
-        <div class="h-6"></div>
-
-        <div class="flex flex-col items-center justify-center my-auto z-10 text-center px-2">
-          <div class="w-[46px] h-[46px] rounded-full bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] shadow-[3px_3px_0_#0b0b0f] grid place-items-center text-[1.1rem] pl-1 group-hover:scale-110 transition-transform">
-            ▶
-          </div>
-          <span class="mt-3 font-mono font-bold text-[0.75rem] tracking-wider text-[var(--yellow)] uppercase">
-            {{ short.platform }} Reel
-          </span>
-        </div>
-
-        <div class="z-10 text-center">
-          <span class="font-mono text-[0.7rem] text-white/60">Tap to play</span>
-        </div>
+        <span class="w-[46px] h-[46px] rounded-full bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] shadow-[3px_3px_0_#0b0b0f] grid place-items-center text-[1.1rem] pl-1 transition-transform group-hover:scale-110 z-10">
+          ▶
+        </span>
       </div>
 
       <!-- Play overlay only for real thumbnail images -->
