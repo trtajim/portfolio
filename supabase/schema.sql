@@ -70,6 +70,7 @@ create table public.posts (
   image_url text default null,
   is_featured boolean not null default false,
   is_published boolean not null default true,
+  order_index int not null default 0,
   published_date date not null default current_date,
   created_at timestamp with time zone default timezone('utc'::text, now()),
   updated_at timestamp with time zone default timezone('utc'::text, now())
@@ -206,7 +207,7 @@ values
   2
 );
 
-insert into public.posts (slug, title, subtitle, content, tags, is_featured, is_published, published_date)
+insert into public.posts (slug, title, subtitle, content, tags, is_featured, is_published, published_date, order_index)
 values
 (
   'building-a-store-without-paying-for-hosting',
@@ -216,7 +217,8 @@ values
   array['Architecture', 'Cloud', 'Cost-optimization'],
   true,
   true,
-  '2026-08-14'
+  '2026-08-14',
+  0
 ),
 (
   'debugging-esp32-mesh-networks',
@@ -226,8 +228,13 @@ values
   array['IoT', 'Embedded', 'C++'],
   true,
   true,
-  '2026-07-22'
+  '2026-07-22',
+  1
 );
+
+create index if not exists idx_projects_order_index on public.projects (order_index asc);
+create index if not exists idx_posts_order_index on public.posts (order_index asc);
+create index if not exists idx_shorts_order_index on public.shorts (order_index asc);
 
 insert into public.shorts (title, platform, video_url, is_published, order_index)
 values
