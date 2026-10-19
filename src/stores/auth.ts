@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
       isGuest.value = true
     }
 
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured.value) {
       initialized.value = true
       return
     }
@@ -47,7 +47,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function signIn(email: string, password: string) {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured.value) {
       throw new Error('Supabase is not configured. Please set environment variables.')
     }
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -65,7 +65,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function signOut() {
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured.value) {
       await supabase.auth.signOut()
     }
     user.value = null

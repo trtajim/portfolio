@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { marked } from 'marked'
 import { usePortfolioStore } from '@/stores/portfolio'
@@ -8,6 +8,8 @@ import BrutalButton from '@/components/brutal/BrutalButton.vue'
 const route = useRoute()
 const router = useRouter()
 const portfolioStore = usePortfolioStore()
+
+const isImageLoaded = ref(false)
 
 const project = computed(() => {
   return portfolioStore.projects.find((p) => p.slug === route.params.slug)
@@ -36,141 +38,99 @@ const colorOrder: ('yellow' | 'pink' | 'blue' | 'mint' | 'orange')[] = [
 function getActionVariant(idx: number) {
   return colorOrder[idx % colorOrder.length]
 }
+const projectColor = computed<'mint' | 'orange' | 'pink' | 'blue'>(() => {
+  if (!project.value) return 'mint'
+  if (project.value.slug === 'hscstack') return 'mint'
+  const allProjects = portfolioStore.projects
+  const idx = allProjects.findIndex((p) => p.slug === project.value?.slug)
+  const palette: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', 'pink', 'blue']
+  const color = idx >= 0 ? palette[idx % palette.length] : 'mint'
+  return color || 'mint'
+})
 </script>
 
 <template>
-  <div class="c detail-page">
-    <div style="margin-bottom: 24px;">
+  <div class="c pt-8 max-sm:pt-4 pb-14">
+    <div class="mb-6">
       <BrutalButton as="button" variant="white" @click="router.back()">
         ← Back
       </BrutalButton>
     </div>
 
-    <div v-if="!project" class="card box">
-      <h2>Project Not Found</h2>
-      <p>The requested project does not exist or may have been unpublished.</p>
+    <div v-if="!project" class="box p-8 text-center font-mono font-bold">
+      <h2 class="text-2xl mb-2">Project Not Found</h2>
+      <p class="opacity-80">The requested project does not exist or may have been unpublished.</p>
     </div>
 
-    <article v-else class="project-detail">
-      <div class="banner box">
-        <span class="st">{{ project.pill }}</span>
-        <span v-if="project.top_metric" class="badge">{{ project.top_metric }}</span>
-        <h1>{{ project.title }}</h1>
-        <p class="summary">{{ project.summary }}</p>
-
-        <div v-if="project.tags && project.tags.length" class="tags">
-          <span v-for="tag in project.tags" :key="tag" class="tag">{{ tag }}</span>
+    <article v-else class="flex flex-col gap-5">
+      <!-- MAIN BANNER CARD: With project's signature color top bar (like ProjectCard) -->
+      <div class="box p-0 relative flex flex-col overflow-hidden">
+        <!-- TOP COLOR BAR -->
+        <div
+          :class="[
+            'flex items-center justify-between gap-2.5 p-[12px_20px] max-sm:p-[10px_16px] border-b-[3px] border-[var(--bd)] text-[#0b0b0f]',
+            projectColor === 'orange' ? 'bg-[var(--orange)]' : projectColor === 'pink' ? 'bg-[var(--pink)]' : projectColor === 'blue' ? 'bg-[var(--blue)] text-white' : 'bg-[var(--green)]'
+          ]"
+        >
+          <span class="font-mono font-bold text-[0.8rem] bg-[#0b0b0f] text-white rounded-[6px] px-2.5 py-1">
+            {{ project.pill }}
+          </span>
+          <span v-if="project.top_metric" class="font-mono font-bold text-[0.82rem] bg-white text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] px-2.5 py-1">
+            {{ project.top_metric }}
+          </span>
         </div>
 
-        <div v-if="project.actions && project.actions.length" class="acts">
-          <BrutalButton
-            v-for="(action, idx) in project.actions"
-            :key="action.label"
-            as="a"
-            :href="action.url"
-            target="_blank"
-            :variant="getActionVariant(idx)"
-          >
-            {{ action.label }}
-          </BrutalButton>
+        <!-- BANNER BODY -->
+        <div class="p-8 max-sm:p-5 flex flex-col gap-4">
+          <h1 class="m-0 text-[clamp(2.2rem,6vw,3.6rem)] leading-[1.05] tracking-[-0.03em] font-extrabold text-[var(--ink)]">
+            {{ project.title }}
+          </h1>
+          <p class="text-[1.15rem] m-0 max-w-[65ch] leading-[1.5] opacity-90">
+            {{ project.summary }}
+          </p>
+
+          <div v-if="project.tags && project.tags.length" class="flex flex-wrap gap-2">
+            <span
+              v-for="tag in project.tags"
+              :key="tag"
+              class="chip"
+            >
+              {{ tag }}
+            </span>
+          </div>
+
+          <div v-if="project.actions && project.actions.length" class="flex flex-wrap gap-3 mt-2 w-full min-w-0">
+            <BrutalButton
+              v-for="(action, idx) in project.actions"
+              :key="action.label"
+              as="a"
+              :href="action.url"
+              target="_blank"
+              :variant="getActionVariant(idx)"
+            >
+              {{ action.label }}
+            </BrutalButton>
+          </div>
         </div>
       </div>
 
-      <div v-if="project.image_url" class="featured-img box">
-        <img :src="project.image_url" :alt="project.title" />
+      <!-- FEATURED IMAGE WITH SHIMMER PLACEHOLDER -->
+      <div v-if="project.image_url" class="box overflow-hidden max-h-[480px] bg-[#111] p-0 relative min-h-[260px] max-sm:min-h-[200px]">
+        <!-- Shimmer Placeholder shown until image completes loading -->
+        <div
+          v-show="!isImageLoaded"
+          class="skeleton-shimmer absolute inset-0 w-full h-full !rounded-none z-10"
+        ></div>
+        <img
+          :src="project.image_url"
+          :alt="project.title"
+          class="w-full h-full object-cover block transition-opacity duration-300"
+          :class="isImageLoaded ? 'opacity-100' : 'opacity-0'"
+          @load="isImageLoaded = true"
+        />
       </div>
 
-      <div v-if="project.content" class="card box markdown-body" v-html="renderedContent"></div>
+      <div v-if="project.content" class="box p-8 max-sm:p-5 markdown-body" v-html="renderedContent"></div>
     </article>
   </div>
 </template>
-
-<style scoped>
-.detail-page {
-  padding-top: 30px;
-  padding-bottom: 50px;
-}
-
-.banner {
-  background: var(--yellow);
-  color: #111;
-  padding: 30px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 14px;
-}
-
-.st {
-  align-self: flex-start;
-  font: 700 0.8rem var(--mono);
-  background: #111;
-  color: #fff;
-  padding: 3px 10px;
-}
-
-.badge {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-}
-
-h1 {
-  margin: 0;
-  font-size: clamp(2.4rem, 6vw, 3.6rem);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-}
-
-.summary {
-  font-size: 1.2rem;
-  margin: 0;
-  max-width: 65ch;
-  line-height: 1.5;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tag {
-  font: 700 0.8rem var(--mono);
-  background: #fff;
-  border: 2px solid #111;
-  padding: 2px 10px;
-}
-
-.acts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.featured-img {
-  margin-bottom: 14px;
-  overflow: hidden;
-  max-height: 480px;
-  background: #111;
-}
-
-.featured-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-@media (max-width: 600px) {
-  .banner {
-    padding: 20px;
-  }
-  .badge {
-    position: static;
-    align-self: flex-start;
-  }
-}
-</style>

@@ -1246,16 +1246,23 @@ async function handleLogout() {
   font-size: 0.95rem;
   font-weight: 700;
   border: 3px solid var(--bd);
+  border-radius: 6px;
   background: var(--paper);
   color: var(--ink);
   padding: 8px 18px;
   cursor: pointer;
   box-shadow: 4px 4px 0 var(--sh);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.tab-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--sh);
 }
 
 .tab-btn.active {
   background: var(--yellow);
-  color: #111;
+  color: #0b0b0f;
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--sh);
 }
@@ -1278,6 +1285,7 @@ async function handleLogout() {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  padding: 28px 24px;
 }
 
 .grid-2 {
@@ -1301,11 +1309,15 @@ label {
 .input-box {
   font-family: var(--sans);
   font-size: 0.95rem;
-  padding: 8px 12px;
-  border: 3px solid var(--bd);
+  padding: 9px 12px;
+  border: 2px solid var(--bd);
+  border-radius: 6px;
   background: var(--paper);
   color: var(--ink);
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
 }
 
 .input-box:focus {
@@ -1334,7 +1346,9 @@ label {
   display: flex;
   gap: 12px;
   background: var(--bg);
-  padding: 12px;
+  padding: 14px;
+  border: 2px solid var(--bd);
+  border-radius: 6px;
   align-items: flex-start;
 }
 
@@ -1349,6 +1363,8 @@ label {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  padding: 18px 20px;
+  border-radius: var(--r);
   transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -1493,6 +1509,8 @@ label {
   min-height: 250px;
   max-height: 400px;
   overflow-y: auto;
+  border-radius: 6px;
+  border: 2px solid var(--bd);
 }
 
 .action-footer {
@@ -1530,6 +1548,7 @@ label {
   width: 90px;
   height: 90px;
   border: 2px solid var(--bd);
+  border-radius: 6px;
   overflow: hidden;
   background: #111;
 }
@@ -1543,17 +1562,19 @@ label {
 
 .demo-banner {
   background: var(--yellow);
-  color: #111;
+  color: #0b0b0f;
   padding: 16px 20px;
   margin-bottom: 24px;
+  border-radius: var(--r);
 }
 
 .demo-badge {
   display: inline-block;
-  background: #111;
+  background: #0b0b0f;
   color: #fff;
   font: 700 0.8rem var(--mono);
   padding: 2px 10px;
+  border-radius: 4px;
   margin-bottom: 8px;
 }
 

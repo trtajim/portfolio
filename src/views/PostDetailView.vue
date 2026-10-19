@@ -15,123 +15,86 @@ const post = computed(() => {
 
 const renderedContent = computed(() => {
   if (!post.value?.content) return ''
-  // Normalize Windows CRLF to LF, and strip accidental 4-space / tab paragraph indentations
   const cleaned = post.value.content
     .replace(/\r\n/g, '\n')
     .split('\n')
     .map((line) => {
-      // If line starts with 4 spaces or tab but is not a fenced block, trim leading whitespace
       return line.startsWith('    ') || line.startsWith('\t') ? line.trimStart() : line
     })
     .join('\n')
 
   return marked.parse(cleaned)
 })
+
+const tagColors: ('yellow' | 'pink' | 'blue' | 'green' | 'orange')[] = [
+  'yellow',
+  'pink',
+  'blue',
+  'green',
+  'orange'
+]
+
+function getTagColorClass(idx: number) {
+  const color = tagColors[idx % tagColors.length]
+  switch (color) {
+    case 'yellow':
+      return '!bg-[var(--yellow)] !text-[#0b0b0f]'
+    case 'pink':
+      return '!bg-[var(--pink)] !text-[#0b0b0f]'
+    case 'blue':
+      return '!bg-[var(--blue)] !text-white'
+    case 'green':
+      return '!bg-[var(--green)] !text-[#0b0b0f]'
+    case 'orange':
+      return '!bg-[var(--orange)] !text-[#0b0b0f]'
+  }
+}
 </script>
 
 <template>
-  <div class="c detail-page">
-    <div style="margin-bottom: 24px;">
+  <div class="c pt-8 max-sm:pt-4 pb-14">
+    <div class="mb-6">
       <BrutalButton as="button" variant="white" @click="router.back()">
         ← Back
       </BrutalButton>
     </div>
 
-    <div v-if="!post" class="card box">
-      <h2>Article Not Found</h2>
-      <p>The requested post does not exist or has not been published.</p>
+    <div v-if="!post" class="box p-8 text-center font-mono font-bold">
+      <h2 class="text-2xl mb-2">Article Not Found</h2>
+      <p class="opacity-80">The requested post does not exist or has not been published.</p>
     </div>
 
-    <article v-else class="post-detail">
-      <header class="post-header box">
-        <div class="meta">
-          <time>{{ post.published_date }}</time>
+    <article v-else class="flex flex-col gap-5">
+      <header class="box p-8 max-sm:p-5 flex flex-col gap-3.5">
+        <div class="font-mono font-bold text-[0.85rem]">
+          <time class="bg-[var(--blue)] text-white border-2 border-[#0b0b0f] rounded-[6px] px-2.5 py-0.5">
+            {{ post.published_date }}
+          </time>
         </div>
 
-        <h1>{{ post.title }}</h1>
-        <p v-if="post.subtitle" class="subtitle">{{ post.subtitle }}</p>
+        <h1 class="m-0 text-[clamp(2.2rem,5vw,3.2rem)] leading-[1.1] tracking-[-0.03em] font-extrabold">
+          {{ post.title }}
+        </h1>
+        <p v-if="post.subtitle" class="text-[1.2rem] m-0 font-medium opacity-90">
+          {{ post.subtitle }}
+        </p>
 
-        <div v-if="post.tags && post.tags.length" class="tags">
-          <span v-for="tag in post.tags" :key="tag" class="tag">{{ tag }}</span>
+        <div v-if="post.tags && post.tags.length" class="flex flex-wrap gap-2 mt-1.5">
+          <span
+            v-for="(tag, idx) in post.tags"
+            :key="tag"
+            :class="['chip', getTagColorClass(idx)]"
+          >
+            {{ tag }}
+          </span>
         </div>
       </header>
 
-      <div v-if="post.image_url" class="featured-img box">
-        <img :src="post.image_url" :alt="post.title" />
+      <div v-if="post.image_url" class="box overflow-hidden max-h-[480px] bg-[#111] p-0">
+        <img :src="post.image_url" :alt="post.title" class="w-full h-full object-cover block" />
       </div>
 
-      <div class="card box markdown-body" v-html="renderedContent"></div>
+      <div v-if="post.content" class="box p-8 max-sm:p-5 markdown-body" v-html="renderedContent"></div>
     </article>
   </div>
 </template>
-
-<style scoped>
-.detail-page {
-  padding-top: 30px;
-  padding-bottom: 50px;
-}
-
-.post-header {
-  background: var(--paper);
-  color: var(--ink);
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-bottom: 14px;
-}
-
-.meta {
-  font: 700 0.85rem var(--mono);
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-h1 {
-  margin: 0;
-  font-size: clamp(2.2rem, 5vw, 3.2rem);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-}
-
-.subtitle {
-  font-size: 1.2rem;
-  margin: 0;
-  font-weight: 500;
-  opacity: 0.9;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.tag {
-  font: 700 0.8rem var(--mono);
-  background: var(--yellow);
-  color: #111;
-  border: 2px solid var(--bd);
-  padding: 2px 10px;
-}
-
-.featured-img {
-  margin-bottom: 14px;
-  max-height: 480px;
-  overflow: hidden;
-}
-
-.featured-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-@media (max-width: 600px) {
-  .post-header {
-    padding: 20px;
-  }
-}
-</style>

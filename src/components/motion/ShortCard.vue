@@ -12,7 +12,6 @@ const emit = defineEmits<{
 }>()
 
 const fallbackThumbnail = computed(() => {
-  // If YouTube and no custom thumbnail, grab maxresdefault / hqdefault
   if (props.short.platform === 'youtube' && props.short.video_url) {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|shorts\/)([^#&?]*).*/
     const match = props.short.video_url.match(regExp)
@@ -25,155 +24,66 @@ const fallbackThumbnail = computed(() => {
 </script>
 
 <template>
-  <div class="short-card box" @click="emit('play', short)">
-    <div class="thumb-container">
-      <span v-if="index !== undefined" class="idx-badge">#{{ index + 1 }}</span>
+  <div
+    class="box p-0 w-full flex flex-col overflow-hidden cursor-pointer select-none transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] active:-translate-x-[3px] active:-translate-y-[3px] active:shadow-[9px_9px_0_var(--sh)] group"
+    @click="emit('play', short)"
+  >
+    <div class="w-full aspect-[9/16] relative bg-[#181824] overflow-hidden border-b-[3px] border-[var(--bd)]">
+      <span
+        v-if="index !== undefined"
+        class="absolute top-2.5 left-2.5 bg-[var(--pink)] text-[#0b0b0f] font-mono font-bold text-[0.75rem] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2 py-0.5 z-10"
+      >
+        #{{ index + 1 }}
+      </span>
 
       <img
         v-if="short.thumbnail_url || fallbackThumbnail"
         :src="short.thumbnail_url || fallbackThumbnail!"
         :alt="short.title"
-        class="thumb-img"
+        class="w-full h-full object-cover block"
         loading="lazy"
       />
-      <div v-else class="thumb-placeholder">
-        <span class="pl-tag">MOTION</span>
+      <!-- CUSTOM FALLBACK ARTWORK WHEN NO THUMBNAIL (E.G. FACEBOOK REELS) -->
+      <div
+        v-else
+        class="w-full h-full relative p-4 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#1c1a32] via-[#24223f] to-[#121124] text-white"
+      >
+        <!-- Atmospheric decorative geometric shapes in the background -->
+        <div class="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-[var(--blue)]/20 blur-xl pointer-events-none" aria-hidden="true"></div>
+        <div class="absolute -left-8 -bottom-8 w-28 h-28 rounded-full bg-[var(--pink)]/20 blur-xl pointer-events-none" aria-hidden="true"></div>
+
+        <!-- Spacer for top badge -->
+        <div class="h-6"></div>
+
+        <div class="flex flex-col items-center justify-center my-auto z-10 text-center px-2">
+          <div class="w-[46px] h-[46px] rounded-full bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] shadow-[3px_3px_0_#0b0b0f] grid place-items-center text-[1.1rem] pl-1 group-hover:scale-110 transition-transform">
+            ▶
+          </div>
+          <span class="mt-3 font-mono font-bold text-[0.75rem] tracking-wider text-[var(--yellow)] uppercase">
+            {{ short.platform }} Reel
+          </span>
+        </div>
+
+        <div class="z-10 text-center">
+          <span class="font-mono text-[0.7rem] text-white/60">Tap to play</span>
+        </div>
       </div>
 
-      <div class="play-overlay">
-        <span class="play-icon">▶</span>
+      <!-- Play overlay only for real thumbnail images -->
+      <div
+        v-if="short.thumbnail_url || fallbackThumbnail"
+        class="absolute inset-0 bg-[#0b0b0f]/35 grid place-items-center transition-colors group-hover:bg-[#0b0b0f]/20"
+      >
+        <span class="w-[46px] h-[46px] rounded-full bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] shadow-[3px_3px_0_#0b0b0f] grid place-items-center text-[1.1rem] pl-1 transition-transform group-hover:scale-110">
+          ▶
+        </span>
       </div>
     </div>
 
-    <div class="card-info">
-      <h4 class="short-title">{{ short.title }}</h4>
+    <div class="p-[14px_16px] max-sm:p-3">
+      <h4 class="m-0 text-[1.05rem] max-sm:text-[0.92rem] font-bold tracking-[-0.01em] line-clamp-2">
+        {{ short.title }}
+      </h4>
     </div>
   </div>
 </template>
-
-<style scoped>
-.short-card {
-  flex: 0 0 260px;
-  width: 260px;
-  background: var(--paper);
-  color: var(--ink);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  user-select: none;
-  transition: transform 0.12s, box-shadow 0.12s;
-}
-
-.short-card:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: 8px 8px 0 var(--sh);
-}
-
-.short-card:active {
-  transform: translate(3px, 3px);
-  box-shadow: 2px 2px 0 var(--sh);
-}
-
-.thumb-container {
-  width: 100%;
-  aspect-ratio: 9 / 16;
-  position: relative;
-  background: #111;
-  overflow: hidden;
-  border-bottom: 3px solid var(--bd);
-}
-
-.thumb-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.thumb-placeholder {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
-  background: var(--paper);
-  color: var(--ink);
-}
-
-.pl-tag {
-  font: 700 1rem var(--mono);
-  background: var(--yellow);
-  color: #111;
-  border: 2px solid var(--bd);
-  padding: 4px 10px;
-}
-
-.play-overlay {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(0, 0, 0, 0.25);
-  transition: background 0.15s;
-}
-
-.short-card:hover .play-overlay {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.idx-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  font: 700 0.8rem var(--mono);
-  background: var(--yellow);
-  color: #111;
-  border: 2px solid #111;
-  box-shadow: 2px 2px 0 #111;
-  padding: 2px 8px;
-  z-index: 2;
-  user-select: none;
-}
-
-.play-icon {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  background: var(--yellow);
-  color: #111;
-  border: 3px solid #111;
-  box-shadow: 3px 3px 0 #111;
-  font-size: 1.1rem;
-  padding-left: 3px;
-  transition: transform 0.12s;
-}
-
-.short-card:hover .play-icon {
-  transform: scale(1.1);
-}
-
-.card-info {
-  padding: 12px 14px;
-  background: var(--paper);
-}
-
-.short-title {
-  margin: 0;
-  font-size: 0.95rem;
-  font-family: var(--sans);
-  font-weight: 700;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-@media (max-width: 600px) {
-  .short-card {
-    flex: 0 0 160px;
-    width: 160px;
-  }
-}
-</style>
