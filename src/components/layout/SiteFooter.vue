@@ -27,13 +27,13 @@ const githubLink = computed(() => {
   <footer class="mt-[72px] max-sm:mt-[44px] border-t-[3px] border-[var(--bd)] overflow-hidden">
     <div class="c flex flex-col items-center">
       <div
-        class="w-full text-center font-extrabold tracking-[-0.04em] whitespace-nowrap text-transparent [-webkit-text-stroke:3px_var(--ink)] max-sm:[-webkit-text-stroke:2px_var(--ink)] select-none text-[clamp(2.8rem,13vw,11rem)] leading-[0.9] mt-[20px] max-sm:mt-[14px]"
+        class="w-full text-center font-extrabold tracking-[-0.04em] whitespace-nowrap text-transparent [-webkit-text-stroke:3px_var(--ink)] max-sm:[-webkit-text-stroke:2px_var(--ink)] select-none text-[clamp(2.8rem,13vw,11rem)] leading-[0.9] mt-[20px] max-sm:mt-[14px] mb-5 max-sm:mb-3"
         aria-hidden="true"
       >
         TR TAJIM
       </div>
 
-      <div class="w-full grid grid-cols-[1fr_auto_1fr] max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-2 items-center gap-3 py-4 pb-7 font-bold text-[0.82rem] font-mono text-[var(--ink)] opacity-85">
+      <div class="w-full grid grid-cols-[1fr_auto_1fr] max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-2.5 items-center gap-3 pt-4 pb-9 max-sm:pb-7 font-bold text-[0.82rem] font-mono text-[var(--ink)] opacity-85">
         <span class="text-left max-sm:text-center">© {{ year }} {{ portfolioStore.profile.name || 'TR Tajim' }}</span>
 
         <router-link
