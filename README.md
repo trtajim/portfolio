@@ -18,9 +18,8 @@ I've always loved retro, high-contrast aesthetics, so I designed this site using
 
 ## 🚀 Make It Yours
 
-Want to build your own portfolio using this? It's super easy!
-
-Everything here is **100% server-driven** via Supabase. You don't have to touch or rewrite any frontend code—just clone the repo, connect your own Supabase database, add your info, and boom, your personal site is ready! 💥
+Want to build your own portfolio with this? It's completely server-driven via Supabase.
+Just clone the repo, connect your Supabase project, input your data, and boom!
 
 ---
 
