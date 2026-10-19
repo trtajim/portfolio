@@ -35,9 +35,7 @@ function categorizeTags(tags?: string[]) {
   for (const tag of tags) {
     const raw = tag.trim()
     const norm = raw.toLowerCase()
-    const isTech =
-      techSet.has(norm) ||
-      Array.from(techSet).some((tech) => tech === norm || tech.includes(norm) || norm.includes(tech))
+    const isTech = techSet.has(norm)
 
     if (isTech) {
       techTags.push(raw)
@@ -339,7 +337,7 @@ async function copyEmail() {
                 as="a"
                 :href="action.url"
                 target="_blank"
-                :variant="index === 0 ? 'yellow' : 'white'"
+                :variant="getSocialVariant(index)"
               >
                 {{ action.label }} ↗
               </BrutalButton>
