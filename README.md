@@ -16,14 +16,14 @@ I've always loved retro, high-contrast aesthetics, so I designed this site using
 
 ---
 
-## ☕ Getting in Touch
+## 🚀 Make It Yours
 
-I'm always excited to collaborate on open-source initiatives, talk competitive programming, or chat about tech ideas:
+Want to build your own portfolio with this? It's completely server-driven via Supabase:
 
-- **GitHub**: [@trtajim](https://github.com/trtajim)
-- **LinkedIn**: [in/trtajim](https://linkedin.com/in/trtajim)
-- **Facebook**: [fb.com/trtajim](https://facebook.com/trtajim)
+1. Clone the repo
+2. Connect your Supabase project
+3. Input your data, and boom!
 
 ---
 
-*Thanks for stopping by! Feel free to explore the code or check out the live site.*
+*Thanks for stopping by! Feel free to fork, customize, or star the repo.*
