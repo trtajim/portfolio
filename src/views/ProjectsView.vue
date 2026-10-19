@@ -65,8 +65,17 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
     </div>
 
     <!-- LOADING STATE -->
-    <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="empty-state card box">
-      <span class="loading-tag">Loading projects...</span>
+    <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="proj-grid">
+      <div v-for="n in 6" :key="n" class="card box skeleton-project-card">
+        <div class="skeleton-pill" style="margin-bottom: 16px; width: 85px;"></div>
+        <div class="skeleton-line" style="width: 70%; height: 26px; margin-bottom: 14px;"></div>
+        <div class="skeleton-line" style="width: 95%; margin-bottom: 8px;"></div>
+        <div class="skeleton-line" style="width: 80%; margin-bottom: 24px;"></div>
+        <div style="display: flex; gap: 8px; margin-top: auto;">
+          <div class="skeleton-pill" style="width: 65px; height: 22px;"></div>
+          <div class="skeleton-pill" style="width: 75px; height: 22px;"></div>
+        </div>
+      </div>
     </div>
 
     <!-- VIDEO SHORTS SECTION (WHEN "ALL" OR "VIDEO" IS ACTIVE) -->
@@ -156,6 +165,14 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
   flex-wrap: wrap;
   gap: 24px;
   padding-bottom: 40px;
+}
+
+.skeleton-project-card {
+  background: var(--paper);
+  padding: 24px;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
 }
 
 .empty-state {
