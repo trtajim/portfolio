@@ -191,7 +191,7 @@ async function copyEmail() {
             <div class="skeleton-shimmer h-[22px] w-[65%] !bg-[#0b0b0f]/20"></div>
           </div>
         </div>
-        <div class="absolute -right-[34px] -bottom-[34px] w-[120px] h-[120px] max-sm:w-[84px] max-sm:h-[84px] max-sm:-right-[26px] max-sm:-bottom-[26px] border-[3px] border-[#0b0b0f] rounded-full bg-[var(--pink)] pointer-events-none" aria-hidden="true"></div>
+        <div class="absolute -right-[34px] -bottom-[34px] w-[120px] h-[120px] max-sm:w-[84px] max-sm:h-[84px] max-sm:-right-[26px] max-sm:-bottom-[26px] border-[3px] border-[var(--bd)] rounded-full bg-[var(--pink)] pointer-events-none" aria-hidden="true"></div>
       </div>
 
       <div class="flex items-stretch w-full h-full min-h-0">
@@ -215,7 +215,7 @@ async function copyEmail() {
             </span>
           </div>
 
-          <div class="absolute bottom-3.5 right-3.5 bg-[var(--pink)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[3px_3px_0_var(--sh)] px-2.5 py-1 inline-flex items-center gap-1.5 -rotate-2 hover:rotate-0 hover:scale-[1.03] transition-transform z-10 select-none">
+          <div class="absolute bottom-3.5 right-3.5 bg-[var(--pink)] text-[#0b0b0f] border-2 border-[var(--bd)] rounded-[6px] shadow-[3px_3px_0_var(--sh)] px-2.5 py-1 inline-flex items-center gap-1.5 -rotate-2 hover:rotate-0 hover:scale-[1.03] transition-transform z-10 select-none">
             <span aria-hidden="true">📍</span>
             <span class="font-mono font-bold text-[0.82rem] whitespace-nowrap">Rangpur, Bangladesh</span>
           </div>
@@ -296,11 +296,11 @@ async function copyEmail() {
               v-for="(item, iIdx) in parseItems(group.items)"
               :key="item"
               :class="[
-                'font-mono font-bold text-[0.82rem] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_var(--sh)] px-2.5 py-[3px]',
+                'font-mono font-bold text-[0.82rem] text-[#0b0b0f] border-2 border-[var(--bd)] rounded-[6px] shadow-[2px_2px_0_var(--sh)] px-2.5 py-[3px]',
                 getAccentColor(gIdx + iIdx) === 'green' && 'bg-[var(--green)]',
                 getAccentColor(gIdx + iIdx) === 'yellow' && 'bg-[var(--yellow)]',
                 getAccentColor(gIdx + iIdx) === 'pink' && 'bg-[var(--pink)]',
-                getAccentColor(gIdx + iIdx) === 'blue' && 'bg-[var(--blue)] text-white border-2 border-[#0b0b0f]',
+                getAccentColor(gIdx + iIdx) === 'blue' && 'bg-[var(--blue)] text-white',
                 getAccentColor(gIdx + iIdx) === 'orange' && 'bg-[var(--orange)]'
               ]"
             >

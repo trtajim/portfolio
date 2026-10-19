@@ -74,7 +74,7 @@ const badgeColorClass = computed(() => {
     </div>
 
     <span
-      class="flex items-center justify-center w-10 h-10 max-sm:w-9 max-sm:h-9 border-[3px] border-[#0b0b0f] rounded-full bg-white text-[#0b0b0f] font-sans font-extrabold text-[1.2rem] leading-none transition-transform group-hover:translate-x-1 group-hover:bg-[#0b0b0f] group-hover:text-white select-none shrink-0"
+      class="flex items-center justify-center w-10 h-10 max-sm:w-9 max-sm:h-9 border-[3px] border-[var(--bd)] rounded-full bg-[var(--paper)] text-[var(--ink)] font-sans font-extrabold text-[1.2rem] leading-none transition-all group-hover:translate-x-1 group-hover:bg-[var(--ink)] group-hover:text-[var(--paper)] select-none shrink-0"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
