@@ -72,12 +72,6 @@ function parseMetric(metric?: string | null): { value: string; label: string } {
   if (parts.length === 1) {
     return { value: first, label: '' }
   }
-  if (['★', '⭐', '🔥', '🚀'].includes(first) && parts.length > 2) {
-    return {
-      value: `${first} ${parts[1] || ''}`,
-      label: parts.slice(2).join(' ')
-    }
-  }
   return {
     value: first,
     label: parts.slice(1).join(' ')
@@ -327,7 +321,7 @@ async function copyEmail() {
         <div v-if="spotlightProject" class="spotlight-card spotlight-split box">
           <div class="spotlight-left">
             <div class="spotlight-pill-row">
-              <span class="spotlight-kicker">FEATURED {{ spotlightProject.pill ? spotlightProject.pill.toUpperCase() : '' }}</span>
+              <span class="spotlight-kicker">★ FEATURED {{ spotlightProject.pill ? spotlightProject.pill.toUpperCase() : '' }}</span>
             </div>
             <h3 class="spotlight-title">
               <router-link :to="`/projects/${spotlightProject.slug}`" class="title-link">
