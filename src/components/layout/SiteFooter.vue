@@ -25,14 +25,14 @@ const githubLink = computed(() => {
 
 <template>
   <footer class="mt-[72px] max-sm:mt-[44px] border-t-[3px] border-[var(--bd)] overflow-hidden">
-    <div
-      class="text-center font-extrabold tracking-[-0.06em] whitespace-nowrap text-transparent [-webkit-text-stroke:3px_var(--ink)] max-sm:[-webkit-text-stroke-width:2px] select-none text-[clamp(4rem,19vw,14rem)] leading-[0.85] mt-[22px]"
-      aria-hidden="true"
-    >
-      TAJIM
-    </div>
-
     <div class="c">
+      <div
+        class="text-center font-extrabold tracking-[-0.06em] whitespace-nowrap text-transparent [-webkit-text-stroke:3px_var(--ink)] max-sm:[-webkit-text-stroke-width:2px] select-none text-[clamp(4rem,19vw,14rem)] leading-[0.85] mt-[22px]"
+        aria-hidden="true"
+      >
+        TR TAJIM
+      </div>
+
       <div class="grid grid-cols-[1fr_auto_1fr] max-sm:grid-cols-1 max-sm:text-center items-center gap-3 py-3.5 pb-6 font-bold text-[0.85rem] font-mono">
         <span class="text-left max-sm:text-center">© {{ year }} {{ portfolioStore.profile.name || 'TR Tajim' }}</span>
 

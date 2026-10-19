@@ -2,9 +2,15 @@
 import { computed } from 'vue'
 import type { Post } from '@/types'
 
-const props = defineProps<{
-  post: Post
-}>()
+const props = withDefaults(
+  defineProps<{
+    post: Post
+    color?: 'blue' | 'yellow' | 'pink' | 'green' | 'orange'
+  }>(),
+  {
+    color: 'blue'
+  }
+)
 
 const formattedDate = computed(() => {
   if (!props.post.published_date) return ''
@@ -25,6 +31,22 @@ const formattedDate = computed(() => {
     return props.post.published_date
   }
 })
+
+const badgeColorClass = computed(() => {
+  switch (props.color) {
+    case 'yellow':
+      return 'bg-[var(--yellow)] text-[#0b0b0f]'
+    case 'pink':
+      return 'bg-[var(--pink)] text-[#0b0b0f]'
+    case 'green':
+      return 'bg-[var(--green)] text-[#0b0b0f]'
+    case 'orange':
+      return 'bg-[var(--orange)] text-[#0b0b0f]'
+    case 'blue':
+    default:
+      return 'bg-[var(--blue)] text-white'
+  }
+})
 </script>
 
 <template>
@@ -34,7 +56,10 @@ const formattedDate = computed(() => {
   >
     <time
       :datetime="post.published_date"
-      class="justify-self-start font-mono font-bold text-[0.78rem] bg-[var(--blue)] text-white border-2 border-[#0b0b0f] rounded-[6px] px-2 py-0.5 max-sm:col-span-full"
+      :class="[
+        'justify-self-start font-mono font-bold text-[0.78rem] border-2 border-[#0b0b0f] rounded-[6px] px-2 py-0.5 max-sm:col-span-full',
+        badgeColorClass
+      ]"
     >
       {{ formattedDate }}
     </time>

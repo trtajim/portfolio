@@ -28,27 +28,18 @@ function toggleTheme() {
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 border-b-[3px] border-[var(--bd)] bg-[var(--bg)] pt-[env(safe-area-inset-top,0px)]">
-    <div class="c flex items-center justify-between gap-2.5 py-2.5">
-      <router-link
-        to="/"
-        class="inline-flex items-center text-[1.25rem] font-extrabold tracking-[-0.02em] text-[#0b0b0f] no-underline bg-[var(--yellow)] border-[3px] border-[var(--bd)] rounded-[var(--r)] px-3.5 py-1 shadow-[3px_3px_0_var(--sh)]"
-      >
+  <header class="top">
+    <div class="c">
+      <router-link to="/" class="logo">
         Tajim
       </router-link>
 
-      <nav class="flex items-center gap-2">
-        <router-link
-          to="/projects"
-          class="inline-flex items-center min-h-[40px] px-3.5 py-1 text-[0.9rem] font-bold text-[var(--ink)] no-underline rounded-[var(--r)] border-[3px] border-transparent transition-all hover:border-[var(--bd)] hover:bg-[var(--pink)] hover:text-[#0b0b0f] hover:shadow-[3px_3px_0_var(--sh)]"
-        >
+      <nav aria-label="Sections">
+        <router-link to="/projects">
           Projects
         </router-link>
 
-        <router-link
-          to="/writing"
-          class="inline-flex items-center min-h-[40px] px-3.5 py-1 text-[0.9rem] font-bold text-[var(--ink)] no-underline rounded-[var(--r)] border-[3px] border-transparent transition-all hover:border-[var(--bd)] hover:bg-[var(--pink)] hover:text-[#0b0b0f] hover:shadow-[3px_3px_0_var(--sh)]"
-        >
+        <router-link to="/writing">
           Writing
         </router-link>
 
@@ -57,7 +48,6 @@ function toggleTheme() {
           type="button"
           @click="toggleTheme"
           aria-label="Switch colour theme"
-          class="inline-flex items-center justify-center min-h-[40px] px-3 py-1 text-[1.1rem] text-white bg-[var(--blue)] border-[3px] border-[var(--bd)] rounded-[var(--r)] shadow-[3px_3px_0_var(--sh)] cursor-pointer transition-colors hover:bg-[var(--yellow)] hover:text-[#0b0b0f]"
         >
           {{ isDark ? '☀️' : '🌙' }}
         </button>
@@ -65,3 +55,102 @@ function toggleTheme() {
     </div>
   </header>
 </template>
+
+<style scoped>
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  border-bottom: var(--w) solid var(--bd);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.top .c {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  font: 800 1.25rem var(--sans);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  background: var(--yellow);
+  color: #0b0b0f;
+  border: var(--w) solid var(--bd);
+  border-radius: var(--r);
+  padding: 3px 14px;
+  box-shadow: 3px 3px 0 var(--sh);
+}
+
+.top nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.top nav a,
+#theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 4px 14px;
+  font: 700 0.9rem var(--sans);
+  text-decoration: none;
+  border: var(--w) solid transparent;
+  border-radius: var(--r);
+  cursor: pointer;
+  background: none;
+  color: var(--ink);
+  transition: transform 0.12s, box-shadow 0.12s, background-color 0.12s, border-color 0.12s;
+}
+
+.top nav a:hover {
+  border-color: var(--bd);
+  background: var(--pink);
+  color: #0b0b0f;
+  box-shadow: 3px 3px 0 var(--sh);
+}
+
+#theme {
+  border-color: var(--bd);
+  font-size: 1.1rem;
+  padding: 4px 12px;
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--sh);
+}
+
+#theme:hover {
+  background: var(--yellow);
+  color: #0b0b0f;
+}
+
+@media (max-width: 600px) {
+  .top .c {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .logo {
+    font-size: 1.1rem;
+    padding: 2px 10px;
+  }
+  .top nav {
+    gap: 6px;
+  }
+  .top nav a,
+  #theme {
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    min-height: 36px;
+  }
+}
+</style>

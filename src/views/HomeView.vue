@@ -105,6 +105,14 @@ function getAccentColor(idx: number) {
   return accentColors[idx % accentColors.length]
 }
 
+const dateColors: ('blue' | 'pink' | 'green' | 'orange' | 'yellow')[] = [
+  'blue',
+  'pink',
+  'green',
+  'orange',
+  'yellow'
+]
+
 const contactEmail = computed(() => {
   return portfolioStore.profile.email || 'com.tajim@gmail.com'
 })
@@ -165,20 +173,20 @@ async function copyEmail() {
   <div class="c">
     <!-- HERO SECTION -->
     <div class="grid grid-cols-[1.4fr_1fr] max-md:grid-cols-1 gap-6 pt-10 max-sm:pt-5 pb-6 items-stretch">
-      <div class="box bg-[var(--yellow)] text-[#0b0b0f] p-[30px_30px_28px] max-md:p-[24px_20px] max-sm:p-[20px_18px] relative overflow-hidden flex flex-col justify-between">
+      <div class="box !bg-[var(--yellow)] !text-[#0b0b0f] !border-[#0b0b0f] p-[30px_30px_28px] max-md:p-[24px_20px] max-sm:p-[20px_18px] relative overflow-hidden flex flex-col justify-between">
         <div>
           <span class="inline-block font-mono font-bold text-[0.8rem] bg-[#0b0b0f] text-white rounded-[6px] px-2.5 py-[3px] mb-4">
             hello, I’m
           </span>
-          <h1 class="m-0 font-extrabold tracking-[-0.05em] leading-[0.88] text-[clamp(3.4rem,10.5vw,7rem)] max-sm:text-[clamp(2.8rem,14vw,4rem)] [text-shadow:5px_5px_0_#fff] max-sm:[text-shadow:3px_3px_0_#fff] text-[#0b0b0f]">
+          <h1 class="m-0 font-extrabold tracking-[-0.05em] leading-[0.88] text-[clamp(3.4rem,10.5vw,7rem)] max-sm:text-[clamp(2.8rem,14vw,4rem)] [text-shadow:5px_5px_0_#fff] max-sm:[text-shadow:3px_3px_0_#fff] !text-[#0b0b0f]">
             {{ profile.name || 'TR Tajim' }}
           </h1>
-          <p v-if="portfolioStore.isLoaded && profile.headline" class="mt-5 max-sm:mt-3.5 text-[1.2rem] max-sm:text-[1.05rem] font-semibold max-w-[32ch] text-[#0b0b0f]">
+          <p v-if="portfolioStore.isLoaded && profile.headline" class="mt-5 max-sm:mt-3.5 text-[1.2rem] max-sm:text-[1.05rem] font-semibold max-w-[32ch] !text-[#0b0b0f]">
             {{ profile.headline }}
           </p>
           <div v-else class="mt-4 flex flex-col gap-2 max-w-[32ch]" aria-hidden="true">
-            <div class="skeleton-line h-5 w-[92%]"></div>
-            <div class="skeleton-line h-5 w-[65%]"></div>
+            <div class="skeleton-line h-5 w-[92%] bg-[#0b0b0f]/20"></div>
+            <div class="skeleton-line h-5 w-[65%] bg-[#0b0b0f]/20"></div>
           </div>
         </div>
         <div class="absolute -right-[34px] -bottom-[34px] w-[120px] h-[120px] max-sm:w-[84px] max-sm:h-[84px] max-sm:-right-[26px] max-sm:-bottom-[26px] border-[3px] border-[#0b0b0f] rounded-full bg-[var(--pink)] pointer-events-none" aria-hidden="true"></div>
@@ -229,7 +237,6 @@ async function copyEmail() {
     <!-- WHO I AM -->
     <section id="about" class="pt-14 max-sm:pt-9 pb-1.5">
       <div class="sh">
-        <span class="n">01</span>
         <h2>Who I am</h2>
       </div>
 
@@ -254,7 +261,6 @@ async function copyEmail() {
     <!-- TECH STACK -->
     <section id="stack" class="pt-14 max-sm:pt-9 pb-1.5">
       <div class="sh">
-        <span class="n">02</span>
         <h2>Tech stack</h2>
       </div>
 
@@ -300,7 +306,6 @@ async function copyEmail() {
     <!-- WHAT I BUILT -->
     <section id="projects" class="pt-14 max-sm:pt-9 pb-1.5">
       <div class="sh">
-        <span class="n">03</span>
         <h2>What I built</h2>
       </div>
 
@@ -320,18 +325,18 @@ async function copyEmail() {
         <!-- SPOTLIGHT / FLAGSHIP PROJECT -->
         <div
           v-if="spotlightProject"
-          class="box bg-[var(--green)] text-[#0b0b0f] p-[30px] max-md:p-[22px_18px] max-sm:p-[18px_14px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-7 max-sm:gap-4.5 items-center rounded-[var(--r)]"
+          class="box !bg-[var(--green)] !text-[#0b0b0f] !border-[#0b0b0f] p-[30px] max-md:p-[22px_18px] max-sm:p-[18px_14px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-7 max-sm:gap-4.5 items-center rounded-[var(--r)]"
         >
           <div class="flex flex-col gap-3.5">
             <span class="font-mono font-bold text-[0.75rem] bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2 py-0.5 self-start">
-              ★ FEATURED {{ spotlightProject.pill ? spotlightProject.pill.toUpperCase() : 'PROJECT' }}
+              ★ FEATURED {{ spotlightProject.pill ? spotlightProject.pill.toUpperCase() : 'WEBSITE' }}
             </span>
-            <h3 class="m-0 text-[clamp(1.85rem,4.5vw,2.5rem)] leading-[1.1] tracking-[-0.03em] font-extrabold text-[#0b0b0f]">
-              <router-link :to="`/projects/${spotlightProject.slug}`" class="no-underline text-inherit hover:underline">
+            <h3 class="m-0 text-[clamp(1.85rem,4.5vw,2.5rem)] leading-[1.1] tracking-[-0.03em] font-extrabold !text-[#0b0b0f]">
+              <router-link :to="`/projects/${spotlightProject.slug}`" class="no-underline !text-[#0b0b0f] hover:underline">
                 {{ spotlightProject.title }}
               </router-link>
             </h3>
-            <p class="m-0 text-[1.05rem] leading-[1.55] text-[#0b0b0f]">
+            <p class="m-0 text-[1.05rem] leading-[1.55] !text-[#0b0b0f]">
               {{ splitSummary(spotlightProject.summary).main }}
             </p>
             <div v-if="spotlightProject.actions?.length" class="flex flex-wrap gap-2.5 mt-2">
@@ -341,7 +346,7 @@ async function copyEmail() {
                 as="a"
                 :href="action.url"
                 target="_blank"
-                :variant="getSocialVariant(index)"
+                :variant="index === 0 ? 'white' : index === 1 ? 'yellow' : 'blue'"
                 class="max-sm:flex-1 max-sm:text-center"
               >
                 {{ action.label }} ↗
@@ -363,7 +368,7 @@ async function copyEmail() {
               </div>
               <div class="p-[18px_20px] max-sm:p-3.5 flex flex-col gap-3">
                 <div v-if="spotlightProject.top_metric" class="flex flex-col border-b-2 border-dashed border-[#ddd] pb-2.5">
-                  <span class="text-[clamp(2rem,5vw,2.5rem)] font-extrabold leading-none tracking-[-0.03em] text-[#0b0b0f]">
+                  <span class="text-[clamp(2rem,5vw,2.5rem)] font-extrabold leading-none tracking-[-0.03em] !text-[#0b0b0f]">
                     {{ parseMetric(spotlightProject.top_metric).value }}
                   </span>
                   <span v-if="parseMetric(spotlightProject.top_metric).label" class="font-mono font-bold text-[0.8rem] text-[#555] mt-1">
@@ -404,7 +409,7 @@ async function copyEmail() {
       </div>
 
       <div class="mt-7 flex justify-center">
-        <BrutalButton as="router-link" to="/projects" variant="yellow" class="text-[1.02rem] px-6 py-2.5 max-sm:w-full">
+        <BrutalButton as="router-link" to="/projects" variant="blue" class="text-[1.02rem] px-6 py-2.5 max-sm:w-full">
           View all projects →
         </BrutalButton>
       </div>
@@ -413,7 +418,6 @@ async function copyEmail() {
     <!-- WHAT I WRITE -->
     <section id="writing" class="pt-14 max-sm:pt-9 pb-1.5">
       <div class="sh">
-        <span class="n">04</span>
         <h2>What I write</h2>
       </div>
 
@@ -431,13 +435,13 @@ async function copyEmail() {
         No articles published yet.
       </div>
       <ul v-else class="grid gap-4.5 max-sm:gap-3.5 m-0 p-0 list-none">
-        <li v-for="post in featuredPosts" :key="post.slug">
-          <PostCard :post="post" />
+        <li v-for="(post, idx) in featuredPosts" :key="post.slug">
+          <PostCard :post="post" :color="dateColors[idx % dateColors.length]" />
         </li>
       </ul>
 
       <div v-if="featuredPosts.length > 0" class="mt-7 flex justify-center">
-        <BrutalButton as="router-link" to="/writing" variant="yellow" class="text-[1.02rem] px-6 py-2.5 max-sm:w-full">
+        <BrutalButton as="router-link" to="/writing" variant="blue" class="text-[1.02rem] px-6 py-2.5 max-sm:w-full">
           View all writing →
         </BrutalButton>
       </div>
@@ -446,7 +450,6 @@ async function copyEmail() {
     <!-- MOTION & SHORTS -->
     <section v-if="activeShorts.length > 0" id="motion" class="pt-14 max-sm:pt-9 pb-1.5">
       <div class="sh">
-        <span class="n">05</span>
         <h2>Motion & Shorts</h2>
       </div>
       <p class="-mt-3 mb-5 text-[1.05rem] opacity-85">

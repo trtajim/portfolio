@@ -8,14 +8,21 @@ const portfolioStore = usePortfolioStore()
 const publishedPosts = computed(() => {
   return portfolioStore.posts.filter((p) => p.is_published)
 })
+
+const dateColors: ('blue' | 'pink' | 'green' | 'orange' | 'yellow')[] = [
+  'blue',
+  'pink',
+  'green',
+  'orange',
+  'yellow'
+]
 </script>
 
 <template>
   <div class="c">
     <div class="pt-10 max-sm:pt-6 pb-6">
       <div class="sh">
-        <span class="n">✍</span>
-        <h2>WRITING</h2>
+        <h2>Writing</h2>
       </div>
       <p class="-mt-3 mb-6 text-[1.1rem] max-w-[65ch] opacity-85">
         Thoughts on software architecture, engineering experiments, books I’m reading, movies, and ideas in progress.
@@ -38,8 +45,8 @@ const publishedPosts = computed(() => {
     </div>
 
     <ul v-else class="grid gap-4.5 max-sm:gap-3.5 m-0 p-0 pb-12 list-none">
-      <li v-for="post in publishedPosts" :key="post.slug">
-        <PostCard :post="post" />
+      <li v-for="(post, idx) in publishedPosts" :key="post.slug">
+        <PostCard :post="post" :color="dateColors[idx % dateColors.length]" />
       </li>
     </ul>
   </div>
