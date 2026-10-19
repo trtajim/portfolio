@@ -33,7 +33,7 @@ const githubLink = computed(() => {
         TR TAJIM
       </div>
 
-      <div class="w-full grid grid-cols-[1fr_auto_1fr] max-sm:flex max-sm:flex-wrap max-sm:justify-center items-center gap-3 max-sm:gap-x-4 max-sm:gap-y-1 py-4 pb-7 font-bold text-[0.82rem] font-mono text-[var(--ink)] opacity-85">
+      <div class="w-full grid grid-cols-[1fr_auto_1fr] max-sm:flex max-sm:flex-col max-sm:items-center max-sm:gap-2 items-center gap-3 py-4 pb-7 font-bold text-[0.82rem] font-mono text-[var(--ink)] opacity-85">
         <span class="text-left max-sm:text-center">© {{ year }} {{ portfolioStore.profile.name || 'TR Tajim' }}</span>
 
         <router-link
