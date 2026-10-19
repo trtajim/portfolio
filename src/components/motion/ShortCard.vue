@@ -56,7 +56,7 @@ const fallbackThumbnail = computed(() => {
         <div class="h-6"></div>
 
         <div class="flex flex-col items-center justify-center my-auto z-10 text-center px-2">
-          <div class="w-14 h-14 rounded-full bg-[var(--yellow)] text-[#0b0b0f] border-[3px] border-[#0b0b0f] shadow-[3px_3px_0_#0b0b0f] grid place-items-center text-xl pl-1 group-hover:scale-110 transition-transform">
+          <div class="w-[46px] h-[46px] rounded-full bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] shadow-[3px_3px_0_#0b0b0f] grid place-items-center text-[1.1rem] pl-1 group-hover:scale-110 transition-transform">
             ▶
           </div>
           <span class="mt-3 font-mono font-bold text-[0.75rem] tracking-wider text-[var(--yellow)] uppercase">
