@@ -12,21 +12,9 @@ const portfolioStore = usePortfolioStore()
 
 const profile = computed(() => portfolioStore.profile)
 
-const fallbackGroupedStacks: GroupedStack[] = [
-  { category: 'Languages', items: 'C, C++, Java, PHP, JavaScript' },
-  { category: 'Web', items: 'Laravel, Vue.js, Vue, React, Inertia.js, HTML, CSS, SQL, MySQL' },
-  { category: 'Mobile', items: 'Java, XML, Android, Android SDK' },
-  { category: 'IoT', items: 'Arduino, IoT integration, Sensor Integration' },
-  { category: 'Database & Cloud', items: 'MySQL, Supabase, Firebase, S3' },
-  { category: 'DevOps', items: 'Git, Linux, Bash, VPS, Cloudflare' }
-]
-
 const knownTechSet = computed(() => {
   const set = new Set<string>()
-  const stacks =
-    profile.value.grouped_stacks && profile.value.grouped_stacks.length > 0
-      ? profile.value.grouped_stacks
-      : fallbackGroupedStacks
+  const stacks = profile.value.grouped_stacks || []
 
   for (const group of stacks) {
     if (!group.items) continue
@@ -61,72 +49,19 @@ function categorizeTags(tags?: string[]) {
   return { domainTags, techTags }
 }
 
-const fallbackProjects: Project[] = [
-  {
-    id: '1',
-    slug: 'hscstack',
-    title: 'HSCStack',
-    summary:
-      'An open-source academic hub empowering students in Bangladesh. Built for peer-to-peer note sharing, community forums, and curated study resources.',
-    pill: 'Website',
-    top_metric: '1,150+ registered users',
-    tags: ['Open source', 'Education', 'Community', 'Laravel', 'Vue.js'],
-    actions: [
-      { label: 'Visit site', url: 'https://hscstack.site' },
-      { label: 'GitHub', url: 'https://github.com/tajim/hscstack' }
-    ],
-    is_featured: true,
-    is_published: true,
-    order_index: 0
-  },
-  {
-    id: '2',
-    slug: 'smart-home-app',
-    title: 'Smart Home App',
-    summary:
-      'An Android application that converts analog homes into smart environments via Bluetooth communication with Arduino microcontrollers.',
-    pill: 'Application',
-    top_metric: '16 Github Stars',
-    tags: ['Android', 'IoT', 'Java', 'Arduino'],
-    actions: [
-      { label: 'GitHub', url: 'https://github.com/tajim/smart-home-app' }
-    ],
-    is_featured: true,
-    is_published: true,
-    order_index: 1
-  },
-  {
-    id: '3',
-    slug: 'url-shortener-saas',
-    title: 'Url Shortener SaaS',
-    summary:
-      'A full-stack, distraction-free URL shortener ecosystem featuring a self-hosted Laravel REST API, modern Vue SPA web frontend, and native Android companion app.',
-    pill: 'SaaS',
-    top_metric: 'Web & Android',
-    tags: ['Laravel', 'Vue', 'Java', 'SQL'],
-    actions: [
-      { label: 'Visit site', url: 'https://go.tajimz.xyz' },
-      { label: 'Web Repo', url: 'https://github.com/tajimz/url-shortener-spa' }
-    ],
-    is_featured: true,
-    is_published: true,
-    order_index: 2
-  }
-]
-
-const allDisplayProjects = computed(() => {
-  const storeFeatured = portfolioStore.projects.filter((p) => p.is_featured && p.is_published)
-  if (storeFeatured.length > 0) return storeFeatured
-  return fallbackProjects
+const featuredProjects = computed(() => {
+  return portfolioStore.projects.filter((p) => p.is_featured && p.is_published)
 })
 
 const spotlightProject = computed(() => {
-  const found = allDisplayProjects.value.find((p) => p.slug === 'hscstack')
-  return found || allDisplayProjects.value[0] || fallbackProjects[0]
+  if (featuredProjects.value.length === 0) return null
+  const found = featuredProjects.value.find((p) => p.slug === 'hscstack')
+  return found || featuredProjects.value[0] || null
 })
 
 const otherProjects = computed(() => {
-  return allDisplayProjects.value.filter((p) => p.slug !== spotlightProject.value?.slug)
+  if (!spotlightProject.value) return []
+  return featuredProjects.value.filter((p) => p.slug !== spotlightProject.value?.slug)
 })
 
 function parseMetric(metric?: string | null): { value: string; label: string } {
@@ -173,8 +108,6 @@ function splitSummary(summary?: string | null): { main: string; note: string } {
 
   return { main: trimmed, note: '' }
 }
-
-const featuredProjects = computed(() => allDisplayProjects.value)
 
 const featuredPosts = computed(() => {
   const featured = portfolioStore.posts.filter((p) => p.is_featured && p.is_published)
@@ -385,12 +318,16 @@ async function copyEmail() {
         </div>
       </div>
 
+      <div v-else-if="featuredProjects.length === 0" class="card box empty-box">
+        No projects found.
+      </div>
+
       <div v-else class="showcase-wrap">
         <!-- SPOTLIGHT SHOWCASE (FLAGSHIP PROJECT) -->
         <div v-if="spotlightProject" class="spotlight-card spotlight-split box">
           <div class="spotlight-left">
             <div class="spotlight-pill-row">
-              <span class="spotlight-kicker">★ FLAGSHIP {{ spotlightProject.pill ? `· ${spotlightProject.pill.toUpperCase()}` : '' }}</span>
+              <span class="spotlight-kicker">FEATURED {{ spotlightProject.pill ? spotlightProject.pill.toUpperCase() : '' }}</span>
             </div>
             <h3 class="spotlight-title">
               <router-link :to="`/projects/${spotlightProject.slug}`" class="title-link">
