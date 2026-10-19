@@ -42,7 +42,7 @@ function toggleTheme() {
         <BrutalButton
           as="router-link"
           to="/writing"
-          :variant="route.path.startsWith('/writing') ? 'blue' : 'mint'"
+          :variant="route.path.startsWith('/writing') ? 'blue' : 'yellow'"
         >
           Writing
         </BrutalButton>

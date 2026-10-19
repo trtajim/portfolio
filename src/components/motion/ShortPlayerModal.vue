@@ -24,8 +24,8 @@ const embedUrl = computed(() => {
     }
     return url
   } else if (props.short.platform === 'facebook') {
-    // Facebook video / reel embed URL with sound enabled
-    return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&show_captions=false&autoplay=true&mute=0`
+    // Facebook video / reel embed URL with sound enabled and muted=0
+    return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&show_captions=false&autoplay=true&mute=0&muted=0`
   }
 
   return url
@@ -66,7 +66,7 @@ function handleBackdrop(e: MouseEvent) {
           ref="iframeRef"
           :src="embedUrl"
           class="video-frame"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; autoplay *"
           allowfullscreen
           @load="onIframeLoad"
         ></iframe>
