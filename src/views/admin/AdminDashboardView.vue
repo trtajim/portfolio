@@ -137,6 +137,34 @@ function removeSocialLink(idx: number) {
   profileForm.value.social_links.splice(idx, 1)
 }
 
+const BN_MAP: Record<string, string> = {
+  'অ': 'o', 'আ': 'a', 'ই': 'i', 'ঈ': 'i', 'উ': 'u', 'ঊ': 'u', 'ঋ': 'ri', 'এ': 'e', 'ঐ': 'oi', 'ও': 'o', 'ঔ': 'ou',
+  'া': 'a', 'ি': 'i', 'ী': 'i', 'ু': 'u', 'ূ': 'u', 'ৃ': 'ri', 'ে': 'e', 'ৈ': 'oi', 'ো': 'o', 'ৌ': 'ou',
+  'ক': 'k', 'খ': 'kh', 'গ': 'g', 'ঘ': 'gh', 'ঙ': 'ng',
+  'চ': 'ch', 'ছ': 'chh', 'জ': 'j', 'ঝ': 'jh', 'ঞ': 'n',
+  'ট': 't', 'ঠ': 'th', 'ড': 'd', 'ঢ': 'dh', 'ণ': 'n',
+  'ত': 't', 'থ': 'th', 'দ': 'd', 'ধ': 'dh', 'ন': 'n',
+  'প': 'p', 'ফ': 'f', 'ব': 'b', 'ভ': 'bh', 'ম': 'm',
+  'য': 'j', 'র': 'r', 'ল': 'l', 'শ': 'sh', 'ষ': 'sh', 'স': 's', 'হ': 'h',
+  'ড়': 'r', 'ঢ়': 'rh', 'য়': 'y', 'ৎ': 't', 'ং': 'ng', 'ঃ': '', 'ঁ': '', '্': ''
+}
+
+function slugify(text: string): string {
+  if (!text) return ''
+  let romanized = ''
+  for (const ch of text) {
+    romanized += BN_MAP[ch] !== undefined ? BN_MAP[ch] : ch
+  }
+  const cleaned = romanized
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '')
+
+  return cleaned || `post-${Date.now().toString(36)}`
+}
+
 const editingProject = ref<Project | null>(null)
 const projectTagsRaw = ref('')
 const projectActions = ref<{ label: string; url: string }[]>([])
@@ -176,6 +204,15 @@ function removeProjectAction(idx: number) {
   projectActions.value.splice(idx, 1)
 }
 
+function syncProjectSlug() {
+  if (!editingProject.value) return
+  if (!editingProject.value.slug && editingProject.value.title) {
+    editingProject.value.slug = slugify(editingProject.value.title)
+  } else if (editingProject.value.slug) {
+    editingProject.value.slug = slugify(editingProject.value.slug)
+  }
+}
+
 async function saveCurrentProject() {
   if (!editingProject.value) return
   if (!authStore.canEdit) {
@@ -190,10 +227,9 @@ async function saveCurrentProject() {
       .filter(Boolean)
 
     if (!editingProject.value.slug) {
-      editingProject.value.slug = editingProject.value.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '')
+      editingProject.value.slug = slugify(editingProject.value.title)
+    } else {
+      editingProject.value.slug = slugify(editingProject.value.slug)
     }
 
     await portfolioStore.saveProject({
@@ -380,6 +416,15 @@ function editPost(post: Post) {
   postTagsRaw.value = post.tags ? post.tags.join(', ') : ''
 }
 
+function syncPostSlug() {
+  if (!editingPost.value) return
+  if (!editingPost.value.slug && editingPost.value.title) {
+    editingPost.value.slug = slugify(editingPost.value.title)
+  } else if (editingPost.value.slug) {
+    editingPost.value.slug = slugify(editingPost.value.slug)
+  }
+}
+
 async function saveCurrentPost() {
   if (!editingPost.value) return
   if (!authStore.canEdit) {
@@ -394,10 +439,9 @@ async function saveCurrentPost() {
       .filter(Boolean)
 
     if (!editingPost.value.slug) {
-      editingPost.value.slug = editingPost.value.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '')
+      editingPost.value.slug = slugify(editingPost.value.title)
+    } else {
+      editingPost.value.slug = slugify(editingPost.value.slug)
     }
 
     await portfolioStore.savePost({
@@ -741,7 +785,24 @@ async function handleLogout() {
 
         <div class="field">
           <label>Title</label>
-          <input v-model="editingProject.title" type="text" class="input-box" required />
+          <input
+            v-model="editingProject.title"
+            type="text"
+            class="input-box"
+            required
+            @blur="syncProjectSlug"
+          />
+        </div>
+
+        <div class="field">
+          <label>Slug (URL key)</label>
+          <input
+            v-model="editingProject.slug"
+            type="text"
+            class="input-box"
+            :placeholder="editingProject.title ? slugify(editingProject.title) : 'e.g. my-project'"
+            @blur="syncProjectSlug"
+          />
         </div>
 
         <div class="grid-2">
@@ -935,7 +996,24 @@ async function handleLogout() {
 
         <div class="field">
           <label>Title</label>
-          <input v-model="editingPost.title" type="text" class="input-box" required />
+          <input
+            v-model="editingPost.title"
+            type="text"
+            class="input-box"
+            required
+            @blur="syncPostSlug"
+          />
+        </div>
+
+        <div class="field">
+          <label>Slug (URL key)</label>
+          <input
+            v-model="editingPost.slug"
+            type="text"
+            class="input-box"
+            :placeholder="editingPost.title ? slugify(editingPost.title) : 'e.g. my-awesome-post'"
+            @blur="syncPostSlug"
+          />
         </div>
 
         <div class="field">
