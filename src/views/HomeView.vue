@@ -195,10 +195,10 @@ async function copyEmail() {
           <h1 class="m-0 font-extrabold tracking-[-0.05em] leading-[0.88] text-[clamp(3.4rem,10.5vw,7rem)] max-sm:text-[clamp(2.8rem,14vw,4rem)] [text-shadow:5px_5px_0_#fff] max-sm:[text-shadow:3px_3px_0_#fff] !text-[#0b0b0f]">
             {{ profile.name || 'TR Tajim' }}
           </h1>
-          <p v-if="portfolioStore.isLoaded && profile.headline" class="mt-5 max-sm:mt-3.5 text-[1.2rem] max-sm:text-[1.05rem] font-semibold max-w-[32ch] !text-[#0b0b0f]">
+          <p v-if="portfolioStore.isLoaded && profile.headline" class="mt-5 max-sm:mt-3.5 text-[1.2rem] max-sm:text-[1.05rem] font-semibold max-w-[28ch] pr-14 max-sm:pr-10 !text-[#0b0b0f] relative z-10">
             {{ profile.headline }}
           </p>
-          <div v-else class="mt-5 max-sm:mt-3.5 flex flex-col gap-2.5 max-w-[32ch]" aria-hidden="true">
+          <div v-else class="mt-5 max-sm:mt-3.5 flex flex-col gap-2.5 max-w-[28ch] pr-14 max-sm:pr-10" aria-hidden="true">
             <div class="skeleton-shimmer h-[22px] w-[95%] !bg-[#0b0b0f]/20"></div>
             <div class="skeleton-shimmer h-[22px] w-[65%] !bg-[#0b0b0f]/20"></div>
           </div>
@@ -345,7 +345,7 @@ async function copyEmail() {
         <!-- SPOTLIGHT / FLAGSHIP PROJECT -->
         <div
           v-if="spotlightProject"
-          class="box spotlight-card !bg-[var(--green)] !text-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden cursor-pointer transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)]"
+          class="box spotlight-card !bg-[var(--green)] !text-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden cursor-pointer transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] active:-translate-x-[3px] active:-translate-y-[3px] active:shadow-[9px_9px_0_var(--sh)]"
           @click="handleSpotlightClick"
         >
           <div class="flex flex-col gap-4 min-w-0">
@@ -492,24 +492,27 @@ async function copyEmail() {
     </section>
 
     <!-- CONTACT SECTION -->
-    <section id="contact" class="pt-14 max-sm:pt-9 pb-1.5">
-      <div class="box p-[32px_30px] max-sm:p-[24px_18px] flex flex-col gap-4.5">
-        <span class="font-mono font-bold text-[0.8rem] bg-[var(--ink)] text-[var(--bg)] border-2 border-[var(--bd)] rounded-[6px] inline-block px-2.5 py-[3px] self-start shadow-[2px_2px_0_var(--sh)]">
-          LET’S CONNECT
-        </span>
-        <h2 class="m-0 text-[clamp(1.5rem,4vw,2rem)] font-extrabold leading-[1.2] tracking-[-0.02em]">
-          Have an idea or want to talk tech?
-        </h2>
-        <p class="m-0 text-[1.05rem] leading-[1.55] opacity-85 max-w-[58ch]">
-          Always down to chat about programming, new ideas, or interesting projects. Feel free to say hi anytime!
-        </p>
+    <section id="contact" class="pt-14 max-sm:pt-9 pb-2 w-full min-w-0">
+      <div class="sh">
+        <h2>Get in touch</h2>
+      </div>
 
-        <div class="flex flex-wrap items-center max-sm:flex-col max-sm:items-stretch gap-3.5 mt-1.5">
+      <div class="box py-12 px-10 max-md:py-8 max-md:px-7 max-sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-8 min-h-[180px]">
+        <div class="max-w-[520px] flex flex-col gap-2.5">
+          <h3 class="m-0 text-[clamp(1.5rem,3.2vw,2.1rem)] font-extrabold tracking-[-0.02em] leading-[1.25]">
+            Have an idea?
+          </h3>
+          <p class="m-0 text-[1.05rem] opacity-75 leading-relaxed">
+            My inbox is always open to chat about programming, new ideas, or interesting projects.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3.5 max-sm:flex-col max-sm:w-full shrink-0">
           <BrutalButton
             as="a"
             :href="`mailto:${contactEmail}`"
             variant="yellow"
-            class="text-[1.02rem] px-6 py-3 max-sm:w-full text-center"
+            class="text-[1.05rem] px-7 py-3.5 font-extrabold max-sm:w-full text-center"
           >
             Say Hello ✉️
           </BrutalButton>
@@ -518,16 +521,16 @@ async function copyEmail() {
             type="button"
             @click="copyEmail"
             :aria-label="isCopied ? 'Email address copied' : 'Copy email address'"
-            class="inline-flex items-center gap-3 bg-[var(--paper)] text-[var(--ink)] border-[3px] border-[var(--bd)] rounded-[var(--r)] shadow-[4px_4px_0_var(--sh)] px-4 py-2 font-mono font-bold text-[0.95rem] cursor-pointer transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_var(--sh)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none max-sm:w-full max-sm:justify-between"
+            class="font-mono font-bold text-[0.92rem] px-4.5 py-3.5 border-2 border-[var(--bd)] rounded-[var(--r)] bg-[var(--paper)] text-[var(--ink)] shadow-[2px_2px_0_var(--sh)] hover:-translate-y-0.5 active:translate-y-0 transition-transform flex items-center justify-between gap-3 max-sm:w-full cursor-pointer"
           >
-            <span class="truncate">{{ contactEmail }}</span>
+            <span>{{ contactEmail }}</span>
             <span
               :class="[
-                'font-mono font-bold text-[0.78rem] border-2 border-[var(--bd)] rounded-[6px] px-2 py-0.5 min-w-[65px] text-center transition-colors',
-                isCopied ? 'bg-[var(--yellow)] text-[#0b0b0f]' : 'bg-[var(--green)] text-[#0b0b0f]'
+                'text-[0.75rem] font-mono font-bold px-2 py-0.5 rounded border border-[var(--bd)] transition-colors',
+                isCopied ? 'bg-[var(--green)] text-[#0b0b0f]' : 'bg-[var(--bg)] text-[var(--ink)]'
               ]"
             >
-              {{ isCopied ? 'Copied! ✓' : 'Copy' }}
+              {{ isCopied ? 'Copied' : 'Copy' }}
             </span>
           </button>
         </div>

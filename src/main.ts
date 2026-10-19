@@ -12,6 +12,11 @@ inject()
 
 const app = createApp(App)
 
+// Enable :active pseudo-class on iOS touch devices
+if (typeof window !== 'undefined') {
+  document.addEventListener('touchstart', () => {}, { passive: true })
+}
+
 app.use(createPinia())
 app.use(router)
 

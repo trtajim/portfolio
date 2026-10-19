@@ -39,7 +39,7 @@ function handleCardClick(e: MouseEvent) {
 
 <template>
   <div
-    class="box p-0 flex flex-col overflow-hidden cursor-pointer transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)]"
+    class="box p-0 flex flex-col overflow-hidden cursor-pointer transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] active:-translate-x-[3px] active:-translate-y-[3px] active:shadow-[9px_9px_0_var(--sh)]"
     @click="handleCardClick"
   >
     <!-- TOP BAR -->

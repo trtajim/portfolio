@@ -341,13 +341,6 @@
   50% { opacity: 0.06; }
 }
 
-@media (max-width: 600px) {
-  .btn:hover,
-  .box:hover,
-  .card:hover {
-    transform: none;
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .btn, .card, .posts a, .arr, .short-card {

@@ -52,7 +52,7 @@ const badgeColorClass = computed(() => {
 <template>
   <router-link
     :to="`/writing/${post.slug}`"
-    class="box p-[16px_18px] max-sm:p-3.5 grid grid-cols-[104px_1fr_44px] max-sm:grid-cols-[1fr_40px] gap-4 max-sm:gap-[6px_12px] items-center no-underline text-inherit transition-all hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] hover:bg-[var(--yellow)] hover:text-[#0b0b0f] group"
+    class="box p-[16px_18px] max-sm:p-3.5 grid grid-cols-[104px_1fr_44px] max-sm:grid-cols-[1fr_40px] gap-4 max-sm:gap-[6px_12px] items-center no-underline text-inherit transition-all hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] hover:bg-[var(--yellow)] hover:text-[#0b0b0f] active:-translate-x-[3px] active:-translate-y-[3px] active:shadow-[9px_9px_0_var(--sh)] active:bg-[var(--yellow)] active:text-[#0b0b0f] group"
   >
     <time
       :datetime="post.published_date"
