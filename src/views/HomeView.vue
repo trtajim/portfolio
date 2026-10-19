@@ -47,6 +47,15 @@ function getSocialVariant(idx: number) {
   return socialColorVariants[idx % socialColorVariants.length]
 }
 
+function parseItems(items: string): string[] {
+  if (!items) return []
+  return items.split(',').map((s) => s.trim()).filter(Boolean)
+}
+
+const accentColors = ['mint', 'yellow', 'pink', 'blue', 'orange'] as const
+function getAccentColor(idx: number) {
+  return accentColors[idx % accentColors.length]
+}
 </script>
 
 <template>
@@ -93,40 +102,52 @@ function getSocialVariant(idx: number) {
     </ul>
 
     <section id="about">
-      <div class="about-headers">
-        <div><h2 class="h">Who I am</h2></div>
-        <div><h2 class="h stack-heading">Tech stack</h2></div>
-      </div>
-      <div class="about">
-        <div class="card box">
-          <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="skeleton-whoami">
-            <div class="skeleton-line" style="width: 95%; margin-bottom: 12px;"></div>
-            <div class="skeleton-line" style="width: 88%; margin-bottom: 12px;"></div>
-            <div class="skeleton-line" style="width: 70%; margin-bottom: 20px;"></div>
-            <div class="skeleton-line" style="width: 92%; margin-bottom: 12px;"></div>
-            <div class="skeleton-line" style="width: 65%;"></div>
-          </div>
-          <template v-else>
-            <p v-for="(p, i) in profile.whoami" :key="i">
-              {{ p }}
-            </p>
-          </template>
+      <h2 class="h">Who I am</h2>
+      <div class="card box about-card">
+        <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="skeleton-whoami">
+          <div class="skeleton-line" style="width: 95%; margin-bottom: 12px;"></div>
+          <div class="skeleton-line" style="width: 88%; margin-bottom: 12px;"></div>
+          <div class="skeleton-line" style="width: 70%; margin-bottom: 20px;"></div>
+          <div class="skeleton-line" style="width: 92%; margin-bottom: 12px;"></div>
+          <div class="skeleton-line" style="width: 65%;"></div>
         </div>
+        <template v-else>
+          <p v-for="(p, i) in profile.whoami" :key="i">
+            {{ p }}
+          </p>
+        </template>
+      </div>
+    </section>
 
-        <div class="card box">
-          <div><h2 class="h mobile-stack-heading">Tech stack</h2></div>
-          <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="skeleton-stack">
-            <div v-for="n in 5" :key="n" class="skeleton-stack-row">
-              <div class="skeleton-line" style="width: 70px; height: 16px;"></div>
-              <div class="skeleton-line" style="width: 140px; height: 16px;"></div>
-            </div>
+    <section id="stack">
+      <h2 class="h">Tech stack</h2>
+      <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="stack-grid">
+        <div v-for="n in 6" :key="n" class="card box skeleton-stack-card">
+          <div class="skeleton-line" style="width: 80px; height: 18px; margin-bottom: 12px;"></div>
+          <div class="skeleton-badges">
+            <div class="skeleton-pill" style="width: 50px; height: 24px;"></div>
+            <div class="skeleton-pill" style="width: 70px; height: 24px;"></div>
+            <div class="skeleton-pill" style="width: 60px; height: 24px;"></div>
+            <div class="skeleton-pill" style="width: 75px; height: 24px;"></div>
           </div>
-          <dl v-else class="stack" aria-label="Technologies">
-            <div v-for="group in profile.grouped_stacks" :key="group.category">
-              <dt>{{ group.category }}</dt>
-              <dd>{{ group.items }}</dd>
-            </div>
-          </dl>
+        </div>
+      </div>
+      <div v-else class="stack-grid">
+        <div
+          v-for="(group, gIdx) in profile.grouped_stacks"
+          :key="group.category"
+          class="card box stack-cat-card"
+        >
+          <span class="stack-cat-title">{{ group.category }}</span>
+          <ul class="stack-accent-badges" :aria-label="group.category + ' technologies'">
+            <li
+              v-for="(item, iIdx) in parseItems(group.items)"
+              :key="item"
+              :class="['stack-accent-badge', getAccentColor(gIdx + iIdx)]"
+            >
+              {{ item }}
+            </li>
+          </ul>
         </div>
       </div>
     </section>
@@ -353,52 +374,74 @@ section {
   padding: 30px 0;
 }
 
-.about-headers {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 24px;
+.about-card {
+  font-size: 1.15rem;
+  line-height: 1.7;
 }
 
-.mobile-stack-heading {
-  display: none;
+.about-card p {
+  margin: 0 0 14px;
 }
 
-.about {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 24px;
+.about-card p:last-child {
+  margin-bottom: 0;
 }
 
-.stack {
-  margin: 0;
+.stack-grid {
   display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
-.stack div {
-  display: grid;
-  grid-template-columns: 104px 1fr;
+.stack-cat-card {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  padding: 9px 0;
-  border-top: 2px solid var(--bd);
 }
 
-.stack div:first-child {
-  border-top: 0;
-  padding-top: 0;
+.stack-cat-title {
+  font: 700 0.85rem var(--mono);
+  background: var(--ink);
+  color: var(--paper);
+  display: inline-block;
+  align-self: flex-start;
+  padding: 3px 8px;
+  letter-spacing: -0.01em;
 }
 
-.stack div:last-child {
-  padding-bottom: 0;
-}
-
-.stack dt {
-  font: 700 0.8rem var(--mono);
-  padding-top: 3px;
-}
-
-.stack dd {
+/* Option D: Colorful accent badges */
+.stack-accent-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin: 0;
-  font-weight: 700;
+  padding: 0;
+  list-style: none;
+}
+
+.stack-accent-badge {
+  font: 700 0.82rem var(--mono);
+  color: #111;
+  border: 2px solid var(--bd);
+  box-shadow: 2px 2px 0 var(--sh);
+  padding: 2px 8px;
+}
+
+.stack-accent-badge.mint { background: var(--mint); }
+.stack-accent-badge.yellow { background: var(--yellow); }
+.stack-accent-badge.pink { background: var(--pink); }
+.stack-accent-badge.blue { background: var(--blue); }
+.stack-accent-badge.orange { background: var(--orange); }
+
+.skeleton-stack-card {
+  padding: 18px 20px;
+}
+
+.skeleton-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .hero-skeleton {
@@ -408,18 +451,6 @@ section {
   opacity: 0.15;
   border-radius: 2px;
   animation: skeleton-pulse 1.4s ease-in-out infinite;
-}
-
-.skeleton-stack-row {
-  display: flex;
-  gap: 16px;
-  padding: 10px 0;
-  border-top: 2px solid var(--bd);
-}
-
-.skeleton-stack-row:first-child {
-  border-top: 0;
-  padding-top: 0;
 }
 
 .skeleton-card {
@@ -502,19 +533,15 @@ section {
   scroll-snap-align: start;
 }
 
+@media (max-width: 860px) {
+  .stack-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 760px) {
-  .hero, .about, .proj {
+  .hero, .proj {
     grid-template-columns: 1fr;
-  }
-  .about-headers {
-    display: block;
-  }
-  .stack-heading {
-    display: none;
-  }
-  .mobile-stack-heading {
-    display: inline-block;
-    margin-bottom: 16px;
   }
   .photo-card {
     min-height: 280px;
@@ -524,13 +551,15 @@ section {
   }
 }
 
+@media (max-width: 540px) {
+  .stack-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 480px) {
   .photo-card {
     min-height: 240px;
-  }
-  .stack div {
-    grid-template-columns: 1fr;
-    gap: 4px;
   }
 }
 </style>
