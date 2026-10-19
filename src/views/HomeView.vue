@@ -195,10 +195,10 @@ async function copyEmail() {
           <h1 class="m-0 font-extrabold tracking-[-0.05em] leading-[0.88] text-[clamp(3.4rem,10.5vw,7rem)] max-sm:text-[clamp(2.8rem,14vw,4rem)] [text-shadow:5px_5px_0_#fff] max-sm:[text-shadow:3px_3px_0_#fff] !text-[#0b0b0f]">
             {{ profile.name || 'TR Tajim' }}
           </h1>
-          <p v-if="portfolioStore.isLoaded && profile.headline" class="mt-5 max-sm:mt-3.5 text-[1.2rem] max-sm:text-[1.05rem] font-semibold max-w-[28ch] pr-14 max-sm:pr-10 !text-[#0b0b0f] relative z-10">
+          <p v-if="portfolioStore.isLoaded && profile.headline" class="mt-5 max-sm:mt-3.5 text-[1.2rem] max-sm:text-[1.05rem] font-semibold max-w-[38ch] max-md:max-w-none pr-8 max-sm:pr-4 !text-[#0b0b0f] relative z-10 [text-wrap:pretty]">
             {{ profile.headline }}
           </p>
-          <div v-else class="mt-5 max-sm:mt-3.5 flex flex-col gap-2.5 max-w-[28ch] pr-14 max-sm:pr-10" aria-hidden="true">
+          <div v-else class="mt-5 max-sm:mt-3.5 flex flex-col gap-2.5 max-w-[38ch] max-md:max-w-none pr-8 max-sm:pr-4" aria-hidden="true">
             <div class="skeleton-shimmer h-[22px] w-[95%] !bg-[#0b0b0f]/20"></div>
             <div class="skeleton-shimmer h-[22px] w-[65%] !bg-[#0b0b0f]/20"></div>
           </div>
