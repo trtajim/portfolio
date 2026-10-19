@@ -3,7 +3,6 @@
 @layer base {
   :root {
     --bg: #f4f1e8;
-    --dot: rgba(11, 11, 15, 0.08);
     --paper: #ffffff;
     --ink: #0b0b0f;
     --bd: #0b0b0f;
@@ -24,7 +23,6 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #121218;
-      --dot: rgba(246, 244, 238, 0.07);
       --paper: #1d1d26;
       --ink: #f6f4ee;
       --bd: #f6f4ee;
@@ -36,7 +34,6 @@
 
   :root[data-theme="dark"] {
     --bg: #121218;
-    --dot: rgba(246, 244, 238, 0.07);
     --paper: #1d1d26;
     --ink: #f6f4ee;
     --bd: #f6f4ee;
@@ -47,7 +44,6 @@
 
   :root[data-theme="light"] {
     --bg: #f4f1e8;
-    --dot: rgba(11, 11, 15, 0.08);
     --paper: #ffffff;
     --ink: #0b0b0f;
     --bd: #0b0b0f;
@@ -71,9 +67,7 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: var(--bg);
-    background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px);
-    background-size: 24px 24px;
+    background: var(--bg);
     color: var(--ink);
     font: 500 17px/1.55 var(--sans);
     -webkit-font-smoothing: antialiased;
