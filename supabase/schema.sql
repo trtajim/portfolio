@@ -37,6 +37,7 @@ create table public.profile (
     {"label": "projects shipped", "value": "15+"}
   ]'::jsonb,
   avatar_url text default null,
+  email text default 'com.tajim@gmail.com',
   updated_at timestamp with time zone default timezone('utc'::text, now())
 );
 

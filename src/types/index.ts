@@ -23,6 +23,7 @@ export interface Profile {
   social_links: SocialLink[]
   stats?: SiteStat[]
   avatar_url?: string | null
+  email?: string | null
   updated_at?: string
 }
 
