@@ -224,19 +224,19 @@ async function copyEmail() {
     </div>
 
     <!-- SOCIAL LINKS -->
-    <ul v-if="!portfolioStore.isLoaded" class="flex flex-wrap gap-3.5 mt-1.5 max-sm:gap-2 mb-0 p-0 list-none" aria-hidden="true">
-      <li v-for="n in 4" :key="n" class="max-sm:flex-1">
-        <div class="skeleton-pill w-[90px] h-[44px]"></div>
+    <ul v-if="!portfolioStore.isLoaded" class="grid grid-cols-4 max-sm:grid-cols-2 gap-3.5 mt-1.5 max-sm:gap-2.5 mb-0 p-0 list-none" aria-hidden="true">
+      <li v-for="n in 4" :key="n" class="w-full">
+        <div class="skeleton-pill w-full h-[44px]"></div>
       </li>
     </ul>
-    <ul v-else-if="profile.social_links && profile.social_links.length" class="flex flex-wrap gap-3.5 mt-1.5 max-sm:gap-2 mb-0 p-0 list-none">
-      <li v-for="(link, idx) in profile.social_links" :key="link.label" class="max-sm:flex-1">
+    <ul v-else-if="profile.social_links && profile.social_links.length" class="grid grid-cols-4 max-sm:grid-cols-2 gap-3.5 mt-1.5 max-sm:gap-2.5 mb-0 p-0 list-none">
+      <li v-for="(link, idx) in profile.social_links" :key="link.label" class="w-full">
         <BrutalButton
           as="a"
           :href="link.url"
           target="_blank"
           :variant="getSocialVariant(idx)"
-          class="max-sm:w-full"
+          class="w-full text-center"
         >
           {{ link.label }}
         </BrutalButton>
