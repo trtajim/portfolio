@@ -174,7 +174,7 @@ async function copyEmail() {
 <template>
   <div class="c">
     <!-- HERO SECTION -->
-    <div class="grid grid-cols-[1.4fr_1fr] max-md:grid-cols-1 gap-6 pt-10 max-sm:pt-5 pb-6 items-stretch">
+    <div class="grid grid-cols-[1.4fr_1fr] max-md:grid-cols-1 gap-6 pt-10 max-sm:pt-5 pb-6 items-stretch w-full min-w-0">
       <div class="box !bg-[var(--yellow)] !text-[#0b0b0f] !border-[#0b0b0f] p-[30px_30px_28px] max-md:p-[24px_20px] max-sm:p-[20px_18px] relative overflow-hidden flex flex-col justify-between">
         <div>
           <span class="inline-block font-mono font-bold text-[0.8rem] bg-[#0b0b0f] text-white rounded-[6px] px-2.5 py-[3px] mb-4">
@@ -347,7 +347,7 @@ async function copyEmail() {
             <p class="m-0 text-[1.05rem] leading-[1.6] !text-[#0b0b0f]">
               {{ splitSummary(spotlightProject.summary).main }}
             </p>
-            <div v-if="spotlightProject.actions?.length" class="flex flex-wrap gap-2.5 mt-2">
+            <div v-if="spotlightProject.actions?.length" class="flex flex-wrap gap-2.5 mt-2 w-full min-w-0">
               <BrutalButton
                 v-for="(action, index) in spotlightProject.actions"
                 :key="action.label"
@@ -355,7 +355,7 @@ async function copyEmail() {
                 :href="action.url"
                 target="_blank"
                 :variant="index === 0 ? 'white' : index === 1 ? 'yellow' : 'blue'"
-                class="max-sm:flex-1 max-sm:text-center !border-[#0b0b0f] !shadow-[4px_4px_0_#0b0b0f] hover:!shadow-[6px_6px_0_#0b0b0f] active:!shadow-none"
+                class="!border-[#0b0b0f] !shadow-[4px_4px_0_#0b0b0f] hover:!shadow-[6px_6px_0_#0b0b0f] active:!shadow-none"
               >
                 {{ action.label }} ↗
               </BrutalButton>

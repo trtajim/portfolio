@@ -74,7 +74,7 @@ function handleCardClick(e: MouseEvent) {
         </li>
       </ul>
 
-      <div v-if="project.actions && project.actions.length" class="acts flex gap-2.5 flex-wrap mt-auto pt-1.5">
+      <div v-if="project.actions && project.actions.length" class="acts flex gap-2.5 flex-wrap mt-auto pt-1.5 w-full min-w-0">
         <BrutalButton
           v-for="(action, index) in project.actions.slice(0, 3)"
           :key="action.label"
@@ -82,7 +82,6 @@ function handleCardClick(e: MouseEvent) {
           :href="action.url"
           target="_blank"
           :variant="getButtonVariant(index)"
-          class="max-sm:flex-1 max-sm:text-center"
         >
           {{ action.label }}
         </BrutalButton>

@@ -25,7 +25,7 @@ const dateColors: ('blue' | 'pink' | 'green' | 'orange' | 'yellow')[] = [
         <h2>Writing</h2>
       </div>
       <p class="-mt-3 mb-6 text-[1.1rem] max-w-[65ch] opacity-85">
-        Thoughts on software architecture, engineering experiments, books I’m reading, movies, and ideas in progress.
+        Architecture notes, technical experiments, books, and work in progress.
       </p>
     </div>
 

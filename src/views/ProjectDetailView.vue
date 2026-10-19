@@ -99,7 +99,7 @@ const projectColor = computed<'mint' | 'orange' | 'pink' | 'blue'>(() => {
             </span>
           </div>
 
-          <div v-if="project.actions && project.actions.length" class="flex flex-wrap gap-3 mt-2">
+          <div v-if="project.actions && project.actions.length" class="flex flex-wrap gap-3 mt-2 w-full min-w-0">
             <BrutalButton
               v-for="(action, idx) in project.actions"
               :key="action.label"
@@ -107,7 +107,6 @@ const projectColor = computed<'mint' | 'orange' | 'pink' | 'blue'>(() => {
               :href="action.url"
               target="_blank"
               :variant="getActionVariant(idx)"
-              class="max-sm:flex-1 max-sm:text-center"
             >
               {{ action.label }}
             </BrutalButton>

@@ -51,7 +51,7 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
         <h2>Projects</h2>
       </div>
       <p class="-mt-3 mb-6 text-[1.1rem] max-w-[65ch] opacity-85">
-        Production applications, community platforms, open-source libraries, IoT firmware, and motion reels.
+        From scalable web apps and embedded firmware to open tooling and motion.
       </p>
 
       <div class="flex flex-wrap gap-2.5">
