@@ -25,15 +25,15 @@ const githubLink = computed(() => {
 
 <template>
   <footer class="mt-[72px] max-sm:mt-[44px] border-t-[3px] border-[var(--bd)] overflow-hidden">
-    <div class="c">
+    <div class="c flex flex-col items-center">
       <div
-        class="text-center font-extrabold tracking-[-0.06em] whitespace-nowrap text-transparent [-webkit-text-stroke:3px_var(--ink)] max-sm:[-webkit-text-stroke-width:2px] select-none text-[clamp(4rem,19vw,14rem)] leading-[0.85] mt-[22px]"
+        class="w-full text-center font-extrabold tracking-[-0.04em] whitespace-nowrap text-transparent [-webkit-text-stroke:3px_var(--ink)] max-sm:[-webkit-text-stroke:2px_var(--ink)] select-none text-[clamp(2.8rem,13vw,11rem)] leading-[0.9] mt-[20px] max-sm:mt-[14px]"
         aria-hidden="true"
       >
         TR TAJIM
       </div>
 
-      <div class="grid grid-cols-[1fr_auto_1fr] max-sm:grid-cols-1 max-sm:text-center items-center gap-3 py-3.5 pb-6 font-bold text-[0.85rem] font-mono">
+      <div class="w-full grid grid-cols-[1fr_auto_1fr] max-sm:flex max-sm:flex-wrap max-sm:justify-center items-center gap-3 max-sm:gap-x-4 max-sm:gap-y-1 py-4 pb-7 font-bold text-[0.82rem] font-mono text-[var(--ink)] opacity-85">
         <span class="text-left max-sm:text-center">© {{ year }} {{ portfolioStore.profile.name || 'TR Tajim' }}</span>
 
         <router-link
