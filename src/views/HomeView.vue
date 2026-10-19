@@ -184,9 +184,9 @@ async function copyEmail() {
           <p v-if="portfolioStore.isLoaded && profile.headline" class="mt-5 max-sm:mt-3.5 text-[1.2rem] max-sm:text-[1.05rem] font-semibold max-w-[32ch] !text-[#0b0b0f]">
             {{ profile.headline }}
           </p>
-          <div v-else class="mt-4 flex flex-col gap-2 max-w-[32ch]" aria-hidden="true">
-            <div class="skeleton-line h-5 w-[92%] bg-[#0b0b0f]/20"></div>
-            <div class="skeleton-line h-5 w-[65%] bg-[#0b0b0f]/20"></div>
+          <div v-else class="mt-5 max-sm:mt-3.5 flex flex-col gap-2.5 max-w-[32ch]" aria-hidden="true">
+            <div class="skeleton-shimmer h-[22px] w-[95%] !bg-[#0b0b0f]/20"></div>
+            <div class="skeleton-shimmer h-[22px] w-[65%] !bg-[#0b0b0f]/20"></div>
           </div>
         </div>
         <div class="absolute -right-[34px] -bottom-[34px] w-[120px] h-[120px] max-sm:w-[84px] max-sm:h-[84px] max-sm:-right-[26px] max-sm:-bottom-[26px] border-[3px] border-[#0b0b0f] rounded-full bg-[var(--pink)] pointer-events-none" aria-hidden="true"></div>
@@ -195,8 +195,9 @@ async function copyEmail() {
       <div class="flex items-stretch w-full h-full min-h-0">
         <div class="box w-full h-full min-h-[280px] max-sm:min-h-[260px] max-xs:min-h-[240px] relative flex flex-col p-2 overflow-hidden" role="img" :aria-label="profile.name || 'TR Tajim'">
           <div class="w-full h-full flex-1 relative bg-[var(--blue)] text-white grid place-items-center overflow-hidden border-2 border-[var(--bd)] rounded-[calc(var(--r)-4px)]">
+            <div v-if="!portfolioStore.isLoaded" class="skeleton-shimmer w-full h-full !bg-white/10 !rounded-none"></div>
             <img
-              v-if="profile.avatar_url"
+              v-else-if="profile.avatar_url"
               :src="profile.avatar_url"
               :alt="profile.name || 'TR Tajim'"
               class="absolute inset-0 w-full h-full object-cover object-[center_65%] block"

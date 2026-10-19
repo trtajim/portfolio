@@ -49,7 +49,44 @@ function toggleTheme() {
           @click="toggleTheme"
           aria-label="Switch colour theme"
         >
-          <span class="theme-icon">{{ isDark ? '☀️' : '🌙' }}</span>
+          <!-- Sun Icon (shown in dark mode to switch to light) -->
+          <svg
+            v-if="isDark"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="w-[18px] h-[18px] text-yellow-400"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="4" fill="currentColor" fill-opacity="0.2" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+          <!-- Moon Icon (shown in light mode to switch to dark) -->
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="w-[18px] h-[18px] text-[var(--ink)]"
+            aria-hidden="true"
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" fill="currentColor" fill-opacity="0.15" />
+          </svg>
         </button>
       </nav>
     </div>
@@ -122,8 +159,11 @@ function toggleTheme() {
 
 #theme {
   border-color: var(--bd);
-  font-size: 1.15rem;
-  padding: 4px 12px;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border-radius: var(--r);
   background: var(--paper);
   color: var(--ink);
   box-shadow: 3px 3px 0 var(--sh);
@@ -134,9 +174,8 @@ function toggleTheme() {
   color: #0b0b0f;
 }
 
-.theme-icon {
-  display: inline-block;
-  line-height: 1;
+#theme:hover svg {
+  color: #0b0b0f;
 }
 
 @media (max-width: 600px) {
@@ -151,11 +190,16 @@ function toggleTheme() {
   .top nav {
     gap: 6px;
   }
-  .top nav a,
-  #theme {
+  .top nav a {
     padding: 4px 10px;
     font-size: 0.85rem;
     min-height: 36px;
+  }
+  #theme {
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+    box-shadow: 2px 2px 0 var(--sh);
   }
 
   /* Distinct visible backgrounds on phone where hover is not available */

@@ -285,6 +285,36 @@
   animation: skeleton-pulse 1.4s ease-in-out infinite;
 }
 
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: rgba(11, 11, 15, 0.15);
+  border-radius: 6px;
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: skeleton-shimmer-anim 1.5s infinite;
+}
+
+@keyframes skeleton-shimmer-anim {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 .skeleton-pill {
   display: inline-block;
   height: 28px;
