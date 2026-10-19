@@ -10,6 +10,8 @@ import type { Short } from '@/types'
 
 const portfolioStore = usePortfolioStore()
 
+const isAvatarLoaded = ref(false)
+
 const profile = computed(() => portfolioStore.profile)
 
 const featuredProjects = computed(() => {
@@ -194,15 +196,21 @@ async function copyEmail() {
 
       <div class="flex items-stretch w-full h-full min-h-0">
         <div class="box w-full h-full min-h-[280px] max-sm:min-h-[260px] max-xs:min-h-[240px] relative flex flex-col p-2 overflow-hidden" role="img" :aria-label="profile.name || 'TR Tajim'">
-          <div class="w-full h-full flex-1 relative bg-[var(--blue)] text-white grid place-items-center overflow-hidden border-2 border-[var(--bd)] rounded-[calc(var(--r)-4px)]">
-            <div v-if="!portfolioStore.isLoaded" class="skeleton-shimmer w-full h-full !bg-white/10 !rounded-none"></div>
+          <div class="w-full h-full flex-1 relative bg-[#e2e8f0] text-white grid place-items-center overflow-hidden border-2 border-[var(--bd)] rounded-[calc(var(--r)-4px)]">
+            <!-- Light shimmer shown while store is loading OR image is still downloading -->
+            <div
+              v-show="!portfolioStore.isLoaded || (profile.avatar_url && !isAvatarLoaded)"
+              class="skeleton-shimmer absolute inset-0 w-full h-full !bg-[#e2e8f0] !rounded-none z-10"
+            ></div>
             <img
-              v-else-if="profile.avatar_url"
+              v-if="profile.avatar_url"
               :src="profile.avatar_url"
               :alt="profile.name || 'TR Tajim'"
-              class="absolute inset-0 w-full h-full object-cover object-[center_65%] block"
+              class="absolute inset-0 w-full h-full object-cover object-[center_65%] block transition-opacity duration-300"
+              :class="isAvatarLoaded ? 'opacity-100' : 'opacity-0'"
+              @load="isAvatarLoaded = true"
             />
-            <span v-else class="font-extrabold text-[3.2rem] tracking-[-0.04em] select-none text-white">
+            <span v-else-if="portfolioStore.isLoaded" class="font-extrabold text-[3.2rem] tracking-[-0.04em] select-none text-[#0b0b0f]">
               {{ (profile.name || 'TR Tajim').slice(0, 2).toUpperCase() }}
             </span>
           </div>
