@@ -29,8 +29,7 @@ function toggleTheme() {
   <header class="top">
     <div class="c">
       <router-link to="/" class="logo">
-        <span class="logo-desktop">TR<span class="logo-full"> Tajim</span></span>
-        <span class="logo-mobile">Tajim</span>
+        Tajim
       </router-link>
       <nav>
         <BrutalButton
@@ -104,10 +103,6 @@ function toggleTheme() {
   font-size: 1rem;
 }
 
-.logo-mobile {
-  display: none;
-}
-
 @media (max-width: 600px) {
   .top .c {
     padding: 6px 12px;
@@ -116,12 +111,6 @@ function toggleTheme() {
   .logo {
     font-size: 1.05rem;
     padding: 2px 8px;
-  }
-  .logo-desktop {
-    display: none;
-  }
-  .logo-mobile {
-    display: inline-block;
   }
   .top nav {
     gap: 4px;
