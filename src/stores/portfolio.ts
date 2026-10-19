@@ -3,20 +3,97 @@ import { ref } from 'vue'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import type { Profile, Project, Post, Short } from '@/types'
 
-const emptyProfile: Profile = {
-  name: '',
-  headline: '',
-  whoami: [],
-  grouped_stacks: [],
-  social_links: [],
-  stats: [],
+const defaultProfile: Profile = {
+  name: 'TR Tajim',
+  headline: 'Full-stack developer, competitive programmer, and IoT enthusiast',
+  whoami: [
+    "I'm TR Tajim, a full-stack developer, competitive programmer, and IoT enthusiast.",
+    'With over 2.5 years of hands-on experience in the field, I craft resilient web platforms, native Android apps, and embedded systems. I care deeply about clean code, algorithmic efficiency, and shipping practical solutions to real-world problems.'
+  ],
+  grouped_stacks: [
+    { category: 'Languages', items: 'C, C++, Java, PHP, JavaScript' },
+    { category: 'Web', items: 'Laravel, Vue.js, React, Inertia.js' },
+    { category: 'Mobile', items: 'Java, XML, Android SDK' },
+    { category: 'IoT', items: 'Arduino, IoT integration' },
+    { category: 'Database & Cloud', items: 'MySQL, Supabase, Firebase, S3' },
+    { category: 'DevOps', items: 'Git, Linux, Bash' }
+  ],
+  social_links: [
+    { label: 'GitHub', url: 'https://github.com/trtajim' },
+    { label: 'LinkedIn', url: 'https://linkedin.com/in/trtajim' },
+    { label: 'Facebook', url: 'https://facebook.com/trtajim' },
+    { label: 'Instagram', url: 'https://instagram.com/trtajim' }
+  ],
+  stats: [
+    { label: 'years building', value: '2.5+' },
+    { label: 'projects shipped', value: '15+' }
+  ],
   avatar_url: null
 }
 
+const defaultProjects: Project[] = [
+  {
+    id: '1',
+    slug: 'hscstack',
+    title: 'HSCStack',
+    summary: 'A community-driven website and Facebook page for HSC and SSC students, offering organised study material. Built and maintained in the open by contributors.',
+    pill: 'Web',
+    top_metric: '1,000+ registered users',
+    tags: ['Open source', 'Education', 'Community'],
+    actions: [
+      { label: 'Visit site', url: 'https://hscstack.com' },
+      { label: 'GitHub', url: 'https://github.com/hscstack' }
+    ],
+    is_featured: true,
+    is_published: true,
+    order_index: 1
+  },
+  {
+    id: '2',
+    slug: 'iot-environment-monitor',
+    title: 'IoT Environment Monitor',
+    summary: 'Battery-powered ESP32 sensor nodes sending real-time temperature, humidity and air quality telemetry over MQTT to a centralized web dashboard.',
+    pill: 'IoT',
+    top_metric: '99.8% uptime',
+    tags: ['ESP32', 'C++', 'MQTT', 'Vue.js'],
+    actions: [
+      { label: 'GitHub', url: 'https://github.com/trtajim' }
+    ],
+    is_featured: true,
+    is_published: true,
+    order_index: 2
+  }
+]
+
+const defaultPosts: Post[] = [
+  {
+    id: '1',
+    slug: 'building-a-store-without-paying-for-hosting',
+    title: 'Building a store without paying for hosting',
+    subtitle: 'What a free-tier-only stack can and cannot do.',
+    content: '# Building a store without paying for hosting\n\nWhat a free-tier-only stack can and cannot do.\n\n### The Setup\nDeploying modern static frontends with serverless backends enables virtually zero-cost operations during early-stage validation.',
+    tags: ['Architecture', 'Cloud', 'Cost-optimization'],
+    is_featured: true,
+    is_published: true,
+    published_date: '2026-08-14'
+  },
+  {
+    id: '2',
+    slug: 'debugging-esp32-mesh-networks',
+    title: 'Debugging ESP32 mesh networks in practice',
+    subtitle: 'Lessons learned from packet drops and battery optimization.',
+    content: '# Debugging ESP32 mesh networks in practice\n\nPractical tips on handling dropped packets and sleep modes in remote node deployments.',
+    tags: ['IoT', 'Embedded', 'C++'],
+    is_featured: true,
+    is_published: true,
+    published_date: '2026-07-22'
+  }
+]
+
 export const usePortfolioStore = defineStore('portfolio', () => {
-  const profile = ref<Profile>({ ...emptyProfile })
-  const projects = ref<Project[]>([])
-  const posts = ref<Post[]>([])
+  const profile = ref<Profile>({ ...defaultProfile })
+  const projects = ref<Project[]>([...defaultProjects])
+  const posts = ref<Post[]>([...defaultPosts])
   const shorts = ref<Short[]>([])
 
   const loading = ref(false)
