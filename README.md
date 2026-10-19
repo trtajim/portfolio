@@ -16,15 +16,9 @@ I've always loved retro, high-contrast aesthetics, so I designed this site using
 
 ---
 
-## ☕ Getting in Touch
+## 🚀 Quick Setup
 
-I'm always excited to collaborate on open-source initiatives, talk competitive programming, or chat about tech ideas:
-
-- **GitHub**: [@trtajim](https://github.com/trtajim)
-- **LinkedIn**: [in/trtajim](https://linkedin.com/in/trtajim)
-- **Facebook**: [fb.com/trtajim](https://facebook.com/trtajim)
-
-> **Note:** You can easily set this up for yourself! Everything is server-driven here—just clone, connect your Supabase database, input your data, and boom! 🚀
+You can easily set this up for yourself! Everything is server-driven here—just clone, connect your Supabase database, input your data, and boom!
 
 ---
 
