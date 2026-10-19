@@ -38,6 +38,15 @@ const colorOrder: ('yellow' | 'pink' | 'blue' | 'mint' | 'orange')[] = [
 function getActionVariant(idx: number) {
   return colorOrder[idx % colorOrder.length]
 }
+const projectColor = computed<'mint' | 'orange' | 'pink' | 'blue'>(() => {
+  if (!project.value) return 'mint'
+  if (project.value.slug === 'hscstack') return 'mint'
+  const allProjects = portfolioStore.projects
+  const idx = allProjects.findIndex((p) => p.slug === project.value?.slug)
+  const palette: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', 'pink', 'blue']
+  const color = idx >= 0 ? palette[idx % palette.length] : 'mint'
+  return color || 'mint'
+})
 </script>
 
 <template>
@@ -54,10 +63,16 @@ function getActionVariant(idx: number) {
     </div>
 
     <article v-else class="flex flex-col gap-5">
-      <!-- MAIN BANNER CARD: Uses theme paper background in both modes -->
-      <div class="box p-8 max-sm:p-5 relative flex flex-col gap-4 overflow-hidden">
-        <div class="flex items-center justify-between gap-3 flex-wrap">
-          <span class="font-mono font-bold text-[0.8rem] bg-[#0b0b0f] text-white rounded-[6px] px-2.5 py-1 self-start">
+      <!-- MAIN BANNER CARD: With project's signature color top bar (like ProjectCard) -->
+      <div class="box p-0 relative flex flex-col overflow-hidden">
+        <!-- TOP COLOR BAR -->
+        <div
+          :class="[
+            'flex items-center justify-between gap-2.5 p-[12px_20px] max-sm:p-[10px_16px] border-b-[3px] border-[var(--bd)] text-[#0b0b0f]',
+            projectColor === 'orange' ? 'bg-[var(--orange)]' : projectColor === 'pink' ? 'bg-[var(--pink)]' : projectColor === 'blue' ? 'bg-[var(--blue)] text-white' : 'bg-[var(--green)]'
+          ]"
+        >
+          <span class="font-mono font-bold text-[0.8rem] bg-[#0b0b0f] text-white rounded-[6px] px-2.5 py-1">
             {{ project.pill }}
           </span>
           <span v-if="project.top_metric" class="font-mono font-bold text-[0.82rem] bg-white text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] px-2.5 py-1">
@@ -65,35 +80,38 @@ function getActionVariant(idx: number) {
           </span>
         </div>
 
-        <h1 class="m-0 text-[clamp(2.2rem,6vw,3.6rem)] leading-[1.05] tracking-[-0.03em] font-extrabold text-[var(--ink)]">
-          {{ project.title }}
-        </h1>
-        <p class="text-[1.15rem] m-0 max-w-[65ch] leading-[1.5] opacity-90">
-          {{ project.summary }}
-        </p>
+        <!-- BANNER BODY -->
+        <div class="p-8 max-sm:p-5 flex flex-col gap-4">
+          <h1 class="m-0 text-[clamp(2.2rem,6vw,3.6rem)] leading-[1.05] tracking-[-0.03em] font-extrabold text-[var(--ink)]">
+            {{ project.title }}
+          </h1>
+          <p class="text-[1.15rem] m-0 max-w-[65ch] leading-[1.5] opacity-90">
+            {{ project.summary }}
+          </p>
 
-        <div v-if="project.tags && project.tags.length" class="flex flex-wrap gap-2">
-          <span
-            v-for="tag in project.tags"
-            :key="tag"
-            class="chip"
-          >
-            {{ tag }}
-          </span>
-        </div>
+          <div v-if="project.tags && project.tags.length" class="flex flex-wrap gap-2">
+            <span
+              v-for="tag in project.tags"
+              :key="tag"
+              class="chip"
+            >
+              {{ tag }}
+            </span>
+          </div>
 
-        <div v-if="project.actions && project.actions.length" class="flex flex-wrap gap-3 mt-2">
-          <BrutalButton
-            v-for="(action, idx) in project.actions"
-            :key="action.label"
-            as="a"
-            :href="action.url"
-            target="_blank"
-            :variant="getActionVariant(idx)"
-            class="max-sm:flex-1 max-sm:text-center"
-          >
-            {{ action.label }}
-          </BrutalButton>
+          <div v-if="project.actions && project.actions.length" class="flex flex-wrap gap-3 mt-2">
+            <BrutalButton
+              v-for="(action, idx) in project.actions"
+              :key="action.label"
+              as="a"
+              :href="action.url"
+              target="_blank"
+              :variant="getActionVariant(idx)"
+              class="max-sm:flex-1 max-sm:text-center"
+            >
+              {{ action.label }}
+            </BrutalButton>
+          </div>
         </div>
       </div>
 
