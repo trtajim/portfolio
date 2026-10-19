@@ -117,7 +117,13 @@ function getSocialVariant(idx: number) {
 
     <section id="projects">
       <h2 class="h">What I built</h2>
-      <div class="proj">
+      <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="card box loading-box">
+        <span class="loading-tag">Loading projects...</span>
+      </div>
+      <div v-else-if="featuredProjects.length === 0" class="card box empty-box">
+        No projects found.
+      </div>
+      <div v-else class="proj">
         <ProjectCard
           v-for="(proj, idx) in featuredProjects"
           :key="proj.slug"
@@ -126,7 +132,7 @@ function getSocialVariant(idx: number) {
           :class="{ 'span-wide': idx === 2 }"
         />
       </div>
-      <div class="more">
+      <div v-if="featuredProjects.length > 0" class="more">
         <BrutalButton as="router-link" to="/projects" variant="yellow" style="font-size: 1.05rem; padding: 10px 22px;">
           View all projects →
         </BrutalButton>
@@ -135,12 +141,18 @@ function getSocialVariant(idx: number) {
 
     <section id="writing">
       <h2 class="h">What I write</h2>
-      <ul class="posts">
+      <div v-if="portfolioStore.loading && !portfolioStore.isLoaded" class="card box loading-box">
+        <span class="loading-tag">Loading writing...</span>
+      </div>
+      <div v-else-if="featuredPosts.length === 0" class="card box empty-box">
+        No articles published yet.
+      </div>
+      <ul v-else class="posts">
         <li v-for="post in featuredPosts" :key="post.slug">
           <PostCard :post="post" />
         </li>
       </ul>
-      <div class="more">
+      <div v-if="featuredPosts.length > 0" class="more">
         <BrutalButton as="router-link" to="/writing" variant="yellow" style="font-size: 1.05rem; padding: 10px 22px;">
           View all writing →
         </BrutalButton>
@@ -355,6 +367,28 @@ section {
 .stack dd {
   margin: 0;
   font-weight: 700;
+}
+
+.loading-box,
+.empty-box {
+  padding: 30px 20px;
+  text-align: center;
+  font: 700 0.95rem var(--mono);
+}
+
+.loading-tag {
+  background: var(--yellow);
+  color: #111;
+  padding: 4px 12px;
+  border: 2px solid var(--bd);
+  box-shadow: 2px 2px 0 var(--sh);
+  display: inline-block;
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(0.98); }
 }
 
 .proj {
