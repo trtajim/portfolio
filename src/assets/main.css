@@ -216,11 +216,14 @@
 .markdown-body {
   font-family: var(--sans);
   line-height: 1.7;
+  color: var(--ink);
 }
 
 .markdown-body h1,
 .markdown-body h2,
-.markdown-body h3 {
+.markdown-body h3,
+.markdown-body h4 {
+  color: var(--ink);
   letter-spacing: -0.02em;
   font-weight: 800;
   margin: 1.5em 0 0.5em;
@@ -248,6 +251,11 @@
   border-radius: 4px;
 }
 
+:root[data-theme="dark"] .markdown-body code {
+  background: rgba(246, 244, 238, 0.15);
+  color: var(--ink);
+}
+
 .markdown-body pre code {
   background: transparent;
   padding: 0;
@@ -258,6 +266,14 @@
 .markdown-body ol {
   padding-left: 24px;
   margin-bottom: 1em;
+}
+
+.markdown-body blockquote {
+  margin: 1em 0;
+  padding: 8px 16px;
+  border-left: 4px solid var(--blue);
+  background: rgba(59, 91, 255, 0.08);
+  border-radius: 0 6px 6px 0;
 }
 
 /* Skeletons */
@@ -284,6 +300,14 @@
 @keyframes skeleton-pulse {
   0%, 100% { opacity: 0.15; }
   50% { opacity: 0.06; }
+}
+
+@media (max-width: 600px) {
+  .btn:hover,
+  .box:hover,
+  .card:hover {
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

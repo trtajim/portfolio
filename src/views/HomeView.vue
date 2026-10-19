@@ -164,16 +164,16 @@ async function copyEmail() {
 <template>
   <div class="c">
     <!-- HERO SECTION -->
-    <div class="grid grid-cols-[1.4fr_1fr] max-md:grid-cols-1 gap-6 pt-10 max-sm:pt-6 pb-6 items-stretch">
+    <div class="grid grid-cols-[1.4fr_1fr] max-md:grid-cols-1 gap-6 pt-10 max-sm:pt-5 pb-6 items-stretch">
       <div class="box bg-[var(--yellow)] text-[#0b0b0f] p-[30px_30px_28px] max-md:p-[24px_20px] max-sm:p-[20px_18px] relative overflow-hidden flex flex-col justify-between">
         <div>
           <span class="inline-block font-mono font-bold text-[0.8rem] bg-[#0b0b0f] text-white rounded-[6px] px-2.5 py-[3px] mb-4">
             hello, I’m
           </span>
-          <h1 class="m-0 font-extrabold tracking-[-0.05em] leading-[0.88] text-[clamp(3.4rem,10.5vw,7rem)] max-sm:text-[clamp(3rem,15vw,4.2rem)] [text-shadow:5px_5px_0_#fff] max-sm:[text-shadow:3px_3px_0_#fff]">
+          <h1 class="m-0 font-extrabold tracking-[-0.05em] leading-[0.88] text-[clamp(3.4rem,10.5vw,7rem)] max-sm:text-[clamp(2.8rem,14vw,4rem)] [text-shadow:5px_5px_0_#fff] max-sm:[text-shadow:3px_3px_0_#fff] text-[#0b0b0f]">
             {{ profile.name || 'TR Tajim' }}
           </h1>
-          <p v-if="portfolioStore.isLoaded && profile.headline" class="mt-5 max-sm:mt-3.5 text-[1.2rem] max-sm:text-[1.05rem] font-semibold max-w-[32ch]">
+          <p v-if="portfolioStore.isLoaded && profile.headline" class="mt-5 max-sm:mt-3.5 text-[1.2rem] max-sm:text-[1.05rem] font-semibold max-w-[32ch] text-[#0b0b0f]">
             {{ profile.headline }}
           </p>
           <div v-else class="mt-4 flex flex-col gap-2 max-w-[32ch]" aria-hidden="true">
@@ -185,7 +185,7 @@ async function copyEmail() {
       </div>
 
       <div class="flex items-stretch w-full h-full min-h-0">
-        <div class="box w-full h-full min-h-[280px] max-xs:min-h-[240px] relative flex flex-col p-2 overflow-hidden" role="img" :aria-label="profile.name || 'TR Tajim'">
+        <div class="box w-full h-full min-h-[280px] max-sm:min-h-[260px] max-xs:min-h-[240px] relative flex flex-col p-2 overflow-hidden" role="img" :aria-label="profile.name || 'TR Tajim'">
           <div class="w-full h-full flex-1 relative bg-[var(--blue)] text-white grid place-items-center overflow-hidden border-2 border-[var(--bd)] rounded-[calc(var(--r)-4px)]">
             <img
               v-if="profile.avatar_url"
@@ -193,12 +193,12 @@ async function copyEmail() {
               :alt="profile.name || 'TR Tajim'"
               class="absolute inset-0 w-full h-full object-cover object-[center_65%] block"
             />
-            <span v-else class="font-extrabold text-[3.2rem] tracking-[-0.04em] select-none">
+            <span v-else class="font-extrabold text-[3.2rem] tracking-[-0.04em] select-none text-white">
               {{ (profile.name || 'TR Tajim').slice(0, 2).toUpperCase() }}
             </span>
           </div>
 
-          <div class="absolute bottom-3.5 right-3.5 bg-[var(--pink)] text-[#0b0b0f] border-2 border-[var(--bd)] rounded-[6px] shadow-[3px_3px_0_var(--sh)] px-2.5 py-1 inline-flex items-center gap-1.5 -rotate-2 hover:rotate-0 hover:scale-[1.03] transition-transform z-10 select-none">
+          <div class="absolute bottom-3.5 right-3.5 bg-[var(--pink)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[3px_3px_0_var(--sh)] px-2.5 py-1 inline-flex items-center gap-1.5 -rotate-2 hover:rotate-0 hover:scale-[1.03] transition-transform z-10 select-none">
             <span aria-hidden="true">📍</span>
             <span class="font-mono font-bold text-[0.82rem] whitespace-nowrap">Rangpur, Bangladesh</span>
           </div>
@@ -282,11 +282,11 @@ async function copyEmail() {
               v-for="(item, iIdx) in parseItems(group.items)"
               :key="item"
               :class="[
-                'font-mono font-bold text-[0.82rem] text-[#0b0b0f] border-2 border-[var(--bd)] rounded-[6px] shadow-[2px_2px_0_var(--sh)] px-2.5 py-[3px]',
+                'font-mono font-bold text-[0.82rem] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_var(--sh)] px-2.5 py-[3px]',
                 getAccentColor(gIdx + iIdx) === 'green' && 'bg-[var(--green)]',
                 getAccentColor(gIdx + iIdx) === 'yellow' && 'bg-[var(--yellow)]',
                 getAccentColor(gIdx + iIdx) === 'pink' && 'bg-[var(--pink)]',
-                getAccentColor(gIdx + iIdx) === 'blue' && 'bg-[var(--blue)] text-white',
+                getAccentColor(gIdx + iIdx) === 'blue' && 'bg-[var(--blue)] text-white border-2 border-[#0b0b0f]',
                 getAccentColor(gIdx + iIdx) === 'orange' && 'bg-[var(--orange)]'
               ]"
             >
@@ -326,12 +326,12 @@ async function copyEmail() {
             <span class="font-mono font-bold text-[0.75rem] bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2 py-0.5 self-start">
               ★ FEATURED {{ spotlightProject.pill ? spotlightProject.pill.toUpperCase() : 'PROJECT' }}
             </span>
-            <h3 class="m-0 text-[clamp(1.85rem,4.5vw,2.5rem)] leading-[1.1] tracking-[-0.03em] font-extrabold">
+            <h3 class="m-0 text-[clamp(1.85rem,4.5vw,2.5rem)] leading-[1.1] tracking-[-0.03em] font-extrabold text-[#0b0b0f]">
               <router-link :to="`/projects/${spotlightProject.slug}`" class="no-underline text-inherit hover:underline">
                 {{ spotlightProject.title }}
               </router-link>
             </h3>
-            <p class="m-0 text-[1.05rem] leading-[1.55]">
+            <p class="m-0 text-[1.05rem] leading-[1.55] text-[#0b0b0f]">
               {{ splitSummary(spotlightProject.summary).main }}
             </p>
             <div v-if="spotlightProject.actions?.length" class="flex flex-wrap gap-2.5 mt-2">
@@ -350,8 +350,8 @@ async function copyEmail() {
           </div>
 
           <div class="w-full">
-            <div class="bg-white text-[#0b0b0f] border-[3px] border-[var(--bd)] rounded-[8px] shadow-[4px_4px_0_var(--sh)] overflow-hidden">
-              <div class="flex items-center gap-2 bg-[#f0eee6] border-b-2 border-[var(--bd)] p-[8px_12px]">
+            <div class="bg-white text-[#0b0b0f] border-[3px] border-[#0b0b0f] rounded-[8px] shadow-[4px_4px_0_#0b0b0f] overflow-hidden">
+              <div class="flex items-center gap-2 bg-[#f0eee6] border-b-2 border-[#0b0b0f] p-[8px_12px]">
                 <div class="flex items-center gap-1.5 shrink-0">
                   <span class="w-[9px] h-[9px] rounded-full border-[1.5px] border-[#0b0b0f] bg-[#ff5f56] inline-block"></span>
                   <span class="w-[9px] h-[9px] rounded-full border-[1.5px] border-[#0b0b0f] bg-[#ffd400] inline-block"></span>
@@ -363,7 +363,7 @@ async function copyEmail() {
               </div>
               <div class="p-[18px_20px] max-sm:p-3.5 flex flex-col gap-3">
                 <div v-if="spotlightProject.top_metric" class="flex flex-col border-b-2 border-dashed border-[#ddd] pb-2.5">
-                  <span class="text-[clamp(2rem,5vw,2.5rem)] font-extrabold leading-none tracking-[-0.03em]">
+                  <span class="text-[clamp(2rem,5vw,2.5rem)] font-extrabold leading-none tracking-[-0.03em] text-[#0b0b0f]">
                     {{ parseMetric(spotlightProject.top_metric).value }}
                   </span>
                   <span v-if="parseMetric(spotlightProject.top_metric).label" class="font-mono font-bold text-[0.8rem] text-[#555] mt-1">
