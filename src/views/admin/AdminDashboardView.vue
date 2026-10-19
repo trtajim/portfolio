@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { marked } from 'marked'
 import { usePortfolioStore } from '@/stores/portfolio'
@@ -56,13 +56,28 @@ async function handleFileUpload(event: Event, targetType: 'avatar' | 'project' |
 }
 
 const profileForm = ref({
-  name: portfolioStore.profile.name,
-  headline: portfolioStore.profile.headline,
+  name: portfolioStore.profile.name || '',
+  headline: portfolioStore.profile.headline || '',
   whoamiRaw: portfolioStore.profile.whoami.join('\n\n'),
   avatar_url: portfolioStore.profile.avatar_url || '',
   grouped_stacks: JSON.parse(JSON.stringify(portfolioStore.profile.grouped_stacks)) as GroupedStack[],
   social_links: JSON.parse(JSON.stringify(portfolioStore.profile.social_links)) as SocialLink[]
 })
+
+watch(
+  () => portfolioStore.profile,
+  (newProf) => {
+    if (newProf) {
+      profileForm.value.name = newProf.name || ''
+      profileForm.value.headline = newProf.headline || ''
+      profileForm.value.whoamiRaw = (newProf.whoami || []).join('\n\n')
+      profileForm.value.avatar_url = newProf.avatar_url || ''
+      profileForm.value.grouped_stacks = JSON.parse(JSON.stringify(newProf.grouped_stacks || []))
+      profileForm.value.social_links = JSON.parse(JSON.stringify(newProf.social_links || []))
+    }
+  },
+  { deep: true }
+)
 
 async function saveProfile() {
   if (!authStore.canEdit) {
