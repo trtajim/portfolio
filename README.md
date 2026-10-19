@@ -24,6 +24,8 @@ I'm always excited to collaborate on open-source initiatives, talk competitive p
 - **LinkedIn**: [in/trtajim](https://linkedin.com/in/trtajim)
 - **Facebook**: [fb.com/trtajim](https://facebook.com/trtajim)
 
+> **Note:** You can easily set this up for yourself! Everything is server-driven here—just clone, connect your Supabase database, input your data, and boom! 🚀
+
 ---
 
 *Thanks for stopping by! Feel free to explore the code or check out the live site.*
