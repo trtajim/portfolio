@@ -49,7 +49,7 @@ function toggleTheme() {
           @click="toggleTheme"
           aria-label="Switch colour theme"
         >
-          {{ isDark ? '☀️' : '🌙' }}
+          <span class="theme-icon">{{ isDark ? '☀️' : '🌙' }}</span>
         </button>
       </nav>
     </div>
@@ -122,16 +122,22 @@ function toggleTheme() {
 
 #theme {
   border-color: var(--bd);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   padding: 4px 12px;
-  background: var(--blue);
-  color: #fff;
+  background: var(--paper);
+  color: var(--ink);
   box-shadow: 3px 3px 0 var(--sh);
 }
 
 #theme:hover {
-  background: var(--yellow);
+  background: var(--pink);
   color: #0b0b0f;
+}
+
+.theme-icon {
+  display: inline-block;
+  line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
 }
 
 @media (max-width: 600px) {

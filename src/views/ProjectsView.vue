@@ -45,7 +45,7 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
 </script>
 
 <template>
-  <div class="c">
+  <div class="c min-h-[calc(100vh-280px)] flex flex-col">
     <div class="pt-10 max-sm:pt-6 pb-6">
       <div class="sh">
         <h2>Projects</h2>
@@ -80,8 +80,11 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
       </div>
     </div>
 
-    <!-- VIDEO SHORTS SECTION (WHEN "ALL" OR "VIDEO" IS ACTIVE) -->
-    <div v-else-if="filteredShorts.length > 0 && activeFilter === 'Video'" class="grid grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1 gap-6 pb-12">
+    <!-- VIDEO SHORTS SECTION (WHEN "ALL" OR "VIDEO" IS ACTIVE): 2 PER ROW ON MOBILE -->
+    <div
+      v-else-if="filteredShorts.length > 0 && activeFilter === 'Video'"
+      class="grid grid-cols-3 max-md:grid-cols-2 grid-cols-2 gap-4 sm:gap-6 pb-12"
+    >
       <ShortCard
         v-for="(short, idx) in filteredShorts"
         :key="short.id || short.title"

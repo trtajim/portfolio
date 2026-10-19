@@ -25,7 +25,7 @@ const fallbackThumbnail = computed(() => {
 
 <template>
   <div
-    class="box p-0 flex-[0_0_250px] max-sm:flex-[0_0_220px] max-xs:flex-[0_0_200px] w-[250px] max-sm:w-[220px] max-xs:w-[200px] flex flex-col overflow-hidden cursor-pointer select-none transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] group"
+    class="box p-0 w-full flex flex-col overflow-hidden cursor-pointer select-none transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] group"
     @click="emit('play', short)"
   >
     <div class="w-full aspect-[9/16] relative bg-[#111] overflow-hidden border-b-[3px] border-[var(--bd)]">
@@ -56,8 +56,8 @@ const fallbackThumbnail = computed(() => {
       </div>
     </div>
 
-    <div class="p-[14px_16px]">
-      <h4 class="m-0 text-[1.05rem] font-bold tracking-[-0.01em] line-clamp-2">
+    <div class="p-[14px_16px] max-sm:p-3">
+      <h4 class="m-0 text-[1.05rem] max-sm:text-[0.92rem] font-bold tracking-[-0.01em] line-clamp-2">
         {{ short.title }}
       </h4>
     </div>

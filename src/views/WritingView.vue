@@ -19,7 +19,7 @@ const dateColors: ('blue' | 'pink' | 'green' | 'orange' | 'yellow')[] = [
 </script>
 
 <template>
-  <div class="c">
+  <div class="c min-h-[calc(100vh-280px)] flex flex-col">
     <div class="pt-10 max-sm:pt-6 pb-6">
       <div class="sh">
         <h2>Writing</h2>
