@@ -59,6 +59,7 @@ export interface Post {
   image_url?: string | null
   is_featured: boolean
   is_published: boolean
+  order_index?: number
   published_date: string
   created_at?: string
   updated_at?: string

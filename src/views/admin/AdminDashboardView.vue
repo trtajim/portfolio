@@ -15,10 +15,24 @@ const authStore = useAuthStore()
 const activeTab = ref<'profile' | 'projects' | 'posts' | 'shorts'>('profile')
 const notification = ref<{ text: string; type: 'success' | 'error' } | null>(null)
 const isSaving = ref(false)
+const saveSuccess = ref(false)
 const isUploading = ref(false)
+const isReordering = ref(false)
+
+// Drag and drop state
+const draggedProjectIndex = ref<number | null>(null)
+const dragOverProjectIndex = ref<number | null>(null)
+const draggedPostIndex = ref<number | null>(null)
+const dragOverPostIndex = ref<number | null>(null)
 
 function notify(text: string, type: 'success' | 'error' = 'success') {
   notification.value = { text, type }
+  if (type === 'success') {
+    saveSuccess.value = true
+    setTimeout(() => {
+      saveSuccess.value = false
+    }, 2500)
+  }
   setTimeout(() => {
     notification.value = null
   }, 3500)
@@ -223,12 +237,120 @@ const visibleProjects = computed(() => {
   return portfolioStore.projects.filter((p) => p.is_published)
 })
 
+async function applyProjectOrder(newOrderList: Project[]) {
+  if (!authStore.canEdit) {
+    notify('Guest Demo Mode: Reordering is disabled in view-only mode.', 'error')
+    return
+  }
+  isReordering.value = true
+  try {
+    const payload = newOrderList.map((p, index) => ({
+      id: p.id!,
+      order_index: index + 1
+    }))
+    await portfolioStore.reorderProjects(payload)
+    notify('Project order updated and saved!')
+  } catch (err: unknown) {
+    notify(err instanceof Error ? err.message : 'Error reordering projects', 'error')
+  } finally {
+    isReordering.value = false
+  }
+}
+
+async function moveProject(index: number, direction: 'up' | 'down') {
+  const list = [...visibleProjects.value]
+  const targetIndex = direction === 'up' ? index - 1 : index + 1
+  if (targetIndex < 0 || targetIndex >= list.length) return
+  const [moved] = list.splice(index, 1)
+  if (!moved) return
+  list.splice(targetIndex, 0, moved)
+  await applyProjectOrder(list)
+}
+
+function handleProjectDragStart(index: number) {
+  draggedProjectIndex.value = index
+}
+
+function handleProjectDragOver(index: number) {
+  dragOverProjectIndex.value = index
+}
+
+async function handleProjectDrop(index: number) {
+  if (draggedProjectIndex.value === null || draggedProjectIndex.value === index) {
+    draggedProjectIndex.value = null
+    dragOverProjectIndex.value = null
+    return
+  }
+  const list = [...visibleProjects.value]
+  const [moved] = list.splice(draggedProjectIndex.value, 1)
+  if (moved) {
+    list.splice(index, 0, moved)
+    draggedProjectIndex.value = null
+    dragOverProjectIndex.value = null
+    await applyProjectOrder(list)
+  }
+}
+
 const visiblePosts = computed(() => {
   if (authStore.canEdit) {
     return portfolioStore.posts
   }
   return portfolioStore.posts.filter((p) => p.is_published)
 })
+
+async function applyPostOrder(newOrderList: Post[]) {
+  if (!authStore.canEdit) {
+    notify('Guest Demo Mode: Reordering is disabled in view-only mode.', 'error')
+    return
+  }
+  isReordering.value = true
+  try {
+    const payload = newOrderList.map((p, index) => ({
+      id: p.id!,
+      order_index: index + 1
+    }))
+    await portfolioStore.reorderPosts(payload)
+    notify('Article order updated and saved!')
+  } catch (err: unknown) {
+    notify(err instanceof Error ? err.message : 'Error reordering articles', 'error')
+  } finally {
+    isReordering.value = false
+  }
+}
+
+async function movePost(index: number, direction: 'up' | 'down') {
+  const list = [...visiblePosts.value]
+  const targetIndex = direction === 'up' ? index - 1 : index + 1
+  if (targetIndex < 0 || targetIndex >= list.length) return
+  const [moved] = list.splice(index, 1)
+  if (!moved) return
+  list.splice(targetIndex, 0, moved)
+  await applyPostOrder(list)
+}
+
+function handlePostDragStart(index: number) {
+  draggedPostIndex.value = index
+}
+
+function handlePostDragOver(index: number) {
+  dragOverPostIndex.value = index
+}
+
+async function handlePostDrop(index: number) {
+  if (draggedPostIndex.value === null || draggedPostIndex.value === index) {
+    draggedPostIndex.value = null
+    dragOverPostIndex.value = null
+    return
+  }
+  const list = [...visiblePosts.value]
+  const [moved] = list.splice(draggedPostIndex.value, 1)
+  if (moved) {
+    list.splice(index, 0, moved)
+    draggedPostIndex.value = null
+    dragOverPostIndex.value = null
+    await applyPostOrder(list)
+  }
+}
 
 const editingPost = ref<Post | null>(null)
 const postTagsRaw = ref('')
@@ -531,7 +653,7 @@ async function handleLogout() {
 
         <div class="action-footer">
           <BrutalButton type="submit" variant="yellow" :disabled="isSaving" style="font-size: 1.1rem; padding: 10px 24px">
-            {{ isSaving ? 'Saving...' : 'Save Profile Changes' }}
+            {{ isSaving ? 'Saving...' : saveSuccess ? 'Saved! ✓' : 'Save Profile Changes' }}
           </BrutalButton>
         </div>
       </form>
@@ -549,10 +671,42 @@ async function handleLogout() {
 
         <div class="list-grid">
           <div
-            v-for="proj in visibleProjects"
+            v-for="(proj, pIdx) in visibleProjects"
             :key="proj.id || proj.slug"
-            class="card box proj-row"
+            :class="['card box proj-row', {
+              'is-dragging': draggedProjectIndex === pIdx,
+              'drag-over': dragOverProjectIndex === pIdx
+            }]"
+            draggable="true"
+            @dragstart="handleProjectDragStart(pIdx)"
+            @dragover.prevent="handleProjectDragOver(pIdx)"
+            @dragleave="dragOverProjectIndex = null"
+            @drop="handleProjectDrop(pIdx)"
           >
+            <div class="drag-handle-wrap" title="Drag to reorder">
+              <span class="drag-handle">⋮⋮</span>
+              <div class="order-arrows">
+                <button
+                  type="button"
+                  class="arrow-btn"
+                  :disabled="pIdx === 0 || isReordering"
+                  title="Move up"
+                  @click="moveProject(pIdx, 'up')"
+                >
+                  ▲
+                </button>
+                <button
+                  type="button"
+                  class="arrow-btn"
+                  :disabled="pIdx === visibleProjects.length - 1 || isReordering"
+                  title="Move down"
+                  @click="moveProject(pIdx, 'down')"
+                >
+                  ▼
+                </button>
+              </div>
+            </div>
+
             <div class="info">
               <div class="meta-row">
                 <span class="st-pill">{{ proj.pill }}</span>
@@ -694,7 +848,7 @@ async function handleLogout() {
 
         <div class="action-footer">
           <BrutalButton type="submit" variant="yellow" :disabled="isSaving" style="font-size: 1.1rem; padding: 10px 24px">
-            {{ isSaving ? 'Saving...' : 'Save Project' }}
+            {{ isSaving ? 'Saving...' : saveSuccess ? 'Saved! ✓' : 'Save Project' }}
           </BrutalButton>
         </div>
       </form>
@@ -712,12 +866,45 @@ async function handleLogout() {
 
         <div class="list-grid">
           <div
-            v-for="post in visiblePosts"
+            v-for="(post, postIdx) in visiblePosts"
             :key="post.id || post.slug"
-            class="card box proj-row"
+            :class="['card box proj-row', {
+              'is-dragging': draggedPostIndex === postIdx,
+              'drag-over': dragOverPostIndex === postIdx
+            }]"
+            draggable="true"
+            @dragstart="handlePostDragStart(postIdx)"
+            @dragover.prevent="handlePostDragOver(postIdx)"
+            @dragleave="dragOverPostIndex = null"
+            @drop="handlePostDrop(postIdx)"
           >
+            <div class="drag-handle-wrap" title="Drag to reorder">
+              <span class="drag-handle">⋮⋮</span>
+              <div class="order-arrows">
+                <button
+                  type="button"
+                  class="arrow-btn"
+                  :disabled="postIdx === 0 || isReordering"
+                  title="Move up"
+                  @click="movePost(postIdx, 'up')"
+                >
+                  ▲
+                </button>
+                <button
+                  type="button"
+                  class="arrow-btn"
+                  :disabled="postIdx === visiblePosts.length - 1 || isReordering"
+                  title="Move down"
+                  @click="movePost(postIdx, 'down')"
+                >
+                  ▼
+                </button>
+              </div>
+            </div>
+
             <div class="info">
               <div class="meta-row">
+                <span v-if="post.order_index !== undefined" class="order-pill">#{{ post.order_index }}</span>
                 <time class="time-tag">{{ post.published_date }}</time>
                 <span v-if="post.is_featured" class="featured-badge">Featured on Home</span>
               </div>
@@ -790,20 +977,27 @@ async function handleLogout() {
           </div>
         </div>
 
-        <div class="checkbox-row">
-          <label class="check-label">
-            <input v-model="editingPost.is_featured" type="checkbox" />
-            <span>Feature on Home page</span>
-          </label>
-          <label class="check-label">
-            <input v-model="editingPost.is_published" type="checkbox" />
-            <span>Published</span>
-          </label>
+        <div class="grid-2">
+          <div class="field">
+            <label>Display Order</label>
+            <input v-model.number="editingPost.order_index" type="number" class="input-box" placeholder="0" />
+          </div>
+
+          <div class="checkbox-row" style="align-self: center">
+            <label class="check-label">
+              <input v-model="editingPost.is_featured" type="checkbox" />
+              <span>Feature on Home page</span>
+            </label>
+            <label class="check-label">
+              <input v-model="editingPost.is_published" type="checkbox" />
+              <span>Published</span>
+            </label>
+          </div>
         </div>
 
         <div class="action-footer">
           <BrutalButton type="submit" variant="yellow" :disabled="isSaving" style="font-size: 1.1rem; padding: 10px 24px">
-            {{ isSaving ? 'Saving...' : 'Save Article' }}
+            {{ isSaving ? 'Saving...' : saveSuccess ? 'Saved! ✓' : 'Save Article' }}
           </BrutalButton>
         </div>
       </form>
@@ -898,7 +1092,7 @@ async function handleLogout() {
 
         <div class="action-footer">
           <BrutalButton type="submit" variant="yellow" :disabled="isSaving" style="font-size: 1.1rem; padding: 10px 24px">
-            {{ isSaving ? 'Saving...' : 'Save Motion Short' }}
+            {{ isSaving ? 'Saving...' : saveSuccess ? 'Saved! ✓' : 'Save Motion Short' }}
           </BrutalButton>
         </div>
       </form>
@@ -925,11 +1119,31 @@ async function handleLogout() {
 }
 
 .notif {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 9999;
   border: 3px solid var(--bd);
-  padding: 12px 18px;
-  margin-bottom: 20px;
+  padding: 14px 22px;
   font-weight: 700;
   font-family: var(--mono);
+  box-shadow: 6px 6px 0 var(--sh);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 420px;
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .notif.success {
@@ -1056,7 +1270,67 @@ label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.proj-row.is-dragging {
+  opacity: 0.4;
+  border-style: dashed;
+}
+
+.proj-row.drag-over {
+  border-color: var(--blue);
+  background-color: rgba(94, 189, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.drag-handle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+.drag-handle {
+  cursor: grab;
+  font-size: 1.25rem;
+  letter-spacing: -2px;
+  color: var(--ink);
+  opacity: 0.5;
+  padding: 4px 6px;
+  transition: opacity 0.15s;
+}
+
+.drag-handle:hover {
+  opacity: 1;
+}
+
+.order-arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.arrow-btn {
+  background: var(--paper);
+  border: 1.5px solid var(--bd);
+  color: var(--ink);
+  font-size: 0.6rem;
+  line-height: 1;
+  padding: 3px 5px;
+  cursor: pointer;
+  transition: background 0.1s, transform 0.1s;
+}
+
+.arrow-btn:hover:not(:disabled) {
+  background: var(--yellow);
+  transform: scale(1.1);
+}
+
+.arrow-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .meta-row {

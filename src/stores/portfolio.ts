@@ -119,7 +119,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
       const [profileRes, projectsRes, postsRes, shortsRes] = await Promise.all([
         supabase.from('profile').select('*').limit(1).maybeSingle(),
         supabase.from('projects').select('*').order('order_index', { ascending: true }),
-        supabase.from('posts').select('*').order('published_date', { ascending: false }),
+        supabase.from('posts').select('*').order('order_index', { ascending: true }).order('published_date', { ascending: false }),
         supabase.from('shorts').select('*').order('order_index', { ascending: true })
       ])
 
@@ -259,6 +259,44 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     await fetchAll(true)
   }
 
+  async function reorderProjects(orderedItems: { id: string; order_index: number }[]) {
+    // Optimistically update local store
+    for (const item of orderedItems) {
+      const match = projects.value.find((p) => p.id === item.id)
+      if (match) match.order_index = item.order_index
+    }
+    projects.value.sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
+
+    if (!isSupabaseConfigured) return
+
+    const updates = orderedItems.map((item) =>
+      supabase.from('projects').update({ order_index: item.order_index }).eq('id', item.id)
+    )
+    const results = await Promise.all(updates)
+    const failed = results.find((r) => r.error)
+    if (failed?.error) throw failed.error
+    invalidateCache()
+  }
+
+  async function reorderPosts(orderedItems: { id: string; order_index: number }[]) {
+    // Optimistically update local store
+    for (const item of orderedItems) {
+      const match = posts.value.find((p) => p.id === item.id)
+      if (match) match.order_index = item.order_index
+    }
+    posts.value.sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
+
+    if (!isSupabaseConfigured) return
+
+    const updates = orderedItems.map((item) =>
+      supabase.from('posts').update({ order_index: item.order_index }).eq('id', item.id)
+    )
+    const results = await Promise.all(updates)
+    const failed = results.find((r) => r.error)
+    if (failed?.error) throw failed.error
+    invalidateCache()
+  }
+
   async function saveShort(short: Partial<Short>) {
     if (!isSupabaseConfigured) {
       if (short.id) {
@@ -335,6 +373,8 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     deleteProject,
     savePost,
     deletePost,
+    reorderProjects,
+    reorderPosts,
     saveShort,
     deleteShort
   }
