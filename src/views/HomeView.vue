@@ -175,7 +175,7 @@ async function copyEmail() {
   <div class="c">
     <!-- HERO SECTION -->
     <div class="grid grid-cols-[1.4fr_1fr] max-md:grid-cols-1 gap-6 pt-10 max-sm:pt-5 pb-6 items-stretch w-full min-w-0">
-      <div class="box !bg-[var(--yellow)] !text-[#0b0b0f] !border-[#0b0b0f] p-[30px_30px_28px] max-md:p-[24px_20px] max-sm:p-[20px_18px] relative overflow-hidden flex flex-col justify-between">
+      <div class="box !bg-[var(--yellow)] !text-[#0b0b0f] p-[30px_30px_28px] max-md:p-[24px_20px] max-sm:p-[20px_18px] relative overflow-hidden flex flex-col justify-between">
         <div>
           <span class="inline-block font-mono font-bold text-[0.8rem] bg-[#0b0b0f] text-white rounded-[6px] px-2.5 py-[3px] mb-4">
             hello, I’m
@@ -333,7 +333,7 @@ async function copyEmail() {
         <!-- SPOTLIGHT / FLAGSHIP PROJECT -->
         <div
           v-if="spotlightProject"
-          class="box spotlight-card !bg-[var(--green)] !text-[#0b0b0f] !border-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden"
+          class="box spotlight-card !bg-[var(--green)] !text-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden"
         >
           <div class="flex flex-col gap-4 min-w-0">
             <span class="font-mono font-bold text-[0.75rem] bg-[var(--yellow)] text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2.5 py-1 self-start">
