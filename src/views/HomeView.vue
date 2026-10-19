@@ -482,7 +482,7 @@ async function copyEmail() {
     <!-- CONTACT SECTION -->
     <section id="contact" class="pt-14 max-sm:pt-9 pb-1.5">
       <div class="box p-[32px_30px] max-sm:p-[24px_18px] flex flex-col gap-4.5">
-        <span class="font-mono font-bold text-[0.8rem] bg-[#0b0b0f] text-[var(--yellow)] border-2 border-[#0b0b0f] rounded-[6px] inline-block px-2.5 py-[3px] self-start shadow-[2px_2px_0_var(--sh)]">
+        <span class="font-mono font-bold text-[0.8rem] bg-[var(--ink)] text-[var(--bg)] border-2 border-[var(--bd)] rounded-[6px] inline-block px-2.5 py-[3px] self-start shadow-[2px_2px_0_var(--sh)]">
           LET’S CONNECT
         </span>
         <h2 class="m-0 text-[clamp(1.5rem,4vw,2rem)] font-extrabold leading-[1.2] tracking-[-0.02em]">
