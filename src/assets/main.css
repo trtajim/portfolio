@@ -18,9 +18,6 @@
     --w: 3px;
     --r: 10px;
     color-scheme: light;
-    box-sizing: border-box;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -59,19 +56,23 @@
     scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 84px);
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    overflow-x: clip;
+    max-width: 100vw;
   }
 
-  * {
+  *, *::before, *::after {
     box-sizing: border-box;
   }
 
   body {
     margin: 0;
+    padding: 0;
     background: var(--bg);
     color: var(--ink);
     font: 500 17px/1.55 var(--sans);
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    overflow-x: clip;
+    max-width: 100vw;
   }
 
   a {

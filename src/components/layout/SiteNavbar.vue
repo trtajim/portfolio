@@ -180,25 +180,27 @@ function toggleTheme() {
 
 @media (max-width: 600px) {
   .top .c {
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    gap: 8px;
   }
   .logo {
-    font-size: 1.1rem;
-    padding: 2px 10px;
+    font-size: 1rem;
+    padding: 2px 9px;
   }
   .top nav {
-    gap: 6px;
+    gap: 5px;
+    flex-shrink: 0;
   }
   .top nav a {
-    padding: 4px 10px;
-    font-size: 0.85rem;
-    min-height: 36px;
+    padding: 3px 8px;
+    font-size: 0.8rem;
+    min-height: 32px;
   }
   #theme {
-    width: 34px;
-    height: 34px;
-    min-height: 34px;
+    width: 32px;
+    height: 32px;
+    min-height: 32px;
     box-shadow: 2px 2px 0 var(--sh);
   }
 
