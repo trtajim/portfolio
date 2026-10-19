@@ -6,17 +6,175 @@ import PostCard from '@/components/writing/PostCard.vue'
 import BrutalButton from '@/components/brutal/BrutalButton.vue'
 import ShortCard from '@/components/motion/ShortCard.vue'
 import ShortPlayerModal from '@/components/motion/ShortPlayerModal.vue'
-import type { Short } from '@/types'
+import type { Short, GroupedStack, Project } from '@/types'
 
 const portfolioStore = usePortfolioStore()
 
 const profile = computed(() => portfolioStore.profile)
 
-const featuredProjects = computed(() => {
-  const featured = portfolioStore.projects.filter((p) => p.is_featured && p.is_published)
-  if (featured.length <= 3) return featured
-  return [...featured].sort(() => 0.5 - Math.random()).slice(0, 3)
+const fallbackGroupedStacks: GroupedStack[] = [
+  { category: 'Languages', items: 'C, C++, Java, PHP, JavaScript' },
+  { category: 'Web', items: 'Laravel, Vue.js, Vue, React, Inertia.js, HTML, CSS, SQL, MySQL' },
+  { category: 'Mobile', items: 'Java, XML, Android, Android SDK' },
+  { category: 'IoT', items: 'Arduino, IoT integration, Sensor Integration' },
+  { category: 'Database & Cloud', items: 'MySQL, Supabase, Firebase, S3' },
+  { category: 'DevOps', items: 'Git, Linux, Bash, VPS, Cloudflare' }
+]
+
+const knownTechSet = computed(() => {
+  const set = new Set<string>()
+  const stacks =
+    profile.value.grouped_stacks && profile.value.grouped_stacks.length > 0
+      ? profile.value.grouped_stacks
+      : fallbackGroupedStacks
+
+  for (const group of stacks) {
+    if (!group.items) continue
+    const items = group.items.split(',').map((s) => s.trim().toLowerCase())
+    for (const item of items) {
+      if (item) set.add(item)
+    }
+  }
+  return set
 })
+
+function categorizeTags(tags?: string[]) {
+  if (!tags || !tags.length) return { domainTags: [] as string[], techTags: [] as string[] }
+  const techSet = knownTechSet.value
+  const domainTags: string[] = []
+  const techTags: string[] = []
+
+  for (const tag of tags) {
+    const raw = tag.trim()
+    const norm = raw.toLowerCase()
+    const isTech =
+      techSet.has(norm) ||
+      Array.from(techSet).some((tech) => tech === norm || tech.includes(norm) || norm.includes(tech))
+
+    if (isTech) {
+      techTags.push(raw)
+    } else {
+      domainTags.push(raw)
+    }
+  }
+
+  return { domainTags, techTags }
+}
+
+const fallbackProjects: Project[] = [
+  {
+    id: '1',
+    slug: 'hscstack',
+    title: 'HSCStack',
+    summary:
+      'An open-source academic hub empowering students in Bangladesh. Built for peer-to-peer note sharing, community forums, and curated study resources.',
+    pill: 'Website',
+    top_metric: '1,150+ registered users',
+    tags: ['Open source', 'Education', 'Community', 'Laravel', 'Vue.js'],
+    actions: [
+      { label: 'Visit site', url: 'https://hscstack.site' },
+      { label: 'GitHub', url: 'https://github.com/tajim/hscstack' }
+    ],
+    is_featured: true,
+    is_published: true,
+    order_index: 0
+  },
+  {
+    id: '2',
+    slug: 'smart-home-app',
+    title: 'Smart Home App',
+    summary:
+      'An Android application that converts analog homes into smart environments via Bluetooth communication with Arduino microcontrollers.',
+    pill: 'Application',
+    top_metric: '16 Github Stars',
+    tags: ['Android', 'IoT', 'Java', 'Arduino'],
+    actions: [
+      { label: 'GitHub', url: 'https://github.com/tajim/smart-home-app' }
+    ],
+    is_featured: true,
+    is_published: true,
+    order_index: 1
+  },
+  {
+    id: '3',
+    slug: 'url-shortener-saas',
+    title: 'Url Shortener SaaS',
+    summary:
+      'A full-stack, distraction-free URL shortener ecosystem featuring a self-hosted Laravel REST API, modern Vue SPA web frontend, and native Android companion app.',
+    pill: 'SaaS',
+    top_metric: 'Web & Android',
+    tags: ['Laravel', 'Vue', 'Java', 'SQL'],
+    actions: [
+      { label: 'Visit site', url: 'https://go.tajimz.xyz' },
+      { label: 'Web Repo', url: 'https://github.com/tajimz/url-shortener-spa' }
+    ],
+    is_featured: true,
+    is_published: true,
+    order_index: 2
+  }
+]
+
+const allDisplayProjects = computed(() => {
+  const storeFeatured = portfolioStore.projects.filter((p) => p.is_featured && p.is_published)
+  if (storeFeatured.length > 0) return storeFeatured
+  return fallbackProjects
+})
+
+const spotlightProject = computed(() => {
+  const found = allDisplayProjects.value.find((p) => p.slug === 'hscstack')
+  return found || allDisplayProjects.value[0] || fallbackProjects[0]
+})
+
+const otherProjects = computed(() => {
+  return allDisplayProjects.value.filter((p) => p.slug !== spotlightProject.value?.slug)
+})
+
+function parseMetric(metric?: string | null): { value: string; label: string } {
+  if (!metric) return { value: '', label: '' }
+  const trimmed = metric.trim()
+  const parts = trimmed.split(/\s+/)
+  const first = parts[0] || ''
+  if (parts.length === 1) {
+    return { value: first, label: '' }
+  }
+  if (['★', '⭐', '🔥', '🚀'].includes(first) && parts.length > 2) {
+    return {
+      value: `${first} ${parts[1] || ''}`,
+      label: parts.slice(2).join(' ')
+    }
+  }
+  return {
+    value: first,
+    label: parts.slice(1).join(' ')
+  }
+}
+
+function splitSummary(summary?: string | null): { main: string; note: string } {
+  if (!summary) return { main: '', note: '' }
+  const trimmed = summary.trim()
+
+  if (trimmed.includes('\n')) {
+    const lines = trimmed.split('\n').map((l) => l.trim()).filter(Boolean)
+    if (lines.length > 1) {
+      return {
+        main: lines.slice(0, -1).join(' '),
+        note: lines[lines.length - 1] || ''
+      }
+    }
+  }
+
+  const matches = trimmed.match(/[^.!?]+[.!?]+(?:\s+|$)/g)
+  if (matches && matches.length > 1) {
+    const last = matches[matches.length - 1]
+    const note = last ? last.trim() : ''
+    const main = matches.slice(0, -1).join('').trim()
+    return { main, note }
+  }
+
+  return { main: trimmed, note: '' }
+}
+
+const featuredProjects = computed(() => allDisplayProjects.value)
 
 const featuredPosts = computed(() => {
   const featured = portfolioStore.posts.filter((p) => p.is_featured && p.is_published)
@@ -217,31 +375,92 @@ async function copyEmail() {
 
     <section id="projects">
       <h2 class="h">What I built</h2>
-      <div v-if="!portfolioStore.isLoaded" class="proj">
+
+      <div v-if="!portfolioStore.isLoaded && portfolioStore.loading" class="proj">
         <div v-for="n in 3" :key="n" :class="['card', 'box', 'skeleton-card', { 'span-wide': n === 3 }]">
           <div class="skeleton-pill" style="margin-bottom: 16px; width: 80px;"></div>
           <div class="skeleton-line" style="width: 60%; height: 26px; margin-bottom: 14px;"></div>
           <div class="skeleton-line" style="width: 90%; margin-bottom: 8px;"></div>
           <div class="skeleton-line" style="width: 75%; margin-bottom: 20px;"></div>
-          <div style="display: flex; gap: 8px;">
-            <div class="skeleton-pill" style="width: 70px; height: 22px;"></div>
-            <div class="skeleton-pill" style="width: 60px; height: 22px;"></div>
-          </div>
         </div>
       </div>
-      <div v-else-if="featuredProjects.length === 0" class="card box empty-box">
-        No projects found.
+
+      <div v-else class="showcase-wrap">
+        <!-- SPOTLIGHT SHOWCASE (FLAGSHIP PROJECT) -->
+        <div v-if="spotlightProject" class="spotlight-card spotlight-split box">
+          <div class="spotlight-left">
+            <div class="spotlight-pill-row">
+              <span class="spotlight-kicker">★ FLAGSHIP {{ spotlightProject.pill ? `· ${spotlightProject.pill.toUpperCase()}` : '' }}</span>
+            </div>
+            <h3 class="spotlight-title">
+              <router-link :to="`/projects/${spotlightProject.slug}`" class="title-link">
+                {{ spotlightProject.title }}
+              </router-link>
+            </h3>
+            <p class="spotlight-summary">{{ splitSummary(spotlightProject.summary).main }}</p>
+            <ul v-if="categorizeTags(spotlightProject.tags).domainTags.length" class="t">
+              <li v-for="tag in categorizeTags(spotlightProject.tags).domainTags" :key="tag">{{ tag }}</li>
+            </ul>
+            <div v-if="spotlightProject.actions?.length" class="acts">
+              <BrutalButton
+                v-for="(action, index) in spotlightProject.actions"
+                :key="action.label"
+                as="a"
+                :href="action.url"
+                target="_blank"
+                :variant="index === 0 ? 'yellow' : 'white'"
+              >
+                {{ action.label }} ↗
+              </BrutalButton>
+            </div>
+          </div>
+          <div class="spotlight-right">
+            <div class="browser-frame box">
+              <div class="browser-top">
+                <div class="browser-dots">
+                  <span class="browser-dot red"></span>
+                  <span class="browser-dot yellow"></span>
+                  <span class="browser-dot green"></span>
+                </div>
+                <span class="browser-address">
+                  {{ spotlightProject.actions?.[0]?.url || `https://${spotlightProject.slug}` }}
+                </span>
+              </div>
+              <div class="browser-body">
+                <div v-if="spotlightProject.top_metric" class="browser-stat-highlight">
+                  <span class="stat-number">{{ parseMetric(spotlightProject.top_metric).value }}</span>
+                  <span v-if="parseMetric(spotlightProject.top_metric).label" class="stat-sub">
+                    {{ parseMetric(spotlightProject.top_metric).label }}
+                  </span>
+                </div>
+                <div v-if="categorizeTags(spotlightProject.tags).techTags.length" class="browser-tech-badges">
+                  <span v-for="tag in categorizeTags(spotlightProject.tags).techTags" :key="tag" class="b-badge">
+                    {{ tag }}
+                  </span>
+                </div>
+                <p v-if="splitSummary(spotlightProject.summary).note" class="browser-note">
+                  {{ splitSummary(spotlightProject.summary).note }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OTHER FEATURED PROJECTS -->
+        <div v-if="otherProjects.length > 0" class="other-heading-row">
+          <span class="other-section-tag">More Featured Work</span>
+        </div>
+        <div v-if="otherProjects.length > 0" class="proj">
+          <ProjectCard
+            v-for="(proj, idx) in otherProjects"
+            :key="proj.slug"
+            :project="proj"
+            :color="projectCardColors[(idx + 1) % projectCardColors.length]"
+          />
+        </div>
       </div>
-      <div v-else class="proj">
-        <ProjectCard
-          v-for="(proj, idx) in featuredProjects"
-          :key="proj.slug"
-          :project="proj"
-          :color="projectCardColors[idx % projectCardColors.length]"
-          :class="{ 'span-wide': idx === 2 }"
-        />
-      </div>
-      <div v-if="featuredProjects.length > 0" class="more">
+
+      <div class="more">
         <BrutalButton as="router-link" to="/projects" variant="yellow" style="font-size: 1.05rem; padding: 10px 22px;">
           View all projects →
         </BrutalButton>
@@ -653,6 +872,244 @@ section {
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.75; transform: scale(0.98); }
+}
+
+.showcase-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Base Spotlight Card */
+.spotlight-card {
+  position: relative;
+  color: #111;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.spotlight-pill-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.spotlight-kicker {
+  font: 700 0.75rem var(--mono);
+  background: var(--yellow);
+  color: #111;
+  border: 2px solid var(--bd);
+  box-shadow: 2px 2px 0 var(--sh);
+  padding: 2px 8px;
+  letter-spacing: -0.01em;
+}
+
+.spotlight-title {
+  margin: 0;
+  font-size: clamp(1.75rem, 5vw, 2.4rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.spotlight-summary {
+  margin: 0;
+  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+  line-height: 1.55;
+  color: #111;
+}
+
+/* ========================================= */
+/* DESIGN 1: SPLIT HERO SHOWCASE STYLES      */
+/* ========================================= */
+.spotlight-split {
+  background: var(--mint);
+  padding: 30px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 28px;
+  align-items: center;
+  border: 3px solid var(--bd);
+  box-shadow: 6px 6px 0 var(--sh);
+}
+
+.spotlight-left {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.spotlight-left .acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.browser-frame {
+  background: #ffffff;
+  color: #111;
+  border: 3px solid var(--bd);
+  box-shadow: 4px 4px 0 var(--sh);
+  overflow: hidden;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.browser-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f1f1;
+  border-bottom: 2px solid var(--bd);
+  padding: 8px 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.browser-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.browser-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid #111;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.browser-dot.red { background: #ff5f56; }
+.browser-dot.yellow { background: #ffbd2e; }
+.browser-dot.green { background: #27c93f; }
+
+.browser-address {
+  font: 700 0.72rem var(--mono);
+  color: #333;
+  background: #fff;
+  border: 1.5px solid #111;
+  padding: 2px 8px;
+  border-radius: 2px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.browser-stat-highlight {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 2px dashed #ddd;
+  padding-bottom: 10px;
+}
+
+.stat-number {
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #111;
+}
+
+.stat-sub {
+  font: 700 0.82rem var(--mono);
+  color: #444;
+  margin-top: 4px;
+}
+
+.browser-tech-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.b-badge {
+  font: 700 0.72rem var(--mono);
+  background: var(--yellow);
+  color: #111;
+  border: 1.5px solid #111;
+  padding: 2px 7px;
+  box-shadow: 1px 1px 0 #111;
+}
+
+.browser-note {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #222;
+}
+
+.other-heading-row {
+  margin-top: 10px;
+  margin-bottom: -10px;
+}
+
+.other-section-tag {
+  font: 700 0.85rem var(--mono);
+  background: #111;
+  color: #fff;
+  padding: 3px 12px;
+  display: inline-block;
+}
+
+/* ========================================= */
+/* RESPONSIVE & MOBILE-FRIENDLY ADJUSTMENTS  */
+/* ========================================= */
+@media (max-width: 768px) {
+  .spotlight-split {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 22px 18px;
+    box-shadow: 5px 5px 0 var(--sh);
+  }
+}
+
+@media (max-width: 480px) {
+  .spotlight-split {
+    padding: 18px 14px;
+    gap: 18px;
+    box-shadow: 4px 4px 0 var(--sh);
+  }
+
+  .spotlight-title {
+    font-size: 1.65rem;
+  }
+
+  .spotlight-left .acts {
+    gap: 8px;
+  }
+
+  .spotlight-left .acts a,
+  .spotlight-left .acts button {
+    flex: 1 1 calc(50% - 8px);
+    text-align: center;
+    justify-content: center;
+  }
+
+  .browser-body {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .browser-address {
+    font-size: 0.66rem;
+    padding: 1px 6px;
+  }
 }
 
 .proj {
