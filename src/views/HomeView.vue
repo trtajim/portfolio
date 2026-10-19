@@ -498,7 +498,7 @@ async function copyEmail() {
       </div>
 
       <div class="box py-12 px-10 max-md:py-8 max-md:px-7 max-sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-8 min-h-[180px]">
-        <div class="max-w-[520px] flex flex-col gap-2.5">
+        <div class="max-w-[480px] flex flex-col gap-2.5">
           <h3 class="m-0 text-[clamp(1.5rem,3.2vw,2.1rem)] font-extrabold tracking-[-0.02em] leading-[1.25]">
             Have an idea?
           </h3>
@@ -535,12 +535,12 @@ async function copyEmail() {
             type="button"
             @click="copyEmail"
             :aria-label="isCopied ? 'Email address copied' : 'Copy email address'"
-            class="font-mono font-bold text-[0.92rem] px-4.5 py-3.5 border-2 border-[var(--bd)] rounded-[var(--r)] bg-[var(--paper)] text-[var(--ink)] shadow-[2px_2px_0_var(--sh)] hover:-translate-y-0.5 active:translate-y-0 transition-transform flex items-center justify-between gap-3 max-sm:w-full cursor-pointer"
+            class="font-mono font-bold text-[0.92rem] px-4.5 py-3.5 border-2 border-[var(--bd)] rounded-[var(--r)] bg-[var(--paper)] text-[var(--ink)] shadow-[2px_2px_0_var(--sh)] hover:-translate-y-0.5 active:translate-y-0 transition-transform flex items-center justify-between gap-3 max-sm:w-full cursor-pointer shrink-0"
           >
             <span>{{ contactEmail }}</span>
             <span
               :class="[
-                'text-[0.75rem] font-mono font-bold px-2 py-0.5 rounded border border-[var(--bd)] transition-colors',
+                'text-[0.75rem] font-mono font-bold w-[62px] text-center py-0.5 rounded border border-[var(--bd)] transition-colors inline-block shrink-0',
                 isCopied ? 'bg-[var(--green)] text-[#0b0b0f]' : 'bg-[var(--bg)] text-[var(--ink)]'
               ]"
             >
