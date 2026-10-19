@@ -16,28 +16,11 @@ I've always loved retro, high-contrast aesthetics, so I designed this site using
 
 ---
 
-## 🚀 Make It Yours (Build Your Own Portfolio)
+## 🚀 Make It Yours
 
-You can easily adapt this codebase into your own personal portfolio website!
+Want to build your own portfolio using this? It's super easy!
 
-Because the entire website is **100% server-driven** via Supabase, you don't have to rewrite any frontend code or component templates to make it your own:
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/trtajim/portfolio.git
-   cd portfolio
-   npm install
-   ```
-
-2. **Connect Supabase**:
-   Create a free project on [Supabase](https://supabase.com), run the SQL schema in `supabase/schema.sql`, and add your credentials to `.env`:
-   ```env
-   VITE_SUPABASE_URL=your-supabase-project-url
-   VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
-   ```
-
-3. **Populate your data & boom! 💥**:
-   Log into the built-in admin dashboard or edit the database tables directly to add your own bio, tech stacks, projects, and articles. Everything updates on the site in real time!
+Everything here is **100% server-driven** via Supabase. You don't have to touch or rewrite any frontend code—just clone the repo, connect your own Supabase database, add your info, and boom, your personal site is ready! 💥
 
 ---
 
