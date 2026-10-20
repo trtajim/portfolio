@@ -189,14 +189,13 @@ const ribbonTracks = computed(() => {
     return { top: [], bottom: [], hasItems: false }
   }
 
-  // Split dynamically into top and bottom tracks
-  const midpoint = Math.ceil(rawItems.length / 2)
-  const topList = rawItems.slice(0, midpoint)
-  const bottomList = rawItems.slice(midpoint)
+  // Both tapes show ALL skills, but offset by half so they never show the same skill at the same position
+  const offset = Math.floor(rawItems.length / 2)
+  const offsetList = [...rawItems.slice(offset), ...rawItems.slice(0, offset)]
 
   return {
-    top: [...topList, ...topList],
-    bottom: [...bottomList, ...bottomList],
+    top: [...rawItems, ...rawItems],
+    bottom: [...offsetList, ...offsetList],
     hasItems: true
   }
 })
