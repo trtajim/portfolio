@@ -189,13 +189,13 @@ const ribbonTracks = computed(() => {
     return { top: [], bottom: [], hasItems: false }
   }
 
-  // Both tapes show ALL skills, but offset by half so they never show the same skill at the same position
+  // Both tapes show ALL skills, but reversed starting point so top starts with the offset and bottom starts from beginning
   const offset = Math.floor(rawItems.length / 2)
   const offsetList = [...rawItems.slice(offset), ...rawItems.slice(0, offset)]
 
   return {
-    top: [...rawItems, ...rawItems],
-    bottom: [...offsetList, ...offsetList],
+    top: [...offsetList, ...offsetList],
+    bottom: [...rawItems, ...rawItems],
     hasItems: true
   }
 })
