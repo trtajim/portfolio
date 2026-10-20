@@ -192,20 +192,21 @@ const ribbonTracks = computed(() => {
   }
 
   // Partition skills evenly into two separate groups so top and bottom never share or duplicate the same item
-  const topList: string[] = []
-  const bottomList: string[] = []
+  const trackA: string[] = []
+  const trackB: string[] = []
   rawItems.forEach((item, index) => {
     if (index % 2 === 0) {
-      topList.push(item)
+      trackA.push(item)
     } else {
-      bottomList.push(item)
+      trackB.push(item)
     }
   })
 
-  // Duplicate for seamless 50% loop animation
+  // Flipped: Top tape gets trackB, Bottom (yellow) tape gets trackA
+  // Repeat items 4 times so track width comfortably spans any ultra-wide screen without running out of items
   return {
-    top: [...topList, ...topList],
-    bottom: [...bottomList, ...bottomList],
+    top: [...trackB, ...trackB, ...trackB, ...trackB],
+    bottom: [...trackA, ...trackA, ...trackA, ...trackA],
     hasItems: true
   }
 })
