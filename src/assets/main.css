@@ -239,7 +239,7 @@
 }
 
 #about .sh h2 {
-  background: var(--pink);
+  background: var(--green);
   color: #0b0b0f;
 }
 
@@ -249,17 +249,17 @@
 }
 
 #projects .sh h2 {
-  background: var(--green);
+  background: var(--yellow);
   color: #0b0b0f;
 }
 
 #writing .sh h2 {
-  background: var(--orange);
+  background: var(--pink);
   color: #0b0b0f;
 }
 
 #contact .sh h2 {
-  background: var(--yellow);
+  background: var(--pink);
   color: #0b0b0f;
 }
 
