@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed } from 'vue'
 import { usePortfolioStore } from '@/stores/portfolio'
 import ProjectCard from '@/components/projects/ProjectCard.vue'
 import ShortCard from '@/components/motion/ShortCard.vue'
 import ShortPlayerModal from '@/components/motion/ShortPlayerModal.vue'
 import type { Short } from '@/types'
 
-const PAGE_SIZE = 12
-
 const portfolioStore = usePortfolioStore()
 const activeFilter = ref('All')
-const displayLimit = ref(PAGE_SIZE)
-const sentinelEl = ref<HTMLElement | null>(null)
-let observer: IntersectionObserver | null = null
 
 const categories = computed(() => {
   const set = new Set<string>()
@@ -38,50 +33,6 @@ const filteredProjects = computed(() => {
 const filteredShorts = computed(() => {
   if (activeFilter.value !== 'All' && activeFilter.value !== 'Video') return []
   return portfolioStore.shorts.filter((s) => s.is_published)
-})
-
-const visibleProjects = computed(() => {
-  return filteredProjects.value.slice(0, displayLimit.value)
-})
-
-const visibleShorts = computed(() => {
-  return filteredShorts.value.slice(0, displayLimit.value)
-})
-
-const hasMore = computed(() => {
-  if (activeFilter.value === 'Video') {
-    return visibleShorts.value.length < filteredShorts.value.length
-  }
-  return visibleProjects.value.length < filteredProjects.value.length
-})
-
-watch(activeFilter, () => {
-  displayLimit.value = PAGE_SIZE
-})
-
-function loadMore() {
-  if (!hasMore.value) return
-  displayLimit.value += PAGE_SIZE
-}
-
-onMounted(() => {
-  if (typeof IntersectionObserver !== 'undefined') {
-    observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting && hasMore.value) {
-          loadMore()
-        }
-      },
-      { rootMargin: '200px' }
-    )
-    if (sentinelEl.value) {
-      observer.observe(sentinelEl.value)
-    }
-  }
-})
-
-onUnmounted(() => {
-  observer?.disconnect()
 })
 
 const selectedShort = ref<Short | null>(null)
@@ -135,7 +86,7 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
       class="grid grid-cols-3 max-md:grid-cols-2 grid-cols-2 gap-4 sm:gap-6 pb-12"
     >
       <ShortCard
-        v-for="(short, idx) in visibleShorts"
+        v-for="(short, idx) in filteredShorts"
         :key="short.id || short.title"
         :short="short"
         :index="idx"
@@ -147,17 +98,14 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
       No projects found under this category.
     </div>
 
-    <div v-else class="grid grid-cols-2 max-md:grid-cols-1 gap-7 max-sm:gap-5.5 pb-6">
+    <div v-else class="grid grid-cols-2 max-md:grid-cols-1 gap-7 max-sm:gap-5.5 pb-12">
       <ProjectCard
-        v-for="(proj, idx) in visibleProjects"
+        v-for="(proj, idx) in filteredProjects"
         :key="proj.slug"
         :project="proj"
         :color="cardColors[idx % cardColors.length]"
       />
     </div>
-
-    <!-- Sentinel element for infinite scroll on scroll hit -->
-    <div ref="sentinelEl" class="h-4 w-full pointer-events-none pb-12" aria-hidden="true"></div>
 
     <ShortPlayerModal
       :short="selectedShort"
