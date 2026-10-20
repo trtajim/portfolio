@@ -18,11 +18,25 @@ I've always loved retro, high-contrast aesthetics, so I designed this site using
 
 ## 🚀 Make It Yours
 
-Want to build your own portfolio with this? It's completely server-driven via Supabase:
+Want to build your own portfolio with this? It's completely customizable and server-driven via Supabase:
 
-1. Clone the repo
-2. Connect your Supabase project
-3. Input your data, and boom!
+1. **Clone the repo**:
+   ```bash
+   git clone https://github.com/trtajim/portfolio.git
+   cd portfolio
+   ```
+
+2. **Run the Setup Wizard**:
+   Configure your name, meta tags, social links, and Supabase credentials in seconds:
+   ```bash
+   python3 setup.py
+   ```
+
+3. **Install & Run**:
+   ```bash
+   npm install
+   npm run dev
+   ```
 
 ---
 
