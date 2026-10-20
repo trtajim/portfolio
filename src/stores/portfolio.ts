@@ -57,6 +57,9 @@ export const usePortfolioStore = defineStore('portfolio', () => {
           whoami: Array.isArray(profileRes.data.whoami)
             ? profileRes.data.whoami
             : [],
+          main_stack: Array.isArray(profileRes.data.main_stack)
+            ? profileRes.data.main_stack
+            : [],
           grouped_stacks: Array.isArray(profileRes.data.grouped_stacks)
             ? profileRes.data.grouped_stacks
             : [],

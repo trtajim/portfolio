@@ -167,14 +167,37 @@ const firstThreeSocialLinks = computed(() => {
 })
 
 const ribbonTracks = computed(() => {
-  const stacks = portfolioStore.profile.main_stack && portfolioStore.profile.main_stack.length > 0
-    ? portfolioStore.profile.main_stack
-    : ['LARAVEL', 'VUE.JS', 'REACT', 'INERTIA.JS', 'PHP', 'JAVA', 'C++', 'JAVASCRIPT']
-  
-  const additional = ['ARDUINO', 'SUPABASE', 'FIREBASE', 'S3', 'CLOUDFLARE', 'LINUX', 'VPS', 'GIT']
+  // Collect all skills dynamically from grouped_stacks and main_stack with NO static fallback
+  const rawItems: string[] = []
+
+  if (portfolioStore.profile.main_stack && portfolioStore.profile.main_stack.length > 0) {
+    rawItems.push(...portfolioStore.profile.main_stack)
+  }
+
+  if (portfolioStore.profile.grouped_stacks && portfolioStore.profile.grouped_stacks.length > 0) {
+    portfolioStore.profile.grouped_stacks.forEach((group) => {
+      const parsed = parseItems(group.items)
+      parsed.forEach((item) => {
+        if (!rawItems.includes(item)) {
+          rawItems.push(item)
+        }
+      })
+    })
+  }
+
+  if (rawItems.length === 0) {
+    return { top: [], bottom: [], hasItems: false }
+  }
+
+  // Split dynamically into top and bottom tracks
+  const midpoint = Math.ceil(rawItems.length / 2)
+  const topList = rawItems.slice(0, midpoint)
+  const bottomList = rawItems.slice(midpoint)
+
   return {
-    top: [...stacks, ...stacks],
-    bottom: [...additional, ...additional]
+    top: [...topList, ...topList],
+    bottom: [...bottomList, ...bottomList],
+    hasItems: true
   }
 })
 
@@ -316,15 +339,15 @@ async function copyEmail() {
     </ul>
 
     <!-- DUAL ROTATING RIBBON / TAPE -->
-    <div class="ribs" aria-hidden="true">
-      <div class="rib">
+    <div v-if="ribbonTracks.hasItems" class="ribs" aria-hidden="true">
+      <div v-if="ribbonTracks.top.length > 0" class="rib">
         <div class="track">
           <span v-for="(skill, i) in ribbonTracks.top" :key="'top-' + i">
             {{ String(skill).toUpperCase() }} &#10022;
           </span>
         </div>
       </div>
-      <div class="rib y">
+      <div v-if="ribbonTracks.bottom.length > 0" class="rib y">
         <div class="track">
           <span v-for="(skill, i) in ribbonTracks.bottom" :key="'bot-' + i">
             {{ String(skill).toUpperCase() }} &#10022;
