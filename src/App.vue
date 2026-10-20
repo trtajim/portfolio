@@ -61,8 +61,6 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 .main-content {
@@ -72,7 +70,5 @@ onUnmounted(() => {
   min-height: calc(100vh - 80px);
   width: 100%;
   min-width: 0;
-  max-width: 100%;
-  overflow-x: hidden;
 }
 </style>
