@@ -1,12 +1,50 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { usePortfolioStore } from '@/stores/portfolio'
 import PostCard from '@/components/writing/PostCard.vue'
 
+const PAGE_SIZE = 12
+
 const portfolioStore = usePortfolioStore()
+const displayLimit = ref(PAGE_SIZE)
+const sentinelEl = ref<HTMLElement | null>(null)
+let observer: IntersectionObserver | null = null
 
 const publishedPosts = computed(() => {
   return portfolioStore.posts.filter((p) => p.is_published)
+})
+
+const visiblePosts = computed(() => {
+  return publishedPosts.value.slice(0, displayLimit.value)
+})
+
+const hasMore = computed(() => {
+  return visiblePosts.value.length < publishedPosts.value.length
+})
+
+function loadMore() {
+  if (!hasMore.value) return
+  displayLimit.value += PAGE_SIZE
+}
+
+onMounted(() => {
+  if (typeof IntersectionObserver !== 'undefined') {
+    observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasMore.value) {
+          loadMore()
+        }
+      },
+      { rootMargin: '200px' }
+    )
+    if (sentinelEl.value) {
+      observer.observe(sentinelEl.value)
+    }
+  }
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
 })
 
 const dateColors: ('blue' | 'pink' | 'green' | 'orange' | 'yellow')[] = [
@@ -44,10 +82,15 @@ const dateColors: ('blue' | 'pink' | 'green' | 'orange' | 'yellow')[] = [
       No articles published yet.
     </div>
 
-    <ul v-else class="grid gap-4.5 max-sm:gap-3.5 m-0 p-0 pb-12 list-none">
-      <li v-for="(post, idx) in publishedPosts" :key="post.slug">
-        <PostCard :post="post" :color="dateColors[idx % dateColors.length]" />
-      </li>
-    </ul>
+    <template v-else>
+      <ul class="grid gap-4.5 max-sm:gap-3.5 m-0 p-0 pb-6 list-none">
+        <li v-for="(post, idx) in visiblePosts" :key="post.slug">
+          <PostCard :post="post" :color="dateColors[idx % dateColors.length]" />
+        </li>
+      </ul>
+
+      <!-- Sentinel element for infinite scroll on scroll hit -->
+      <div ref="sentinelEl" class="h-4 w-full pointer-events-none pb-12" aria-hidden="true"></div>
+    </template>
   </div>
 </template>
