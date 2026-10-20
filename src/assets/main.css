@@ -87,6 +87,32 @@
     outline: 3px solid var(--blue);
     outline-offset: 3px;
   }
+
+  /* Custom brutalist scrollbar */
+  html {
+    scrollbar-color: var(--ink) var(--bg);
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg);
+    border-left: 2px solid var(--bd);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--ink);
+    border: 2px solid var(--bg);
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--mute);
+  }
 }
 
 /* Core brutalist utility classes */
