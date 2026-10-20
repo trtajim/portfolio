@@ -551,7 +551,7 @@ async function copyEmail() {
             More Featured Work
           </span>
         </div>
-        <div v-if="otherProjects.length > 0" class="grid grid-cols-2 max-md:grid-cols-1 gap-7 max-sm:gap-5.5">
+        <div v-if="otherProjects.length > 0" class="grid grid-cols-2 max-md:grid-cols-1 gap-x-7 gap-y-12 max-sm:gap-y-10 pt-3">
           <ProjectCard
             v-for="(proj, idx) in otherProjects"
             :key="proj.slug"

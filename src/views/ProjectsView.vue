@@ -98,7 +98,7 @@ const cardColors: ('mint' | 'orange' | 'pink' | 'blue')[] = ['mint', 'orange', '
       No projects found under this category.
     </div>
 
-    <div v-else class="grid grid-cols-2 max-md:grid-cols-1 gap-7 max-sm:gap-5.5 pb-12">
+    <div v-else class="grid grid-cols-2 max-md:grid-cols-1 gap-x-7 gap-y-12 max-sm:gap-y-10 pb-12 pt-3">
       <ProjectCard
         v-for="(proj, idx) in filteredProjects"
         :key="proj.slug"
