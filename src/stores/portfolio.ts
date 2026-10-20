@@ -53,9 +53,12 @@ export const usePortfolioStore = defineStore('portfolio', () => {
       if (profileRes.data) {
         profile.value = {
           ...profileRes.data,
-          email: profileRes.data.email || 'com.tajim@gmail.com',
+          email: profileRes.data.email || '',
           whoami: Array.isArray(profileRes.data.whoami)
             ? profileRes.data.whoami
+            : [],
+          main_stack: Array.isArray(profileRes.data.main_stack)
+            ? profileRes.data.main_stack
             : [],
           grouped_stacks: Array.isArray(profileRes.data.grouped_stacks)
             ? profileRes.data.grouped_stacks

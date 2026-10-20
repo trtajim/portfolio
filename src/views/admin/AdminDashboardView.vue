@@ -71,6 +71,7 @@ async function handleFileUpload(event: Event, targetType: 'avatar' | 'project' |
 
 const profileForm = ref({
   name: portfolioStore.profile.name || '',
+  email: portfolioStore.profile.email || '',
   headline: portfolioStore.profile.headline || '',
   whoamiRaw: portfolioStore.profile.whoami.join('\n\n'),
   avatar_url: portfolioStore.profile.avatar_url || '',
@@ -83,6 +84,7 @@ watch(
   (newProf) => {
     if (newProf) {
       profileForm.value.name = newProf.name || ''
+      profileForm.value.email = newProf.email || ''
       profileForm.value.headline = newProf.headline || ''
       profileForm.value.whoamiRaw = (newProf.whoami || []).join('\n\n')
       profileForm.value.avatar_url = newProf.avatar_url || ''
@@ -107,6 +109,7 @@ async function saveProfile() {
 
     await portfolioStore.updateProfile({
       name: profileForm.value.name,
+      email: profileForm.value.email.trim() || null,
       headline: profileForm.value.headline,
       whoami,
       avatar_url: profileForm.value.avatar_url || null,
@@ -601,17 +604,22 @@ async function handleLogout() {
           </div>
 
           <div class="field">
-            <label>Avatar Image</label>
-            <div class="upload-row">
-              <input v-model="profileForm.avatar_url" type="text" class="input-box" placeholder="https://..." style="flex: 1" />
-              <label class="btn white upload-btn">
-                {{ isUploading ? 'Uploading...' : 'Upload' }}
-                <input type="file" accept="image/*" class="file-hidden" @change="handleFileUpload($event, 'avatar')" />
-              </label>
-            </div>
-            <div v-if="profileForm.avatar_url" class="img-preview-mini">
-              <img :src="profileForm.avatar_url" alt="Avatar preview" />
-            </div>
+            <label>Contact Email (Dynamic, displayed in Get in Touch)</label>
+            <input v-model="profileForm.email" type="email" class="input-box" placeholder="com.tajim@gmail.com" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Avatar Image</label>
+          <div class="upload-row">
+            <input v-model="profileForm.avatar_url" type="text" class="input-box" placeholder="https://..." style="flex: 1" />
+            <label class="btn white upload-btn">
+              {{ isUploading ? 'Uploading...' : 'Upload' }}
+              <input type="file" accept="image/*" class="file-hidden" @change="handleFileUpload($event, 'avatar')" />
+            </label>
+          </div>
+          <div v-if="profileForm.avatar_url" class="img-preview-mini">
+            <img :src="profileForm.avatar_url" alt="Avatar preview" />
           </div>
         </div>
 

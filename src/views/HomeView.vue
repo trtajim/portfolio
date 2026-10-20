@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePortfolioStore } from '@/stores/portfolio'
 import ProjectCard from '@/components/projects/ProjectCard.vue'
@@ -7,6 +7,7 @@ import PostCard from '@/components/writing/PostCard.vue'
 import BrutalButton from '@/components/brutal/BrutalButton.vue'
 import ShortCard from '@/components/motion/ShortCard.vue'
 import ShortPlayerModal from '@/components/motion/ShortPlayerModal.vue'
+import { initScrollReveal } from '@/lib/reveal'
 import type { Short } from '@/types'
 
 const router = useRouter()
@@ -15,6 +16,23 @@ const portfolioStore = usePortfolioStore()
 const isAvatarLoaded = ref(false)
 
 const profile = computed(() => portfolioStore.profile)
+
+onMounted(() => {
+  nextTick(() => {
+    initScrollReveal()
+  })
+})
+
+watch(
+  () => portfolioStore.isLoaded,
+  (loaded) => {
+    if (loaded) {
+      nextTick(() => {
+        initScrollReveal()
+      })
+    }
+  }
+)
 
 const featuredProjects = computed(() => {
   return portfolioStore.projects.filter((p) => p.is_featured && p.is_published)
@@ -127,14 +145,77 @@ const dateColors: ('blue' | 'pink' | 'green' | 'orange' | 'yellow')[] = [
   'yellow'
 ]
 
+const stackPalette = [
+  { bg: 'var(--pink)', text: '#0b0b0f' },
+  { bg: 'var(--green)', text: '#0b0b0f' },
+  { bg: 'var(--orange)', text: '#0b0b0f' },
+  { bg: 'var(--yellow)', text: '#0b0b0f' },
+  { bg: '#b8c0ff', text: '#0b0b0f' },
+  { bg: '#ffd6a5', text: '#0b0b0f' },
+  { bg: 'var(--blue)', text: '#ffffff' },
+  { bg: '#caffbf', text: '#0b0b0f' }
+]
+
+function getStackStyle(index: number): { bg: string; text: string } {
+  return stackPalette[index % stackPalette.length] || { bg: 'var(--blue)', text: '#ffffff' }
+}
+
 const contactEmail = computed(() => {
-  return portfolioStore.profile.email || 'com.tajim@gmail.com'
+  return portfolioStore.profile.email || ''
+})
+
+const firstThreeSocialLinks = computed(() => {
+  return (portfolioStore.profile.social_links || []).slice(0, 3)
+})
+
+const ribbonTracks = computed(() => {
+  // Collect all skills dynamically from grouped_stacks and main_stack with NO static fallback
+  const rawItems: string[] = []
+
+  if (portfolioStore.profile.main_stack && portfolioStore.profile.main_stack.length > 0) {
+    rawItems.push(...portfolioStore.profile.main_stack)
+  }
+
+  if (portfolioStore.profile.grouped_stacks && portfolioStore.profile.grouped_stacks.length > 0) {
+    portfolioStore.profile.grouped_stacks.forEach((group) => {
+      const parsed = parseItems(group.items)
+      parsed.forEach((item) => {
+        if (!rawItems.includes(item)) {
+          rawItems.push(item)
+        }
+      })
+    })
+  }
+
+  if (rawItems.length === 0) {
+    return { top: [], bottom: [], hasItems: false }
+  }
+
+  // Partition skills evenly into two separate groups so top and bottom never share or duplicate the same item
+  const trackA: string[] = []
+  const trackB: string[] = []
+  rawItems.forEach((item, index) => {
+    if (index % 2 === 0) {
+      trackA.push(item)
+    } else {
+      trackB.push(item)
+    }
+  })
+
+  // Flipped: Top tape gets trackB, Bottom (yellow) tape gets trackA
+  // Repeat items 4 times so track width comfortably spans any ultra-wide screen without running out of items
+  return {
+    top: [...trackB, ...trackB, ...trackB, ...trackB],
+    bottom: [...trackA, ...trackA, ...trackA, ...trackA],
+    hasItems: true
+  }
 })
 
 const isCopied = ref(false)
 let copyTimeout: ReturnType<typeof setTimeout> | null = null
 
 async function copyEmail() {
+  if (!contactEmail.value) return
   let copied = false
   const text = contactEmail.value
 
@@ -178,7 +259,7 @@ async function copyEmail() {
     if (copyTimeout) clearTimeout(copyTimeout)
     copyTimeout = setTimeout(() => {
       isCopied.value = false
-    }, 2000)
+    }, 1800)
   }
 }
 </script>
@@ -267,13 +348,47 @@ async function copyEmail() {
       </li>
     </ul>
 
+    <!-- DUAL ROTATING RIBBON / TAPE -->
+    <div v-if="!portfolioStore.isLoaded" class="ribs" aria-hidden="true">
+      <div class="rib">
+        <div class="track">
+          <span v-for="n in 12" :key="'shim-top-' + n" class="opacity-35 inline-block">
+            ███████ &#10022;
+          </span>
+        </div>
+      </div>
+      <div class="rib y">
+        <div class="track">
+          <span v-for="n in 12" :key="'shim-bot-' + n" class="opacity-35 inline-block">
+            ███████ &#10022;
+          </span>
+        </div>
+      </div>
+    </div>
+    <div v-else-if="ribbonTracks.hasItems" class="ribs" aria-hidden="true">
+      <div v-if="ribbonTracks.top.length > 0" class="rib">
+        <div class="track">
+          <span v-for="(skill, i) in ribbonTracks.top" :key="'top-' + i">
+            {{ String(skill).toUpperCase() }} &#10022;
+          </span>
+        </div>
+      </div>
+      <div v-if="ribbonTracks.bottom.length > 0" class="rib y">
+        <div class="track">
+          <span v-for="(skill, i) in ribbonTracks.bottom" :key="'bot-' + i">
+            {{ String(skill).toUpperCase() }} &#10022;
+          </span>
+        </div>
+      </div>
+    </div>
+
     <!-- WHO I AM -->
     <section id="about" class="pt-14 max-sm:pt-9 pb-1.5">
-      <div class="sh">
+      <div class="sh rv">
         <h2>Who I am</h2>
       </div>
 
-      <div class="box p-[26px_28px] max-sm:p-[18px]">
+      <div class="box rv p-[26px_28px] max-sm:p-[18px]">
         <div v-if="!portfolioStore.isLoaded" class="space-y-3">
           <div class="skeleton-line w-[95%]"></div>
           <div class="skeleton-line w-[88%]"></div>
@@ -293,7 +408,7 @@ async function copyEmail() {
 
     <!-- TECH STACK -->
     <section id="stack" class="pt-14 max-sm:pt-9 pb-1.5">
-      <div class="sh">
+      <div class="sh rv">
         <h2>Tech stack</h2>
       </div>
 
@@ -311,23 +426,23 @@ async function copyEmail() {
         <div
           v-for="(group, gIdx) in profile.grouped_stacks"
           :key="group.category"
-          class="box p-[20px_22px] flex flex-col gap-3.5"
+          class="box rv p-[20px_22px] flex flex-col gap-3.5 transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)]"
+          :style="{
+            backgroundColor: getStackStyle(gIdx).bg,
+            color: getStackStyle(gIdx).text
+          }"
         >
-          <span class="font-mono font-bold text-[0.82rem] tracking-[-0.01em] bg-[var(--ink)] text-[var(--paper)] rounded-[6px] px-2.5 py-[3px] self-start">
+          <h3
+            class="m-0 font-mono font-bold text-[0.82rem] tracking-[-0.01em] uppercase self-start"
+            :style="{ color: getStackStyle(gIdx).text }"
+          >
             {{ group.category }}
-          </span>
+          </h3>
           <ul class="flex flex-wrap gap-2 m-0 p-0 list-none" :aria-label="group.category + ' technologies'">
             <li
-              v-for="(item, iIdx) in parseItems(group.items)"
+              v-for="item in parseItems(group.items)"
               :key="item"
-              :class="[
-                'font-mono font-bold text-[0.82rem] text-[#0b0b0f] border-2 border-[var(--bd)] rounded-[6px] shadow-[2px_2px_0_var(--sh)] px-2.5 py-[3px]',
-                getAccentColor(gIdx + iIdx) === 'green' && 'bg-[var(--green)]',
-                getAccentColor(gIdx + iIdx) === 'yellow' && 'bg-[var(--yellow)]',
-                getAccentColor(gIdx + iIdx) === 'pink' && 'bg-[var(--pink)]',
-                getAccentColor(gIdx + iIdx) === 'blue' && 'bg-[var(--blue)] text-white',
-                getAccentColor(gIdx + iIdx) === 'orange' && 'bg-[var(--orange)]'
-              ]"
+              class="font-mono font-bold text-[0.82rem] bg-white text-[#0b0b0f] border-2 border-[#0b0b0f] rounded-[6px] shadow-[2px_2px_0_#0b0b0f] px-2.5 py-[3px]"
             >
               {{ item }}
             </li>
@@ -338,7 +453,7 @@ async function copyEmail() {
 
     <!-- WHAT I BUILT -->
     <section id="projects" class="pt-14 max-sm:pt-9 pb-1.5">
-      <div class="sh">
+      <div class="sh rv">
         <h2>What I built</h2>
       </div>
 
@@ -350,7 +465,7 @@ async function copyEmail() {
         </div>
       </div>
 
-      <div v-else-if="featuredProjects.length === 0" class="box p-7 text-center font-mono font-bold">
+      <div v-else-if="featuredProjects.length === 0" class="box rv p-7 text-center font-mono font-bold">
         No projects found.
       </div>
 
@@ -358,7 +473,7 @@ async function copyEmail() {
         <!-- SPOTLIGHT / FLAGSHIP PROJECT -->
         <div
           v-if="spotlightProject"
-          class="box spotlight-card !bg-[var(--green)] !text-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden cursor-pointer transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] active:-translate-x-[3px] active:-translate-y-[3px] active:shadow-[9px_9px_0_var(--sh)]"
+          class="box rv spotlight-card relative !bg-[var(--green)] !text-[#0b0b0f] p-[38px_34px] max-md:p-[28px_22px] max-sm:p-[22px_16px] grid grid-cols-[1.2fr_1fr] max-md:grid-cols-1 gap-8 max-sm:gap-5 items-center rounded-[var(--r)] min-w-0 max-w-full overflow-hidden cursor-pointer transition-transform hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] active:-translate-x-[3px] active:-translate-y-[3px] active:shadow-[9px_9px_0_var(--sh)]"
           @click="handleSpotlightClick"
         >
           <div class="flex flex-col gap-4 min-w-0">
@@ -437,6 +552,7 @@ async function copyEmail() {
             v-for="(proj, idx) in otherProjects"
             :key="proj.slug"
             :project="proj"
+            class="rv"
             :color="projectCardColors[(idx + 1) % projectCardColors.length]"
           />
         </div>
@@ -451,7 +567,7 @@ async function copyEmail() {
 
     <!-- WHAT I WRITE -->
     <section id="writing" class="pt-14 max-sm:pt-9 pb-1.5">
-      <div class="sh">
+      <div class="sh rv">
         <h2>What I write</h2>
       </div>
 
@@ -465,11 +581,11 @@ async function copyEmail() {
           <div class="skeleton-line w-6 h-5"></div>
         </div>
       </div>
-      <div v-else-if="featuredPosts.length === 0" class="box p-7 text-center font-mono font-bold">
+      <div v-else-if="featuredPosts.length === 0" class="box rv p-7 text-center font-mono font-bold">
         No articles published yet.
       </div>
       <ul v-else class="grid gap-4.5 max-sm:gap-3.5 m-0 p-0 list-none">
-        <li v-for="(post, idx) in featuredPosts" :key="post.slug">
+        <li v-for="(post, idx) in featuredPosts" :key="post.slug" class="rv">
           <PostCard :post="post" :color="dateColors[idx % dateColors.length]" />
         </li>
       </ul>
@@ -483,7 +599,7 @@ async function copyEmail() {
 
     <!-- MOTION & SHORTS -->
     <section v-if="activeShorts.length > 0" id="motion" class="pt-14 max-sm:pt-9 pb-1.5 w-full min-w-0 max-w-full overflow-hidden">
-      <div class="sh">
+      <div class="sh rv">
         <h2>Motion & Shorts</h2>
       </div>
       <p class="-mt-3 mb-5 text-[1.05rem] opacity-85">
@@ -493,7 +609,7 @@ async function copyEmail() {
         <div
           v-for="(short, idx) in activeShorts"
           :key="short.id || short.title"
-          class="snap-start flex-[0_0_240px] max-sm:flex-[0_0_200px] shrink-0"
+          class="rv snap-start flex-[0_0_240px] max-sm:flex-[0_0_200px] shrink-0"
         >
           <ShortCard
             :short="short"
@@ -506,60 +622,57 @@ async function copyEmail() {
 
     <!-- CONTACT SECTION -->
     <section id="contact" class="pt-14 max-sm:pt-9 pb-2 w-full min-w-0">
-      <div class="sh">
+      <div class="sh rv">
         <h2>Get in touch</h2>
       </div>
 
-      <div class="box py-12 px-10 max-md:py-8 max-md:px-7 max-sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-8 min-h-[180px]">
-        <div class="max-w-[480px] flex flex-col gap-2.5">
-          <h3 class="m-0 text-[clamp(1.5rem,3.2vw,2.1rem)] font-extrabold tracking-[-0.02em] leading-[1.25]">
-            Have an idea?
+      <div class="contact-box box rv">
+        <div>
+          <h3 class="m-0 mb-3 text-[clamp(2.1rem,5.4vw,3.4rem)] leading-[0.96] tracking-[-0.045em] font-extrabold text-white">
+            Let’s build something.
           </h3>
-          <p class="m-0 text-[1.05rem] opacity-75 leading-relaxed">
-            My inbox is always open to chat about programming, new ideas, or interesting projects.
+          <p class="m-0 text-[1.1rem] max-w-[36ch] leading-relaxed text-white">
+            Have a project in mind or a question? Email me, or find me on social media.
           </p>
         </div>
 
-        <div class="flex items-center gap-3.5 max-sm:flex-col max-sm:w-full shrink-0">
-          <BrutalButton
-            as="a"
-            :href="`mailto:${contactEmail}`"
-            variant="yellow"
-            class="text-[1.05rem] px-7 py-3.5 font-extrabold max-sm:w-full text-center"
-          >
-            <span>Say Hello</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="w-[19px] h-[19px] shrink-0 -mr-0.5"
-              aria-hidden="true"
+        <div class="ch">
+          <div class="mrow">
+            <a
+              v-if="contactEmail"
+              class="mail"
+              :href="`mailto:${contactEmail}`"
             >
-              <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-            </svg>
-          </BrutalButton>
+              <span class="font-bold text-[1.2rem] leading-tight">Send an email</span>
+              <small class="font-mono font-bold text-[0.85rem] opacity-85">{{ contactEmail }}</small>
+            </a>
+            <div v-else class="mail">
+              <span class="font-bold text-[1.1rem]">Email</span>
+              <small class="font-mono text-[0.85rem] opacity-75">Not configured</small>
+            </div>
+            <button
+              v-if="contactEmail"
+              type="button"
+              class="cp"
+              :class="{ ok: isCopied }"
+              @click="copyEmail"
+              aria-label="Copy email address"
+            >
+              <span>{{ isCopied ? 'Copied!' : 'Copy' }}</span>
+            </button>
+          </div>
 
-          <button
-            type="button"
-            @click="copyEmail"
-            :aria-label="isCopied ? 'Email address copied' : 'Copy email address'"
-            class="font-mono font-bold text-[0.92rem] px-4.5 py-3.5 border-2 border-[var(--bd)] rounded-[var(--r)] bg-[var(--paper)] text-[var(--ink)] shadow-[2px_2px_0_var(--sh)] hover:-translate-y-0.5 active:translate-y-0 transition-transform flex items-center justify-between gap-3 max-sm:w-full cursor-pointer shrink-0"
-          >
-            <span>{{ contactEmail }}</span>
-            <span
-              :class="[
-                'text-[0.75rem] font-mono font-bold w-[62px] text-center py-0.5 rounded border border-[var(--bd)] transition-colors inline-block shrink-0',
-                isCopied ? 'bg-[var(--green)] text-[#0b0b0f]' : 'bg-[var(--bg)] text-[var(--ink)]'
-              ]"
+          <div v-if="firstThreeSocialLinks.length > 0" class="soc">
+            <a
+              v-for="link in firstThreeSocialLinks"
+              :key="link.label"
+              :href="link.url"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              {{ isCopied ? 'Copied' : 'Copy' }}
-            </span>
-          </button>
+              {{ link.label }}
+            </a>
+          </div>
         </div>
       </div>
     </section>

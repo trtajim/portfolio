@@ -32,19 +32,19 @@ const formattedDate = computed(() => {
   }
 })
 
-const badgeColorClass = computed(() => {
+const leftCapColor = computed(() => {
   switch (props.color) {
     case 'yellow':
-      return 'bg-[var(--yellow)] text-[#0b0b0f]'
+      return 'var(--yellow)'
     case 'pink':
-      return 'bg-[var(--pink)] text-[#0b0b0f]'
+      return 'var(--pink)'
     case 'green':
-      return 'bg-[var(--green)] text-[#0b0b0f]'
+      return 'var(--green)'
     case 'orange':
-      return 'bg-[var(--orange)] text-[#0b0b0f]'
+      return 'var(--orange)'
     case 'blue':
     default:
-      return 'bg-[var(--blue)] text-white'
+      return 'var(--blue)'
   }
 })
 </script>
@@ -52,14 +52,12 @@ const badgeColorClass = computed(() => {
 <template>
   <router-link
     :to="`/writing/${post.slug}`"
-    class="box p-[16px_18px] max-sm:p-3.5 grid grid-cols-[104px_1fr_44px] max-sm:grid-cols-[1fr_40px] gap-4 max-sm:gap-[6px_12px] items-center no-underline text-inherit transition-all hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] hover:bg-[var(--yellow)] hover:text-[#0b0b0f] active:-translate-x-[3px] active:-translate-y-[3px] active:shadow-[9px_9px_0_var(--sh)] active:bg-[var(--yellow)] active:text-[#0b0b0f] group"
+    class="post-link box p-[16px_18px_16px_22px] max-sm:p-3.5 grid grid-cols-[104px_1fr_44px] max-sm:grid-cols-[1fr_40px] gap-4 max-sm:gap-[6px_12px] items-center no-underline text-inherit transition-all hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] active:-translate-x-[3px] active:-translate-y-[3px] active:shadow-[9px_9px_0_var(--sh)] group"
+    :style="{ borderLeft: `16px solid ${leftCapColor}` }"
   >
     <time
       :datetime="post.published_date"
-      :class="[
-        'justify-self-start font-mono font-bold text-[0.78rem] border-2 border-[#0b0b0f] rounded-[6px] px-2 py-0.5 max-sm:col-span-full',
-        badgeColorClass
-      ]"
+      class="justify-self-start font-mono font-bold text-[0.78rem] bg-[#0b0b0f] text-white rounded-[6px] px-2 py-0.5 max-sm:col-span-full"
     >
       {{ formattedDate }}
     </time>
@@ -93,3 +91,15 @@ const badgeColorClass = computed(() => {
     </span>
   </router-link>
 </template>
+
+<style scoped>
+.post-link {
+  border-left-width: 16px !important;
+}
+
+@media (max-width: 600px) {
+  .post-link {
+    border-left-width: 12px !important;
+  }
+}
+</style>
