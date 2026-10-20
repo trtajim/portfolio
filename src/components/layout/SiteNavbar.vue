@@ -100,7 +100,6 @@ function toggleTheme() {
   z-index: 50;
   background: var(--bg);
   border-bottom: var(--w) solid var(--bd);
-  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .top .c {
