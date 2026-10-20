@@ -299,7 +299,11 @@ async function copyEmail() {
               v-if="profile.avatar_url"
               :src="profile.avatar_url"
               :alt="profile.name || 'TR Tajim'"
-              class="absolute inset-0 w-full h-full object-cover object-[center_65%] block transition-opacity duration-300"
+              width="400"
+              height="400"
+              fetchpriority="high"
+              decoding="async"
+              class="absolute inset-0 w-full h-full object-cover object-[center_65%] block transition-opacity duration-300 [aspect-ratio:1/1]"
               :class="isAvatarLoaded ? 'opacity-100' : 'opacity-0'"
               @load="isAvatarLoaded = true"
             />

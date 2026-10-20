@@ -14,8 +14,8 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
       meta: {
-        title: 'TR Tajim | Full-Stack Developer, Competitive Programmer & IoT Enthusiast',
-        description: 'Portfolio of TR Tajim, a full-stack developer and IoT enthusiast building web applications, Android apps, and open-source tools with Laravel, Vue, React, PHP, Java, and C++.'
+        title: 'TR Tajim | Full-Stack Developer & Competitive Programmer',
+        description: 'Portfolio of TR Tajim: Full-stack developer and competitive programmer building lean web products, Android apps, and open-source tools with Laravel and Vue.'
       }
     },
     {
@@ -65,6 +65,15 @@ const router = createRouter({
       name: 'admin-dashboard',
       component: () => import('@/views/admin/AdminDashboardView.vue'),
       meta: { requiresAuth: true, title: 'Admin Studio | TR Tajim' }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/NotFoundView.vue'),
+      meta: {
+        title: '404 - Page Not Found | TR Tajim',
+        description: 'The requested page could not be found on TR Tajim portfolio.'
+      }
     }
   ],
   scrollBehavior(to, from, savedPosition) {
