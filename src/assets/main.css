@@ -286,12 +286,12 @@
 .track {
   display: flex;
   width: max-content;
-  animation: run 34s linear infinite;
+  animation: run 60s linear infinite;
 }
 
 .rib.y .track {
   animation-direction: reverse;
-  animation-duration: 28s;
+  animation-duration: 52s;
 }
 
 .track span {
