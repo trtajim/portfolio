@@ -388,7 +388,7 @@ async function copyEmail() {
         <h2>Who I am</h2>
       </div>
 
-      <div class="box rv p-[26px_28px] max-sm:p-[18px]">
+      <div class="box rv p-[26px_28px] max-sm:p-[18px] !bg-[#ffeb85] !text-[#0b0b0f] dark:!bg-[#2a2414] dark:!text-[#f6f4ee]">
         <div v-if="!portfolioStore.isLoaded" class="space-y-3">
           <div class="skeleton-line w-[95%]"></div>
           <div class="skeleton-line w-[88%]"></div>
