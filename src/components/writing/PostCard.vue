@@ -32,19 +32,19 @@ const formattedDate = computed(() => {
   }
 })
 
-const leftCapClass = computed(() => {
+const leftCapColor = computed(() => {
   switch (props.color) {
     case 'yellow':
-      return 'border-l-[16px] border-l-[var(--yellow)]'
+      return 'var(--yellow)'
     case 'pink':
-      return 'border-l-[16px] border-l-[var(--pink)]'
+      return 'var(--pink)'
     case 'green':
-      return 'border-l-[16px] border-l-[var(--green)]'
+      return 'var(--green)'
     case 'orange':
-      return 'border-l-[16px] border-l-[var(--orange)]'
+      return 'var(--orange)'
     case 'blue':
     default:
-      return 'border-l-[16px] border-l-[var(--blue)]'
+      return 'var(--blue)'
   }
 })
 </script>
@@ -52,10 +52,8 @@ const leftCapClass = computed(() => {
 <template>
   <router-link
     :to="`/writing/${post.slug}`"
-    :class="[
-      'box p-[16px_18px_16px_22px] max-sm:p-3.5 grid grid-cols-[104px_1fr_44px] max-sm:grid-cols-[1fr_40px] gap-4 max-sm:gap-[6px_12px] items-center no-underline text-inherit transition-all hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] active:-translate-x-[3px] active:-translate-y-[3px] active:shadow-[9px_9px_0_var(--sh)] group',
-      leftCapClass
-    ]"
+    class="post-link box p-[16px_18px_16px_22px] max-sm:p-3.5 grid grid-cols-[104px_1fr_44px] max-sm:grid-cols-[1fr_40px] gap-4 max-sm:gap-[6px_12px] items-center no-underline text-inherit transition-all hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[9px_9px_0_var(--sh)] active:-translate-x-[3px] active:-translate-y-[3px] active:shadow-[9px_9px_0_var(--sh)] group"
+    :style="{ borderLeft: `16px solid ${leftCapColor}` }"
   >
     <time
       :datetime="post.published_date"
@@ -93,3 +91,15 @@ const leftCapClass = computed(() => {
     </span>
   </router-link>
 </template>
+
+<style scoped>
+.post-link {
+  border-left-width: 16px !important;
+}
+
+@media (max-width: 600px) {
+  .post-link {
+    border-left-width: 12px !important;
+  }
+}
+</style>

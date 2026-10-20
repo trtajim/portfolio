@@ -151,11 +151,13 @@ const stackPalette = [
   { bg: 'var(--green)', text: '#0b0b0f' },
   { bg: 'var(--orange)', text: '#0b0b0f' },
   { bg: 'var(--yellow)', text: '#0b0b0f' },
-  { bg: '#ffffff', text: '#0b0b0f' }
+  { bg: '#b8c0ff', text: '#0b0b0f' },
+  { bg: '#ffd6a5', text: '#0b0b0f' },
+  { bg: '#caffbf', text: '#0b0b0f' }
 ]
 
 function getStackStyle(index: number): { bg: string; text: string } {
-  return stackPalette[index % stackPalette.length] || { bg: '#ffffff', text: '#0b0b0f' }
+  return stackPalette[index % stackPalette.length] || { bg: 'var(--blue)', text: '#ffffff' }
 }
 
 const contactEmail = computed(() => {
@@ -189,13 +191,21 @@ const ribbonTracks = computed(() => {
     return { top: [], bottom: [], hasItems: false }
   }
 
-  // Both tapes show ALL skills, but reversed starting point so top starts with the offset and bottom starts from beginning
-  const offset = Math.floor(rawItems.length / 2)
-  const offsetList = [...rawItems.slice(offset), ...rawItems.slice(0, offset)]
+  // Partition skills evenly into two separate groups so top and bottom never share or duplicate the same item
+  const topList: string[] = []
+  const bottomList: string[] = []
+  rawItems.forEach((item, index) => {
+    if (index % 2 === 0) {
+      topList.push(item)
+    } else {
+      bottomList.push(item)
+    }
+  })
 
+  // Duplicate for seamless 50% loop animation
   return {
-    top: [...offsetList, ...offsetList],
-    bottom: [...rawItems, ...rawItems],
+    top: [...topList, ...topList],
+    bottom: [...bottomList, ...bottomList],
     hasItems: true
   }
 })
@@ -338,7 +348,23 @@ async function copyEmail() {
     </ul>
 
     <!-- DUAL ROTATING RIBBON / TAPE -->
-    <div v-if="ribbonTracks.hasItems" class="ribs" aria-hidden="true">
+    <div v-if="!portfolioStore.isLoaded" class="ribs" aria-hidden="true">
+      <div class="rib">
+        <div class="track">
+          <span v-for="n in 12" :key="'shim-top-' + n" class="opacity-35 inline-block">
+            ███████ &#10022;
+          </span>
+        </div>
+      </div>
+      <div class="rib y">
+        <div class="track">
+          <span v-for="n in 12" :key="'shim-bot-' + n" class="opacity-35 inline-block">
+            ███████ &#10022;
+          </span>
+        </div>
+      </div>
+    </div>
+    <div v-else-if="ribbonTracks.hasItems" class="ribs" aria-hidden="true">
       <div v-if="ribbonTracks.top.length > 0" class="rib">
         <div class="track">
           <span v-for="(skill, i) in ribbonTracks.top" :key="'top-' + i">
