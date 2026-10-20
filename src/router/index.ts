@@ -14,8 +14,8 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
       meta: {
-        title: 'TR Tajim | Full-Stack Developer, Competitive Programmer & IoT Enthusiast',
-        description: 'Portfolio of TR Tajim, a full-stack developer and IoT enthusiast building web applications, Android apps, and open-source tools with Laravel, Vue, React, PHP, Java, and C++.'
+        title: 'TR Tajim | Full-Stack Developer & IoT Engineer',
+        description: 'Portfolio of TR Tajim: Full-stack developer and IoT builder crafting lean web products, Android apps, and open-source tools with Laravel and Vue.'
       }
     },
     {
