@@ -13,31 +13,46 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-      meta: { title: 'TR Tajim | Full-Stack Developer, Competitive Programmer & IoT Enthusiast' }
+      meta: {
+        title: 'TR Tajim | Full-Stack Developer, Competitive Programmer & IoT Enthusiast',
+        description: 'Portfolio of TR Tajim, a full-stack developer and IoT enthusiast building web applications, Android apps, and open-source tools with Laravel, Vue, React, PHP, Java, and C++.'
+      }
     },
     {
       path: '/projects',
       name: 'projects',
       component: () => import('@/views/ProjectsView.vue'),
-      meta: { title: 'Projects | TR Tajim' }
+      meta: {
+        title: 'Projects | TR Tajim',
+        description: 'Explore web applications, Android apps, and IoT hardware projects designed and shipped by TR Tajim.'
+      }
     },
     {
       path: '/projects/:slug',
       name: 'project-detail',
       component: () => import('@/views/ProjectDetailView.vue'),
-      meta: { title: 'Project Details | TR Tajim' }
+      meta: {
+        title: 'Project Details | TR Tajim',
+        description: 'Deep dive into architecture, tech stacks, and metrics of projects built by TR Tajim.'
+      }
     },
     {
       path: '/writing',
       name: 'writing',
       component: () => import('@/views/WritingView.vue'),
-      meta: { title: 'Writing & Technical Notes | TR Tajim' }
+      meta: {
+        title: 'Writing & Technical Notes | TR Tajim',
+        description: 'Articles, architectural write-ups, and engineering notes on web development, open source, and software craft.'
+      }
     },
     {
       path: '/writing/:slug',
       name: 'post-detail',
       component: () => import('@/views/PostDetailView.vue'),
-      meta: { title: 'Article | TR Tajim' }
+      meta: {
+        title: 'Article | TR Tajim',
+        description: 'Read technical insights and lessons learned by TR Tajim.'
+      }
     },
     {
       path: '/admin/login',
@@ -66,6 +81,31 @@ const router = createRouter({
 router.beforeEach(async (to, _from) => {
   if (to.meta.title) {
     document.title = to.meta.title as string
+  }
+
+  if (to.meta.description && typeof document !== 'undefined') {
+    let metaDesc = document.querySelector('meta[name="description"]')
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta')
+      metaDesc.setAttribute('name', 'description')
+      document.head.appendChild(metaDesc)
+    }
+    metaDesc.setAttribute('content', to.meta.description as string)
+
+    let ogDesc = document.querySelector('meta[property="og:description"]')
+    if (ogDesc) {
+      ogDesc.setAttribute('content', to.meta.description as string)
+    }
+
+    let twDesc = document.querySelector('meta[property="twitter:description"]')
+    if (twDesc) {
+      twDesc.setAttribute('content', to.meta.description as string)
+    }
+
+    let ogTitle = document.querySelector('meta[property="og:title"]')
+    if (ogTitle && to.meta.title) {
+      ogTitle.setAttribute('content', to.meta.title as string)
+    }
   }
 
   const authStore = useAuthStore()
