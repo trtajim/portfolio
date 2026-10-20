@@ -146,13 +146,13 @@ const dateColors: ('blue' | 'pink' | 'green' | 'orange' | 'yellow')[] = [
 ]
 
 const stackPalette = [
-  { bg: 'var(--blue)', text: '#ffffff' },
   { bg: 'var(--pink)', text: '#0b0b0f' },
   { bg: 'var(--green)', text: '#0b0b0f' },
   { bg: 'var(--orange)', text: '#0b0b0f' },
   { bg: 'var(--yellow)', text: '#0b0b0f' },
   { bg: '#b8c0ff', text: '#0b0b0f' },
   { bg: '#ffd6a5', text: '#0b0b0f' },
+  { bg: 'var(--blue)', text: '#ffffff' },
   { bg: '#caffbf', text: '#0b0b0f' }
 ]
 
