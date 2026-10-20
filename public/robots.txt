@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/*
 
-Sitemap: https://trtajim.com/sitemap.xml
+Sitemap: https://tajimz.xyz/sitemap.xml

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { marked } from 'marked'
 import { usePortfolioStore } from '@/stores/portfolio'
@@ -13,6 +13,19 @@ const isImageLoaded = ref(false)
 
 const project = computed(() => {
   return portfolioStore.projects.find((p) => p.slug === route.params.slug)
+})
+
+watchEffect(() => {
+  if (project.value) {
+    document.title = `${project.value.title} | TR Tajim`
+    const desc = project.value.summary || project.value.title
+    const metaDesc = document.querySelector('meta[name="description"]')
+    if (metaDesc) metaDesc.setAttribute('content', desc)
+    const ogTitle = document.querySelector('meta[property="og:title"]')
+    if (ogTitle) ogTitle.setAttribute('content', `${project.value.title} | TR Tajim`)
+    const ogDesc = document.querySelector('meta[property="og:description"]')
+    if (ogDesc) ogDesc.setAttribute('content', desc)
+  }
 })
 
 const renderedContent = computed(() => {
