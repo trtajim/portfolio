@@ -65,6 +65,15 @@ const router = createRouter({
       name: 'admin-dashboard',
       component: () => import('@/views/admin/AdminDashboardView.vue'),
       meta: { requiresAuth: true, title: 'Admin Studio | TR Tajim' }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/NotFoundView.vue'),
+      meta: {
+        title: '404 - Page Not Found | TR Tajim',
+        description: 'The requested page could not be found on TR Tajim portfolio.'
+      }
     }
   ],
   scrollBehavior(to, from, savedPosition) {
